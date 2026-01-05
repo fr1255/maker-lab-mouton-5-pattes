@@ -31,33 +31,29 @@
       color:var(--text);
     }
 
-    .wrap{
-      max-width:var(--max);
-      margin:auto;
-      padding:24px 16px 64px;
-    }
-
-    /* HEADER */
+    /* HEADER PLEINE LARGEUR */
     header{
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      margin-bottom:32px;
+      justify-content:space-between;
+      padding:16px 24px;
+      border-bottom:1px solid var(--line);
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:16px;
       font-weight:700;
+      font-size:18px;
     }
 
     .brand img{
-      width:56px;
-      height:56px;
+      width:120px;
+      height:120px;
       background:#fff;
-      padding:6px;
-      border-radius:14px;
+      padding:12px;
+      border-radius:20px;
       border:1px solid var(--line);
       object-fit:contain;
       display:block;
@@ -77,7 +73,13 @@
       border-color:var(--accent);
     }
 
-    /* HERO */
+    /* CONTENU CENTRÉ */
+    .wrap{
+      max-width:var(--max);
+      margin:auto;
+      padding:32px 16px 64px;
+    }
+
     .hero{
       background:rgba(17,24,36,.7);
       border:1px solid var(--line);
@@ -97,7 +99,6 @@
       max-width:70ch;
     }
 
-    /* SECTIONS */
     .grid{
       display:grid;
       gap:16px;
@@ -117,24 +118,39 @@
       font-size:14px;
       color:var(--muted);
     }
+
+    /* MOBILE */
+    @media (max-width: 700px){
+      header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+      }
+
+      .brand img{
+        width:96px;
+        height:96px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
 
-    <header>
-      <div class="brand">
-        <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes">
-        <span>Maker Lab du Mouton à 5 Pattes</span>
-      </div>
+  <header>
+    <div class="brand">
+      <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes">
+      <span>Maker Lab du Mouton à 5 Pattes</span>
+    </div>
 
-      <nav>
-        <a href="#projets">Projets</a>
-        <a href="#journal">Journal</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
+    <nav>
+      <a href="#projets">Projets</a>
+      <a href="#journal">Journal</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
 
     <section class="hero">
       <h1>Je fabrique, je teste, je documente.</h1>
@@ -168,10 +184,11 @@
       © <span id="year"></span> Maker Lab du Mouton à 5 Pattes
     </footer>
 
-  </div>
+  </main>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+
 </body>
 </html>
