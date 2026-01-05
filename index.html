@@ -16,7 +16,7 @@
       --line:rgba(255,255,255,.12);
       --accent:#7ee787;
       --radius:16px;
-      --max:980px;
+      --max:1100px;
     }
 
     *{box-sizing:border-box}
@@ -31,32 +31,10 @@
       color:var(--text);
     }
 
-    /* HEADER PLEINE LARGEUR */
     header{
       display:flex;
-      align-items:center;
-      justify-content:space-between;
+      justify-content:flex-end;
       padding:16px 24px;
-      border-bottom:1px solid var(--line);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      font-weight:700;
-      font-size:18px;
-    }
-
-    .brand img{
-      width:120px;
-      height:120px;
-      background:#fff;
-      padding:12px;
-      border-radius:20px;
-      border:1px solid var(--line);
-      object-fit:contain;
-      display:block;
     }
 
     nav a{
@@ -69,23 +47,41 @@
       font-size:14px;
     }
 
-    nav a:hover{
-      border-color:var(--accent);
-    }
+    nav a:hover{ border-color:var(--accent); }
 
-    /* CONTENU CENTRÉ */
-    .wrap{
+    /* === LAYOUT 2 COLONNES === */
+    .layout{
+      display:grid;
+      grid-template-columns: 260px 1fr;
       max-width:var(--max);
       margin:auto;
-      padding:32px 16px 64px;
+      gap:32px;
+      padding:24px;
     }
 
+    /* COLONNE LOGO */
+    .sidebar{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .sidebar img{
+      width:220px;
+      background:#fff;
+      padding:16px;
+      border-radius:24px;
+      border:1px solid var(--line);
+      object-fit:contain;
+    }
+
+    /* CONTENU */
     .hero{
       background:rgba(17,24,36,.7);
       border:1px solid var(--line);
       border-radius:var(--radius);
       padding:28px;
-      margin-bottom:28px;
+      margin-bottom:24px;
     }
 
     h1{
@@ -120,16 +116,17 @@
     }
 
     /* MOBILE */
-    @media (max-width: 700px){
-      header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:12px;
+    @media (max-width: 800px){
+      .layout{
+        grid-template-columns:1fr;
       }
 
-      .brand img{
-        width:96px;
-        height:96px;
+      .sidebar{
+        justify-content:flex-start;
+      }
+
+      .sidebar img{
+        width:160px;
       }
     }
   </style>
@@ -138,11 +135,6 @@
 <body>
 
   <header>
-    <div class="brand">
-      <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes">
-      <span>Maker Lab du Mouton à 5 Pattes</span>
-    </div>
-
     <nav>
       <a href="#projets">Projets</a>
       <a href="#journal">Journal</a>
@@ -150,39 +142,47 @@
     </nav>
   </header>
 
-  <main class="wrap">
+  <main class="layout">
 
-    <section class="hero">
-      <h1>Je fabrique, je teste, je documente.</h1>
-      <p>
-        Bienvenue dans mon laboratoire personnel.
-        Un espace pour bricoler, expérimenter et partager des idées hors cadre.
-      </p>
-    </section>
+    <!-- COLONNE GAUCHE : LOGO -->
+    <aside class="sidebar">
+      <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes">
+    </aside>
 
-    <section class="grid">
-      <div class="card" id="projets">
-        <h2>🔧 Projets</h2>
-        <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
-      </div>
-
-      <div class="card" id="journal">
-        <h2>🧪 Journal</h2>
-        <p>Notes, tests, erreurs utiles et apprentissages.</p>
-      </div>
-
-      <div class="card" id="contact">
-        <h2>✉️ Contact</h2>
+    <!-- COLONNE DROITE : CONTENU -->
+    <section>
+      <div class="hero">
+        <h1>Je fabrique, je teste, je documente.</h1>
         <p>
-          Une idée, une question ?<br>
-          <a href="mailto:tonmail@exemple.com">tonmail@exemple.com</a>
+          Bienvenue dans mon laboratoire personnel.
+          Un espace pour bricoler, expérimenter et partager des idées hors cadre.
         </p>
       </div>
-    </section>
 
-    <footer>
-      © <span id="year"></span> Maker Lab du Mouton à 5 Pattes
-    </footer>
+      <div class="grid">
+        <div class="card" id="projets">
+          <h2>🔧 Projets</h2>
+          <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
+        </div>
+
+        <div class="card" id="journal">
+          <h2>🧪 Journal</h2>
+          <p>Notes, tests, erreurs utiles et apprentissages.</p>
+        </div>
+
+        <div class="card" id="contact">
+          <h2>✉️ Contact</h2>
+          <p>
+            Une idée, une question ?<br>
+            <a href="mailto:tonmail@exemple.com">tonmail@exemple.com</a>
+          </p>
+        </div>
+      </div>
+
+      <footer>
+        © <span id="year"></span> Maker Lab du Mouton à 5 Pattes
+      </footer>
+    </section>
 
   </main>
 
