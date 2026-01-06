@@ -13,10 +13,9 @@
       --panel:#111824;
       --text:#e7eef7;
       --muted:#a9b4c4;
-      --line:rgba(255,255,255,.12);
       --accent:#7ee787;
       --radius:16px;
-      --max:1100px;
+      --max:1200px;
     }
 
     *{ box-sizing:border-box; }
@@ -31,65 +30,68 @@
       color:var(--text);
     }
 
+    /* NAV */
     header{
-      display:flex;
-      justify-content:flex-end;
+      position:fixed;
+      top:0;
+      right:0;
       padding:16px 24px;
+      z-index:10;
     }
 
     nav a{
       margin-left:8px;
       padding:6px 12px;
       border-radius:999px;
-      border:1px solid var(--line);
+      border:1px solid rgba(255,255,255,.2);
       text-decoration:none;
       color:var(--text);
       font-size:14px;
     }
 
-    nav a:hover{ border-color:var(--accent); }
+    nav a:hover{
+      border-color:var(--accent);
+    }
 
-    /* === LAYOUT === */
+    /* LAYOUT GLOBAL */
     .layout{
       display:grid;
-      grid-template-columns: 280px 1fr;
-      gap:32px;
+      grid-template-columns: 260px 1fr;
+      min-height:100vh;
       max-width:var(--max);
       margin:auto;
       padding:24px;
+      gap:40px;
     }
 
-    /* === COLONNE GAUCHE === */
+    /* COLONNE GAUCHE */
     .sidebar{
       display:flex;
       flex-direction:column;
-      align-items:center;
-      gap:24px;
-    }
-
-    .sidebar img{
-      background:#fff;
-      border-radius:24px;
-      border:1px solid var(--line);
-      padding:16px;
-      object-fit:contain;
+      justify-content:space-between;
+      align-items:flex-start;
     }
 
     .logo{
-      width:220px;
+      width:200px;
+      display:block;
     }
 
     .qrcode{
-      width:160px;
+      width:140px;
+      display:block;
     }
 
-    /* === CONTENU === */
+    /* CONTENU */
+    main{
+      padding-top:64px;
+    }
+
     .hero{
       background:rgba(17,24,36,.7);
-      border:1px solid var(--line);
       border-radius:var(--radius);
-      padding:28px;
-      margin-bottom:24px;
+      padding:32px;
+      margin-bottom:32px;
     }
 
     h1{
@@ -105,98 +107,98 @@
 
     .grid{
       display:grid;
-      gap:16px;
+      gap:20px;
     }
 
     .card{
       background:rgba(17,24,36,.6);
-      border:1px solid var(--line);
       border-radius:var(--radius);
-      padding:18px;
+      padding:22px;
     }
 
     footer{
-      margin-top:40px;
-      padding-top:16px;
-      border-top:1px solid var(--line);
+      margin-top:48px;
       font-size:14px;
       color:var(--muted);
     }
 
-    /* === MOBILE === */
-    @media (max-width: 800px){
+    /* MOBILE */
+    @media (max-width: 900px){
       .layout{
         grid-template-columns:1fr;
       }
 
       .sidebar{
-        align-items:flex-start;
+        flex-direction:row;
+        justify-content:space-between;
+        margin-bottom:24px;
       }
 
-      .logo{ width:160px; }
-      .qrcode{ width:120px; }
+      .logo{ width:140px; }
+      .qrcode{ width:100px; }
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <nav>
-      <a href="#projets">Projets</a>
-      <a href="#journal">Journal</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+<header>
+  <nav>
+    <a href="#projets">Projets</a>
+    <a href="#journal">Journal</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-  <main class="layout">
+<div class="layout">
 
-    <!-- COLONNE GAUCHE : LOGO + QR -->
-    <aside class="sidebar">
-      <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes" class="logo">
-      <img src="images/qrcode.png" alt="QR Code Maker Lab du Mouton à 5 Pattes" class="qrcode">
-    </aside>
+  <!-- GAUCHE -->
+  <aside class="sidebar">
+    <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes" class="logo">
+    <img src="images/QRCODE.png" alt="QR Code Maker Lab du Mouton à 5 Pattes" class="qrcode">
+  </aside>
 
-    <!-- COLONNE DROITE -->
-    <section>
-      <div class="hero">
-        <h1>Je fabrique, je teste, je documente.</h1>
-        <p>
-          Bienvenue dans mon laboratoire personnel.
-          Un espace pour bricoler, expérimenter et partager des idées hors cadre.
-        </p>
-      </div>
-
-      <div class="grid">
-        <div class="card" id="projets">
-          <h2>🔧 Projets</h2>
-          <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
-        </div>
-
-        <div class="card" id="journal">
-          <h2>🧪 Journal</h2>
-          <p>Notes, tests, erreurs utiles et apprentissages.</p>
-        </div>
-
-        <div class="card" id="contact">
-          <h2>✉️ Contact</h2>
-          <p>
-            Une idée, une question ?<br>
-            <a href="mailto:tonmail@exemple.com">tonmail@exemple.com</a>
-          </p>
-        </div>
-      </div>
-
-      <footer>
-        © <span id="year"></span> Maker Lab du Mouton à 5 Pattes
-      </footer>
+  <!-- DROITE -->
+  <main>
+    <section class="hero">
+      <h1>Je fabrique, je teste, je documente.</h1>
+      <p>
+        Bienvenue dans mon laboratoire personnel.
+        Un espace pour bricoler, expérimenter et partager des idées hors cadre.
+      </p>
     </section>
 
+    <section class="grid">
+      <div class="card" id="projets">
+        <h2>🔧 Projets</h2>
+        <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
+      </div>
+
+      <div class="card" id="journal">
+        <h2>🧪 Journal</h2>
+        <p>Notes, tests, erreurs utiles et apprentissages.</p>
+      </div>
+
+      <div class="card" id="contact">
+        <h2>✉️ Contact</h2>
+        <p>
+          Une idée, une question ?<br>
+          <a href="mailto:tonmail@exemple.com">tonmail@exemple.com</a>
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Maker Lab du Mouton à 5 Pattes
+    </footer>
   </main>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+</div>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 
 </body>
 </html>
+
