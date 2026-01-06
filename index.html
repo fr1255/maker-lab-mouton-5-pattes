@@ -30,6 +30,7 @@
       color:var(--text);
     }
 
+    /* NAVIGATION */
     header{
       position:fixed;
       top:0;
@@ -42,7 +43,7 @@
       margin-left:8px;
       padding:6px 12px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.2);
+      border:1px solid rgba(255,255,255,.25);
       text-decoration:none;
       color:var(--text);
       font-size:14px;
@@ -52,6 +53,7 @@
       border-color:var(--accent);
     }
 
+    /* LAYOUT */
     .layout{
       display:grid;
       grid-template-columns:260px 1fr;
@@ -59,7 +61,7 @@
       max-width:var(--max);
       margin:auto;
       padding:24px;
-      gap:40px;
+      gap:48px;
     }
 
     /* COLONNE GAUCHE */
@@ -68,7 +70,7 @@
       flex-direction:column;
       justify-content:space-between;
       align-items:flex-start;
-      padding-top:80px;
+      padding-top:96px;
     }
 
     .logo{
@@ -76,18 +78,18 @@
       display:block;
     }
 
-    /* QR CODE — LISIBILITÉ FIXÉE ICI */
     .qrcode{
-      width:150px;
+      width:160px;
       background:#ffffff;
-      padding:14px;
-      border-radius:14px;
+      padding:16px;
+      border-radius:16px;
       box-shadow:0 12px 32px rgba(0,0,0,.55);
       display:block;
     }
 
+    /* CONTENU */
     main{
-      padding-top:80px;
+      padding-top:96px;
     }
 
     .hero{
@@ -125,6 +127,7 @@
       color:var(--muted);
     }
 
+    /* MOBILE */
     @media (max-width:900px){
       .layout{
         grid-template-columns:1fr;
@@ -134,6 +137,7 @@
         flex-direction:row;
         justify-content:space-between;
         padding-top:0;
+        margin-bottom:24px;
       }
 
       .logo{ width:140px; }
@@ -154,16 +158,18 @@
 
 <div class="layout">
 
-  <!-- GAUCHE -->
+  <!-- COLONNE GAUCHE -->
   <aside class="sidebar">
-    <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes" class="logo">
+    <img src="images/logo.png"
+         alt="Logo Maker Lab du Mouton à 5 Pattes"
+         class="logo">
 
-    <img src="images/QRCODE.png"
+    <img src="images/qrcode.png"
          alt="QR Code Maker Lab du Mouton à 5 Pattes"
          class="qrcode">
   </aside>
 
-  <!-- DROITE -->
+  <!-- CONTENU DROIT -->
   <main>
     <section class="hero">
       <h1>Je fabrique, je teste, je documente.</h1>
