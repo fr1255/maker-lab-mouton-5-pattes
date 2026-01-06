@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Système d’alarme des portes de secours – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111824;
+      --text: #e7eef7;
+      --muted: #a9b4c4;
+      --line: rgba(255,255,255,.12);
+      --accent: #58a6ff;
+      --radius: 16px;
+      --max: 900px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px 16px 60px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    .back {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: 34px;
+    }
+
+    .card {
+      background: rgba(17,24,36,.7);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .pdf {
+      margin-top: 16px;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="back">
+        ← <a href="../index.html">Retour à l’accueil</a>
+      </div>
+      <h1>Système d’alarme des portes de secours</h1>
+      <p>
+        Projet de conception et de test d’un système d’alarme dédié aux portes de secours,
+        visant à prévenir toute ouverture non autorisée tout en respectant les normes de sécurité.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>🎯 Objectif</h2>
+      <p>
+        Concevoir un système simple, fiable et robuste permettant de détecter
+        l’ouverture d’une porte de secours et de déclencher une alarme sonore ou visuelle.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>🛠️ Principe de fonctionnement</h2>
+      <p>
+        Le système repose sur un capteur d’ouverture (contact magnétique),
+        un module de commande et un dispositif d’alerte.
+        Des tests ont été réalisés pour valider la fiabilité en conditions réelles.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>📄 Documentation</h2>
+      <p>Télécharger ou consulter les documents du projet :</p>
+
+      <!-- Exemple PDF -->
+      <div class="pdf">
+        📎 <a href="../documents/alarme-portes-secours.pdf" target="_blank">
+          Documentation technique (PDF)
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Maker Lab du Mouton à 5 Pattes
+    </footer>
+
+  </div>
+</body>
+</html>
 
