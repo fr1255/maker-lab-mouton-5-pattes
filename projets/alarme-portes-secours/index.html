@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Système d’alarme des portes de secours – Maker Lab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
     :root {
@@ -28,21 +28,6 @@
         var(--bg);
       color: var(--text);
     }
-    <script>
-  const SECRET_CODE = "LMT@2026"; // ← ton code ici
-
-  function checkCode() {
-    const input = document.getElementById("access-code").value;
-    const error = document.getElementById("error");
-
-    if (input === SECRET_CODE) {
-      document.getElementById("lock-screen").style.display = "none";
-      document.getElementById("project-content").style.display = "block";
-    } else {
-      error.style.display = "block";
-    }
-  }
-</script>
 
     .wrap {
       max-width: var(--max);
@@ -55,9 +40,7 @@
       text-decoration: none;
     }
 
-    header {
-      margin-bottom: 24px;
-    }
+    header { margin-bottom: 24px; }
 
     .back {
       font-size: 14px;
@@ -87,10 +70,6 @@
       line-height: 1.6;
     }
 
-    .pdf {
-      margin-top: 16px;
-    }
-
     footer {
       margin-top: 40px;
       padding-top: 16px;
@@ -99,42 +78,123 @@
       color: var(--muted);
     }
 
+    /* PDF preview */
     .pdf-preview {
-  margin-top: 16px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: #000;
-}
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+    }
 
-.pdf-preview iframe {
-  width: 100%;
-  height: 600px;
-  border: none;
-}
+    .pdf-preview iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
 
+    /* 🔒 Protection */
+    #project-content { display: none; }
+
+    #lock-screen {
+      max-width: 420px;
+      margin: 110px auto;
+      padding: 24px;
+      text-align: center;
+      background: rgba(17,24,36,.85);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.4);
+    }
+
+    #lock-screen input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #0b0f14;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    #lock-screen button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #lock-screen button:hover { opacity: .9; }
+
+    #lock-error {
+      margin-top: 12px;
+      color: #ff7b72;
+      display: none;
+      font-size: 14px;
+    }
   </style>
+
+  <script>
+    // ⚠️ Rappel : c'est "dissuasif", pas une vraie sécurité (le code est dans le HTML).
+    const SECRET_CODE = "LMT@2026";
+
+    function checkCode() {
+      const input = document.getElementById("access-code").value;
+      const error = document.getElementById("lock-error");
+
+      if (input === SECRET_CODE) {
+        document.getElementById("lock-screen").style.display = "none";
+        document.getElementById("project-content").style.display = "block";
+        error.style.display = "none";
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    // Bonus : validation en appuyant sur Entrée
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && document.getElementById("lock-screen")) {
+        checkCode();
+      }
+    });
+  </script>
 </head>
 
 <body>
-  <div class="wrap">
+
+  <!-- 🔒 Écran code -->
+  <div id="lock-screen">
+    <h2>Accès protégé</h2>
+    <p>Entrez le code pour consulter ce projet.</p>
+    <input id="access-code" type="password" placeholder="Code d’accès…" autocomplete="off" />
+    <button type="button" onclick="checkCode()">Déverrouiller</button>
+    <div id="lock-error">Code incorrect. Réessayez.</div>
+  </div>
+
+  <!-- ✅ Contenu du projet -->
+  <div class="wrap" id="project-content">
 
     <header>
       <div class="back">
-        ← <a href="../index.html">Retour à l’accueil</a>
+        ← <a href="../../index.html">Retour à l’accueil</a>
       </div>
-      <h1>Système d’alarme des portes de secours </h1>
+      <h1>Système d’alarme des portes de secours</h1>
       <p>
         Ce système d’alarme assure la surveillance intelligente des portes de secours afin de détecter toute ouverture non autorisée,
-        sans dépendre du réseau Internet du site. 
+        sans dépendre du réseau Internet du site.
       </p>
     </header>
 
     <section class="card">
       <h2>🎯 Objectif</h2>
-      <p>
-        Alerter immédiatement les responsables par SMS lors de l’ouverture d’une issue de secours.
-      </p>
+      <p>Alerter immédiatement les responsables par SMS lors de l’ouverture d’une issue de secours.</p>
     </section>
 
     <section class="card">
@@ -146,59 +206,46 @@
       </p>
     </section>
 
-   <section class="card">
-  <h2>📄 Documentation – Version 1</h2>
-  <p>Documentation technique du projet :</p>
+    <section class="card">
+      <h2>📄 Documentation – Version 1</h2>
+      <p>Documentation technique du projet :</p>
 
-  <!-- Aperçu PDF intégré -->
-  <div class="pdf-preview">
-    <iframe
-      src="../pdf/alarme-portes-secours-version1.pdf"
-      title="Documentation technique – Alarme portes de secours"
-      loading="lazy">
-    </iframe>
-  </div>
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/alarme-portes-secours-version1.pdf"
+          title="Documentation technique – Version 1"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <!-- Lien de secours -->
-  <p style="margin-top:12px;">
-    📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf"
-   target="_blank" rel="noopener">
-  Ouvrir le PDF dans un nouvel onglet
-</a>
+      <p style="margin-top:12px;">
+        📎 <a href="../../pdf/alarme-portes-secours-version1.pdf" target="_blank" rel="noopener">
+          Ouvrir le PDF dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-  </p>
-</section>
+    <section class="card">
+      <h2>📄 Documentation – Version 2</h2>
+      <p>Version optimisée suite à la visite du bâtiment et à l’analyse de ses contraintes structurelles.</p>
 
-<section class="card">
-  <h2>📄 Documentation – Version 2</h2>
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/alarme-portes-secours-version2.pdf"
+          title="Documentation technique – Version 2"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <p>
-    Version optimisée suite à la visite du bâtiment et à l’analyse de ses contraintes structurelles.
-  </p>
+      <p style="margin-top:12px;">
+        📎 <a href="../../pdf/alarme-portes-secours-version2.pdf" target="_blank" rel="noopener">
+          Ouvrir le PDF V2 dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-  <div class="pdf-preview">
-    <iframe
-      src="../pdf/alarme-portes-secours-version2.pdf"
-      title="Documentation technique – Version 2"
-      loading="lazy">
-    </iframe>
-  </div>
-
-  <p style="margin-top:12px;">
-    📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf"
-   target="_blank" rel="noopener">
-  Ouvrir le PDF V2 dans un nouvel onglet
-</a>
-  </p>
-</section>
-
-    
-    <footer>
-      © 2026 Maker Lab du Mouton à 5 Pattes
-    </footer>
+    <footer>© 2026 Maker Lab du Mouton à 5 Pattes</footer>
 
   </div>
 </body>
 </html>
-
-
