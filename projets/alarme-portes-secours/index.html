@@ -28,6 +28,21 @@
         var(--bg);
       color: var(--text);
     }
+    <script>
+  const SECRET_CODE = "LMT@2026"; // ← ton code ici
+
+  function checkCode() {
+    const input = document.getElementById("access-code").value;
+    const error = document.getElementById("error");
+
+    if (input === SECRET_CODE) {
+      document.getElementById("lock-screen").style.display = "none";
+      document.getElementById("project-content").style.display = "block";
+    } else {
+      error.style.display = "block";
+    }
+  }
+</script>
 
     .wrap {
       max-width: var(--max);
