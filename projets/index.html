@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Projets – Maker Lab du Mouton à 5 Pattes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111824;
+      --text: #e7eef7;
+      --muted: #a9b4c4;
+      --line: rgba(255,255,255,.12);
+      --accent: #58a6ff;
+      --radius: 16px;
+      --max: 1000px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: auto;
+      padding: 32px 16px 60px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+
+    h1 { margin: 16px 0 8px; }
+
+    .back {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .cta {
+      margin-top: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="back">
+      ← <a href="../index.html">Retour à l’accueil</a>
+    </div>
+
+    <h1>🛠️ Projets</h1>
+    <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
+
+    <div class="grid">
+
+      <!-- PROJET 1 -->
+      <div class="card">
+        <h2>🔔 Système d’alarme</h2>
+        <p>
+          Surveillance des portes de secours avec détection d’ouverture
+          et alerte sonore/visuelle.
+        </p>
+        <div class="cta">
+          → <a href="alarme-portes-secours/">Voir le projet</a>
+        </div>
+      </div>
+
+      <!-- PROJET 2 -->
+      <div class="card">
+        <h2>🌦️ Station météo connectée</h2>
+        <p>
+          Mesure température, humidité et pression avec publication en ligne.
+        </p>
+        <div class="cta">
+          → <a href="station-meteo/">Voir le projet</a>
+        </div>
+      </div>
+
+      <!-- PROJET 3 -->
+      <div class="card">
+        <h2>🤖 Robot suiveur de ligne</h2>
+        <p>
+          Robot autonome basé sur capteurs infrarouges et microcontrôleur.
+        </p>
+        <div class="cta">
+          → <a href="robot-suiveur-ligne/">Voir le projet</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>
 
