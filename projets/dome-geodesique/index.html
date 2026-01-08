@@ -1,1 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dôme géodésique – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111824;
+      --text: #e7eef7;
+      --muted: #a9b4c4;
+      --line: rgba(255,255,255,.12);
+      --accent: #58a6ff;
+      --radius: 16px;
+      --max: 900px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px 16px 60px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+
+    header { margin-bottom: 24px; }
+
+    .back { font-size: 14px; color: var(--muted); }
+
+    h1 { margin: 12px 0 8px; font-size: 34px; }
+
+    .card {
+      background: rgba(17,24,36,.7);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    h2 { margin-top: 0; font-size: 22px; }
+
+    p { color: var(--muted); line-height: 1.6; }
+
+    .pdf-preview {
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+    }
+
+    .pdf-preview iframe {
+      width: 100%;
+      height: 650px;
+      border: none;
+    }
+
+    .doc-links {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .doc-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+
+    .doc-links a:hover {
+      border-color: rgba(88,166,255,.65);
+      background: rgba(88,166,255,.07);
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="back">← <a href="../index.html">Retour à la liste des projets</a></div>
+      <h1>🏗️ Dôme géodésique</h1>
+      <p>
+        Conception / calcul et préparation du montage d’un dôme géodésique.
+        Objectif : un montage clair, reproductible et documenté.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>🎯 Objectif</h2>
+      <p>
+        Définir une structure stable, optimiser les longueurs, et produire un cahier de montage
+        + un fichier de calcul (Excel) pour les variantes.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>📄 Cahier technique de montage (PDF)</h2>
+      <p>Consultation directe du cahier :</p>
+
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/cahier-technique-de-montage.pdf"
+          title="Cahier technique de montage – Dôme géodésique"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="doc-links">
+        <a href="../../pdf/cahier-technique-de-montage.pdf" target="_blank" rel="noopener">
+          📎 Ouvrir le PDF dans un nouvel onglet
+        </a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 Fichier de calcul (Excel)</h2>
+      <p>
+        Fichier de calcul/planification (diamètre, longueurs, quantités, etc.).
+      </p>
+
+      <div class="doc-links">
+        <a href="../../files/dome-f3.xlsx" download>
+          📥 Télécharger dome-f3.xlsx
+        </a>
+      </div>
+
+      <p style="margin-top:12px;">
+        Si tu veux un aperçu dans la page : le plus simple est de faire aussi une version PDF/PNG du tableau,
+        car GitHub Pages n’affiche pas un .xlsx directement dans un iframe.
+      </p>
+    </section>
+
+    <footer>© 2026 Maker Lab du Mouton à 5 Pattes</footer>
+
+  </div>
+</body>
+</html>
 
