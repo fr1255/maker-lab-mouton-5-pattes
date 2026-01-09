@@ -30,7 +30,7 @@
     }
 
     a{ color:var(--accent); text-decoration:none; }
-    a:hover{ text-decoration:underline; }
+    a:hover{ text-decoration: underline; }
 
     .wrap{
       max-width:var(--max);
@@ -55,7 +55,7 @@
     }
 
     .card{
-      background:rgba(17,24,36,.7);
+      background: rgba(17,24,36,.7);
       border:1px solid var(--line);
       border-radius:var(--radius);
       padding:20px;
@@ -67,70 +67,81 @@
       font-size:22px;
     }
 
-    .btns{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-
     .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
       padding:10px 14px;
       border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
+      border:1px solid rgba(88,166,255,.45);
+      background: rgba(88,166,255,.16);
       color:var(--text);
       font-weight:600;
     }
 
-    .btn.primary{
-      background:rgba(88,166,255,.16);
-      border-color:rgba(88,166,255,.45);
+    .btn:hover{
+      text-decoration:none;
+      border-color:rgba(88,166,255,.8);
     }
+
+    /* --- DEMO --- */
 
     .row{
       display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:16px;
+      grid-template-columns: 1.3fr .7fr;
+      gap:20px;
+      align-items:start;
     }
 
-    @media (max-width:860px){
+    @media (max-width: 900px){
       .row{ grid-template-columns:1fr; }
     }
 
-    .media{
-      border:1px solid var(--line);
-      border-radius:12px;
-      overflow:hidden;
-      background:#000;
-    }
-
-    .media img{
-      width:100%;
-      display:block;
-    }
-
-    .pdf-preview,
     .app-preview{
-      margin-top:12px;
       border-radius:12px;
       overflow:hidden;
       border:1px solid var(--line);
       background:#000;
     }
 
-    .pdf-preview iframe{ height:640px; }
-    .app-preview iframe{ height:680px; }
-
-    iframe{
+    .app-preview iframe{
       width:100%;
+      height:680px;
       border:none;
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
+      text-align:center;
+    }
+
+    .side img{
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#000;
     }
 
     .note{
       font-size:14px;
       color:var(--muted);
-      margin-top:8px;
+    }
+
+    .pdf-preview{
+      margin-top:12px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .pdf-preview iframe{
+      width:100%;
+      height:640px;
+      border:none;
     }
 
     footer{
@@ -152,25 +163,19 @@
     <h1>👁️ Application lenticulaire</h1>
     <p>
       Application web permettant de générer des images lenticulaires à partir de deux images sources
-      strictement identiques (dimensions et cadrage).
+      strictement identiques en taille et cadrage.
     </p>
 
-    <div class="btns">
-      <a class="btn primary" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-        🚀 Ouvrir l’application
-      </a>
-      <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-        🔗 Lien direct
-      </a>
-    </div>
+    <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+      🚀 Ouvrir l’application
+    </a>
   </header>
 
   <section class="card">
     <h2>🎯 Objectif</h2>
     <p>
-      Fournir un outil simple pour produire une image lenticulaire imprimable
-      (A5/A4, portrait/paysage) avec réglages précis : unités, nombre de bandes
-      et format d’export (PNG / JPG / WEBP).
+      Générer une image lenticulaire imprimable (A5 / A4, portrait ou paysage) avec réglages :
+      unités, nombre de bandes et format d’export (PNG / JPG / WEBP).
     </p>
   </section>
 
@@ -178,50 +183,42 @@
     <h2>🧪 Démo et aperçu</h2>
 
     <div class="row">
-      <div>
-        <p>Aperçu interactif de l’application directement ci-dessous :</p>
 
-        <div class="app-preview">
-          <iframe
-            src="https://fr1255.github.io/image-lenticulaire/"
-            title="Application lenticulaire"
-            loading="lazy">
-          </iframe>
-        </div>
-
-        <p class="note">
-          ⚠️ Sur mobile, l’application est plus confortable en ouverture directe.
-        </p>
+      <!-- Aperçu interactif -->
+      <div class="app-preview">
+        <iframe
+          src="https://fr1255.github.io/image-lenticulaire/"
+          title="Aperçu interactif – Application lenticulaire"
+          loading="lazy">
+        </iframe>
       </div>
 
-      <div>
-        <a href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-          <div class="media">
-            <img src="../../images/application-lenticulaire/preview-app.png"
-                 alt="Capture de l'application lenticulaire">
-          </div>
-        </a>
+      <!-- Logo + QR -->
+      <div class="side">
 
-        <a href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-          <div class="media" style="margin-top:12px;">
-            <img src="../../images/application-lenticulaire/qrcode-app.png"
-                 alt="QR Code vers l'application lenticulaire">
-          </div>
-        </a>
+        <img
+          src="../../images/application-lenticulaire/logo-app.png"
+          alt="Logo de l'application lenticulaire">
 
         <p class="note">
-          QR Code pour accès rapide depuis un smartphone.
+          QR Code pour accès rapide depuis un smartphone
         </p>
+
+        <img
+          src="../../images/application-lenticulaire/qrcode-app.png"
+          alt="QR Code vers l'application lenticulaire">
+
       </div>
+
     </div>
+
+    <p class="note" style="margin-top:12px;">
+      ⚠️ Sur mobile, l’application est plus confortable en ouverture directe.
+    </p>
   </section>
 
   <section class="card">
     <h2>📄 Guide d’utilisation</h2>
-    <p>
-      Guide détaillé expliquant le fonctionnement, les paramètres
-      et les bonnes pratiques d’utilisation.
-    </p>
 
     <div class="pdf-preview">
       <iframe
@@ -241,10 +238,9 @@
   <section class="card">
     <h2>⚙️ Points clés</h2>
     <p>
-      • Deux images sources strictement identiques<br>
+      • Deux images strictement identiques (dimensions et cadrage)<br>
       • Réglages complets : format, orientation, unités, bandes<br>
-      • Export prêt pour impression ou diffusion web<br>
-      • Application 100 % client-side (aucun envoi d’image serveur)
+      • Export adapté à l’impression ou au web
     </p>
   </section>
 
