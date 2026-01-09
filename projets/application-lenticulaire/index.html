@@ -1,27 +1,281 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Application lenticulaire – Maker Lab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max: 980px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:32px 16px 60px;
+    }
+
+    .back{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    h1{
+      margin: 10px 0 8px;
+      font-size:34px;
+      letter-spacing:.2px;
+    }
+
+    p{
+      color:var(--muted);
+      line-height:1.6;
+      margin: 10px 0;
+    }
+
+    .card{
+      background: rgba(17,24,36,.7);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-top:20px;
+    }
+
+    h2{
+      margin:0 0 10px;
+      font-size:22px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    @media (max-width: 860px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    .btns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight:600;
+    }
+    .btn:hover{
+      border-color: rgba(88,166,255,.6);
+      text-decoration:none;
+    }
+    .btn.primary{
+      background: rgba(88,166,255,.16);
+      border-color: rgba(88,166,255,.45);
+    }
+
+    .media{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background:#000;
+    }
+
+    .media img{
+      display:block;
+      width:100%;
+      height:auto;
+    }
+
+    /* Aperçu PDF */
+    .pdf-preview{
+      margin-top:12px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .pdf-preview iframe{
+      width:100%;
+      height:640px;
+      border:none;
+    }
+
+    /* Iframe app */
+    .app-preview{
+      margin-top:12px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#0a0a0a;
+    }
+
+    .app-preview iframe{
+      width:100%;
+      height:680px;
+      border:none;
+    }
+
+    .note{
+      font-size:14px;
+      color:var(--muted);
+      margin-top:8px;
+    }
+
+    footer{
+      margin-top:40px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      color:var(--muted);
+    }
+  </style>
 </head>
-<body style="background:#0b0f14; color:#e7eef7; font-family:system-ui; padding:40px">
 
-  <a href="../index.html" style="color:#58a6ff">← Retour aux projets</a>
+<body>
+  <div class="wrap">
 
-  <h1>👁️ Application lenticulaire</h1>
+    <div class="back">← <a href="../index.html">Retour à la liste des projets</a></div>
 
-  <p>
-    Application web permettant de générer des images lenticulaires
-    à partir de deux images sources.
-  </p>
+    <header>
+      <h1>👁️ Application lenticulaire</h1>
+      <p>
+        Application web qui exploite l’effet lenticulaire : elle assemble 2 images (même taille, même cadrage)
+        en bandes alternées pour produire un visuel qui change selon l’angle de vue.
+      </p>
 
-  <p>
-    👉 <a href="https://fr1255.github.io/image-lenticulaire/" target="_blank">
-      Accéder à l’application
-    </a>
-  </p>
+      <div class="btns">
+        <a class="btn primary" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+          🚀 Ouvrir l’application
+        </a>
+        <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+          🔗 Lien direct
+        </a>
+      </div>
+    </header>
 
+    <section class="card">
+      <h2>🎯 Objectif</h2>
+      <p>
+        Fournir un outil simple pour générer une image lenticulaire imprimable (A5/A4, portrait/paysage),
+        avec réglages : unités, nombre de bandes, format de sortie (PNG/JPG/WEBP).
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>🧪 Démo et aperçu</h2>
+
+      <div class="row">
+        <div>
+          <p>
+            Ci-dessous, un aperçu intégré de l’application (pratique pour montrer au client).
+            Si ton navigateur bloque l’iframe, utilise le bouton “Ouvrir l’application”.
+          </p>
+
+          <div class="app-preview">
+            <iframe
+              src="https://fr1255.github.io/image-lenticulaire/"
+              title="Aperçu – Application lenticulaire"
+              loading="lazy">
+            </iframe>
+          </div>
+
+          <div class="note">
+            Astuce : si l’aperçu est “vide” sur certains navigateurs, c’est souvent une règle de sécurité (X-Frame-Options/CSP)
+            du site intégré. Dans ce cas, garde seulement le bouton d’ouverture.
+          </div>
+        </div>
+
+        <div>
+          <div class="media">
+            <!-- Mets une capture d’écran de l’appli ici -->
+            <img src="../../images/application-lenticulaire/preview-app.png"
+                 alt="Capture de l'application lenticulaire">
+          </div>
+
+          <div class="media" style="margin-top:12px; background: rgba(255,255,255,.02);">
+            <!-- QR code vers l'appli -->
+            <img src="../../images/application-lenticulaire/qrcode-app.png"
+                 alt="QR Code vers l'application lenticulaire">
+          </div>
+
+          <p class="note">
+            QR code : pratique pour un accès rapide sur téléphone (iPhone/Android).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📄 Guide d’utilisation</h2>
+      <p>
+        Guide (iPhone) : accès rapide, ajout à l’écran d’accueil, et rappel des réglages principaux.
+      </p>
+
+      <!-- Aperçu PDF intégré -->
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/guide-application-lenticulaire.pdf"
+          title="Guide d’utilisation – Application lenticulaire"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <p style="margin-top:12px;">
+        📎 <a href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+          Ouvrir le guide PDF dans un nouvel onglet
+        </a>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>⚙️ Points clés</h2>
+      <p>
+        • Deux images strictement identiques en dimensions/cadrage<br>
+        • Paramètres : format papier, orientation, unités, nombre de bandes<br>
+        • Export : PNG/JPG/WEBP selon l’usage (impression / web)<br>
+      </p>
+    </section>
+
+    <footer>
+      © 2026 Maker Lab du Mouton à 5 Pattes
+    </footer>
+
+  </div>
 </body>
 </html>
-
