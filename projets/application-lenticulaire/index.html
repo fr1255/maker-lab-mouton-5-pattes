@@ -14,7 +14,7 @@
       --line:rgba(255,255,255,.12);
       --accent:#58a6ff;
       --radius:16px;
-      --max: 980px;
+      --max:980px;
     }
 
     *{ box-sizing:border-box; }
@@ -30,7 +30,7 @@
     }
 
     a{ color:var(--accent); text-decoration:none; }
-    a:hover{ text-decoration: underline; }
+    a:hover{ text-decoration:underline; }
 
     .wrap{
       max-width:var(--max);
@@ -45,19 +45,17 @@
     }
 
     h1{
-      margin: 10px 0 8px;
+      margin:10px 0 8px;
       font-size:34px;
-      letter-spacing:.2px;
     }
 
     p{
       color:var(--muted);
       line-height:1.6;
-      margin: 10px 0;
     }
 
     .card{
-      background: rgba(17,24,36,.7);
+      background:rgba(17,24,36,.7);
       border:1px solid var(--line);
       border-radius:var(--radius);
       padding:20px;
@@ -69,17 +67,6 @@
       font-size:22px;
     }
 
-    .row{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:16px;
-      align-items:start;
-    }
-
-    @media (max-width: 860px){
-      .row{ grid-template-columns: 1fr; }
-    }
-
     .btns{
       display:flex;
       gap:10px;
@@ -88,41 +75,43 @@
     }
 
     .btn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
       padding:10px 14px;
       border-radius:12px;
       border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
       font-weight:600;
     }
-    .btn:hover{
-      border-color: rgba(88,166,255,.6);
-      text-decoration:none;
-    }
+
     .btn.primary{
-      background: rgba(88,166,255,.16);
-      border-color: rgba(88,166,255,.45);
+      background:rgba(88,166,255,.16);
+      border-color:rgba(88,166,255,.45);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+    }
+
+    @media (max-width:860px){
+      .row{ grid-template-columns:1fr; }
     }
 
     .media{
-      width:100%;
-      border-radius:12px;
       border:1px solid var(--line);
+      border-radius:12px;
       overflow:hidden;
       background:#000;
     }
 
     .media img{
-      display:block;
       width:100%;
-      height:auto;
+      display:block;
     }
 
-    /* Aperçu PDF */
-    .pdf-preview{
+    .pdf-preview,
+    .app-preview{
       margin-top:12px;
       border-radius:12px;
       overflow:hidden;
@@ -130,24 +119,11 @@
       background:#000;
     }
 
-    .pdf-preview iframe{
-      width:100%;
-      height:640px;
-      border:none;
-    }
+    .pdf-preview iframe{ height:640px; }
+    .app-preview iframe{ height:680px; }
 
-    /* Iframe app */
-    .app-preview{
-      margin-top:12px;
-      border-radius:12px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background:#0a0a0a;
-    }
-
-    .app-preview iframe{
+    iframe{
       width:100%;
-      height:680px;
       border:none;
     }
 
@@ -168,113 +144,114 @@
 </head>
 
 <body>
-  <div class="wrap">
+<div class="wrap">
 
-    <div class="back">← <a href="../index.html">Retour à la liste des projets</a></div>
+  <div class="back">← <a href="../index.html">Retour aux projets</a></div>
 
-    <header>
-      <h1>👁️ Application lenticulaire</h1>
-      <p>
-        Application web qui exploite l’effet lenticulaire : elle assemble 2 images (même taille, même cadrage)
-        en bandes alternées pour produire un visuel qui change selon l’angle de vue.
-      </p>
+  <header>
+    <h1>👁️ Application lenticulaire</h1>
+    <p>
+      Application web permettant de générer des images lenticulaires à partir de deux images sources
+      strictement identiques (dimensions et cadrage).
+    </p>
 
-      <div class="btns">
-        <a class="btn primary" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-          🚀 Ouvrir l’application
-        </a>
-        <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
-          🔗 Lien direct
-        </a>
-      </div>
-    </header>
+    <div class="btns">
+      <a class="btn primary" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+        🚀 Ouvrir l’application
+      </a>
+      <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+        🔗 Lien direct
+      </a>
+    </div>
+  </header>
 
-    <section class="card">
-      <h2>🎯 Objectif</h2>
-      <p>
-        Fournir un outil simple pour générer une image lenticulaire imprimable (A5/A4, portrait/paysage),
-        avec réglages : unités, nombre de bandes, format de sortie (PNG/JPG/WEBP).
-      </p>
-    </section>
+  <section class="card">
+    <h2>🎯 Objectif</h2>
+    <p>
+      Fournir un outil simple pour produire une image lenticulaire imprimable
+      (A5/A4, portrait/paysage) avec réglages précis : unités, nombre de bandes
+      et format d’export (PNG / JPG / WEBP).
+    </p>
+  </section>
 
-    <section class="card">
-      <h2>🧪 Démo et aperçu</h2>
+  <section class="card">
+    <h2>🧪 Démo et aperçu</h2>
 
-      <div class="row">
-        <div>
-          <p>
-            Ci-dessous, un aperçu intégré de l’application.
-           
-          </p>
+    <div class="row">
+      <div>
+        <p>Aperçu interactif de l’application directement ci-dessous :</p>
 
-          <div class="app-preview">
-            <iframe
-              src="https://fr1255.github.io/image-lenticulaire/"
-              title="Aperçu – Application lenticulaire"
-              loading="lazy">
-            </iframe>
-          </div>
-
-          <div class="note">
-            
-          </div>
+        <div class="app-preview">
+          <iframe
+            src="https://fr1255.github.io/image-lenticulaire/"
+            title="Application lenticulaire"
+            loading="lazy">
+          </iframe>
         </div>
 
-        <div>
+        <p class="note">
+          ⚠️ Sur mobile, l’application est plus confortable en ouverture directe.
+        </p>
+      </div>
+
+      <div>
+        <a href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
           <div class="media">
-            <!-- Mets une capture d’écran de l’appli ici -->
             <img src="../../images/application-lenticulaire/preview-app.png"
                  alt="Capture de l'application lenticulaire">
           </div>
+        </a>
 
-          <div class="media" style="margin-top:12px; background: rgba(255,255,255,.02);">
-            <!-- QR code vers l'appli -->
+        <a href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+          <div class="media" style="margin-top:12px;">
             <img src="../../images/application-lenticulaire/qrcode-app.png"
                  alt="QR Code vers l'application lenticulaire">
           </div>
-
-          <p class="note">
-            
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>📄 Guide d’utilisation</h2>
-      <p>
-        
-      </p>
-
-      <!-- Aperçu PDF intégré -->
-      <div class="pdf-preview">
-        <iframe
-          src="../../pdf/guide-application-lenticulaire.pdf"
-          title="Guide d’utilisation – Application lenticulaire"
-          loading="lazy">
-        </iframe>
-      </div>
-
-      <p style="margin-top:12px;">
-        📎 <a href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
-          Ouvrir le guide PDF dans un nouvel onglet
         </a>
-      </p>
-    </section>
 
-    <section class="card">
-      <h2>⚙️ Points clés</h2>
-      <p>
-        • Deux images strictement identiques en dimensions/cadrage<br>
-        • Paramètres : format papier, orientation, unités, nombre de bandes<br>
-        • Export : PNG/JPG/WEBP selon l’usage (impression / web)<br>
-      </p>
-    </section>
+        <p class="note">
+          QR Code pour accès rapide depuis un smartphone.
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-      © 2026 Maker Lab du Mouton à 5 Pattes
-    </footer>
+  <section class="card">
+    <h2>📄 Guide d’utilisation</h2>
+    <p>
+      Guide détaillé expliquant le fonctionnement, les paramètres
+      et les bonnes pratiques d’utilisation.
+    </p>
 
-  </div>
+    <div class="pdf-preview">
+      <iframe
+        src="../../pdf/guide-application-lenticulaire.pdf"
+        title="Guide d’utilisation – Application lenticulaire"
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <p style="margin-top:12px;">
+      📎 <a href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+        Ouvrir le guide PDF dans un nouvel onglet
+      </a>
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>⚙️ Points clés</h2>
+    <p>
+      • Deux images sources strictement identiques<br>
+      • Réglages complets : format, orientation, unités, bandes<br>
+      • Export prêt pour impression ou diffusion web<br>
+      • Application 100 % client-side (aucun envoi d’image serveur)
+    </p>
+  </section>
+
+  <footer>
+    © 2026 Maker Lab du Mouton à 5 Pattes
+  </footer>
+
+</div>
 </body>
 </html>
