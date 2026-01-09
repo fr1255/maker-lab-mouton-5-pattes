@@ -29,19 +29,36 @@
       color:var(--text);
     }
 
+    /* NAVIGATION GLOBALE */
+    header.top-nav{
+      position:fixed;
+      top:0;
+      right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+
+    header.top-nav nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    header.top-nav nav a:hover{
+      border-color:var(--accent);
+    }
+
     a{ color:var(--accent); text-decoration:none; }
     a:hover{ text-decoration: underline; }
 
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:32px 16px 60px;
-    }
-
-    .back{
-      font-size:14px;
-      color:var(--muted);
-      margin-bottom:10px;
+      padding:96px 16px 60px; /* décalage pour menu fixe */
     }
 
     h1{
@@ -85,7 +102,6 @@
     }
 
     /* --- DEMO --- */
-
     .row{
       display:grid;
       grid-template-columns: 1.3fr .7fr;
@@ -155,9 +171,17 @@
 </head>
 
 <body>
-<div class="wrap">
 
-  <div class="back">← <a href="../index.html">Retour aux projets</a></div>
+<header class="top-nav">
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/#journal">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
 
   <header>
     <h1>👁️ Application lenticulaire</h1>
@@ -189,15 +213,14 @@
         <iframe
           src="https://fr1255.github.io/image-lenticulaire/"
           title="Aperçu interactif – Application lenticulaire"
-          loading="lazy">
-        </iframe>
+          loading="lazy"></iframe>
       </div>
 
       <!-- Logo + QR -->
       <div class="side">
 
         <img
-          src="../../images/application-lenticulaire/logo-app.png"
+          src="/maker-lab-mouton-5-pattes/images/application-lenticulaire/logo-app.png"
           alt="Logo de l'application lenticulaire">
 
         <p class="note">
@@ -205,16 +228,12 @@
         </p>
 
         <img
-  src="../../images/application-lenticulaire/qrcode-app.png"
-  alt="QR Code vers l'application lenticulaire"
-  style="max-width:260px;">
-
-
+          src="/maker-lab-mouton-5-pattes/images/application-lenticulaire/qrcode-app.png"
+          alt="QR Code vers l'application lenticulaire"
+          style="max-width:260px;">
       </div>
 
     </div>
-
-    
   </section>
 
   <section class="card">
@@ -222,14 +241,13 @@
 
     <div class="pdf-preview">
       <iframe
-        src="../../pdf/guide-application-lenticulaire.pdf"
+        src="/maker-lab-mouton-5-pattes/pdf/guide-application-lenticulaire.pdf"
         title="Guide d’utilisation – Application lenticulaire"
-        loading="lazy">
-      </iframe>
+        loading="lazy"></iframe>
     </div>
 
     <p style="margin-top:12px;">
-      📎 <a href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+      📎 <a href="/maker-lab-mouton-5-pattes/pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
         Ouvrir le guide PDF dans un nouvel onglet
       </a>
     </p>
