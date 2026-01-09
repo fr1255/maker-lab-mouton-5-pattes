@@ -29,17 +29,36 @@
       color: var(--text);
     }
 
+    /* NAVIGATION GLOBALE */
+    header.top-nav {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 16px 24px;
+      z-index: 10;
+    }
+
+    header.top-nav nav a {
+      margin-left: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.25);
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    header.top-nav nav a:hover {
+      border-color: var(--accent);
+    }
+
     .wrap {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 32px 16px 60px;
+      padding: 96px 16px 60px; /* décalage pour le menu fixe */
     }
 
     a { color: var(--accent); text-decoration: none; }
-
-    header { margin-bottom: 24px; }
-
-    .back { font-size: 14px; color: var(--muted); }
 
     h1 { margin: 12px 0 8px; font-size: 34px; }
 
@@ -101,68 +120,72 @@
 </head>
 
 <body>
-  <div class="wrap">
 
-    <header>
-      <div class="back">← <a href="../index.html">Retour à la liste des projets</a></div>
-      <h1>🌐 Dôme géodésique</h1>
-      <p>
-        Conception / calcul et préparation du montage d’un dôme géodésique.
-        Objectif : un montage clair, reproductible et documenté.
-      </p>
-    </header>
+<header class="top-nav">
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/#journal">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
 
-    <section class="card">
-      <h2>🎯 Objectif</h2>
-      <p>
-        Définir une structure stable, optimiser les longueurs, et produire un cahier de montage
-        + un fichier de calcul (Excel) pour les variantes.
-      </p>
-    </section>
+<div class="wrap">
 
-    <section class="card">
-      <h2>📄 Cahier technique de montage (PDF)</h2>
-      <p>Consultation directe du cahier :</p>
-
-      <div class="pdf-preview">
-        <iframe
-          src="../../pdf/cahier-technique-de-montage.pdf"
-          title="Cahier technique de montage – Dôme géodésique"
-          loading="lazy">
-        </iframe>
-      </div>
-
-      <div class="doc-links">
-        <a href="../../pdf/cahier-technique-de-montage.pdf" target="_blank" rel="noopener">
-          📎 Ouvrir le PDF dans un nouvel onglet
-        </a>
-      </div>
-    </section>
-
-    <section class="card">
-  <h2>📊 Fichier de calcul (Excel)</h2>
+  <h1>🌐 Dôme géodésique</h1>
   <p>
-    Aperçu du fichier de calcul utilisé pour les longueurs, quantités et variantes du dôme.
+    Conception / calcul et préparation du montage d’un dôme géodésique.
+    Objectif : un montage clair, reproductible et documenté.
   </p>
 
-  <!-- Aperçu image -->
-  <img
-    src="../../images/dome-geodesique/excel-dome.png"
-    alt="Aperçu du fichier Excel du dôme géodésique"
-    style="width:100%; border-radius:12px; border:1px solid var(--line); margin-top:12px;"
-  >
+  <section class="card">
+    <h2>🎯 Objectif</h2>
+    <p>
+      Définir une structure stable, optimiser les longueurs, et produire un cahier de montage
+      + un fichier de calcul (Excel) pour les variantes.
+    </p>
+  </section>
 
-  <div class="doc-links">
-    <a href="../../files/dome-f3.xlsx" download>
-      📥 Télécharger le fichier Excel (dome-f3.xlsx)
-    </a>
-  </div>
-</section>
+  <section class="card">
+    <h2>📄 Cahier technique de montage (PDF)</h2>
+    <p>Consultation directe du cahier :</p>
 
+    <div class="pdf-preview">
+      <iframe
+        src="/maker-lab-mouton-5-pattes/pdf/cahier-technique-de-montage.pdf"
+        title="Cahier technique de montage – Dôme géodésique"
+        loading="lazy"></iframe>
+    </div>
 
-    <footer>© 2026 Maker Lab du Mouton à 5 Pattes</footer>
+    <div class="doc-links">
+      <a href="/maker-lab-mouton-5-pattes/pdf/cahier-technique-de-montage.pdf" target="_blank" rel="noopener">
+        📎 Ouvrir le PDF dans un nouvel onglet
+      </a>
+    </div>
+  </section>
 
-  </div>
+  <section class="card">
+    <h2>📊 Fichier de calcul (Excel)</h2>
+    <p>
+      Aperçu du fichier de calcul utilisé pour les longueurs, quantités et variantes du dôme.
+    </p>
+
+    <img
+      src="/maker-lab-mouton-5-pattes/images/dome-geodesique/excel-dome.png"
+      alt="Aperçu du fichier Excel du dôme géodésique"
+      style="width:100%; border-radius:12px; border:1px solid var(--line); margin-top:12px;"
+    >
+
+    <div class="doc-links">
+      <a href="/maker-lab-mouton-5-pattes/files/dome-f3.xlsx" download>
+        📥 Télécharger le fichier Excel (dome-f3.xlsx)
+      </a>
+    </div>
+  </section>
+
+  <footer>© 2026 Maker Lab du Mouton à 5 Pattes</footer>
+
+</div>
+
 </body>
 </html>
-
