@@ -127,7 +127,7 @@
       color:var(--muted);
     }
 
-    /* --- AJOUT : styles du formulaire Contact --- */
+    /* --- FORMULAIRE CONTACT --- */
     .contact-form{
       margin-top:14px;
       display:grid;
@@ -192,21 +192,6 @@
     .contact-status.ok{ color: var(--accent); }
     .contact-status.err{ color: #ff7b72; }
 
-    .small-note{
-      margin-top:10px;
-      font-size:12px;
-      color:rgba(169,180,196,.9);
-    }
-
-    .small-note a{
-      color:var(--accent);
-      text-decoration:none;
-    }
-
-    .small-note a:hover{
-      text-decoration:underline;
-    }
-
     /* MOBILE */
     @media (max-width:900px){
       .layout{
@@ -231,7 +216,7 @@
 <header>
   <nav>
     <a href="#projets">Projets</a>
-    <a href="#journal">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
     <a href="#contact">Contact</a>
   </nav>
 </header>
@@ -240,13 +225,8 @@
 
   <!-- COLONNE GAUCHE -->
   <aside class="sidebar">
-    <img src="images/logo.png"
-         alt="Logo Maker Lab du Mouton à 5 Pattes"
-         class="logo">
-
-    <img src="images/qrcode.png"
-         alt="QR Code Maker Lab du Mouton à 5 Pattes"
-         class="qrcode">
+    <img src="images/logo.png" alt="Logo Maker Lab du Mouton à 5 Pattes" class="logo">
+    <img src="images/qrcode.png" alt="QR Code Maker Lab du Mouton à 5 Pattes" class="qrcode">
   </aside>
 
   <!-- CONTENU DROIT -->
@@ -260,10 +240,10 @@
     </section>
 
     <section class="grid">
+
       <div class="card" id="projets">
         <h2>🔧 Projets</h2>
         <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
-
         <div style="margin-top:12px;">
           <a href="projets/" style="color: var(--accent); text-decoration: none;">
             → Voir tous les projets
@@ -271,12 +251,16 @@
         </div>
       </div>
 
-      <div class="card" id="journal">
+      <div class="card">
         <h2>🧪 Journal</h2>
-        <p>Notes, tests, erreurs utiles et apprentissages.</p>
+        <p>Notes, essais et réflexions en cours.</p>
+        <div style="margin-top:12px;">
+          <a href="/maker-lab-mouton-5-pattes/journal/" style="color: var(--accent); text-decoration: none;">
+            → Ouvrir le journal
+          </a>
+        </div>
       </div>
 
-      <!-- CONTACT : remplacé par le formulaire -->
       <div class="card" id="contact">
         <h2>✉️ Contact</h2>
         <p>Une question, une idée ou une curiosité passagère ? Le formulaire ci-dessous ne mord pas.</p>
@@ -284,12 +268,12 @@
         <form id="contactForm" class="contact-form">
           <div class="field">
             <label for="name">Nom</label>
-            <input id="name" name="name" type="text" autocomplete="name" required>
+            <input id="name" name="name" type="text" required>
           </div>
 
           <div class="field">
             <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" required>
+            <input id="email" name="email" type="email" required>
           </div>
 
           <div class="field">
@@ -303,10 +287,9 @@
             <button class="btn" type="submit">Envoyer</button>
             <span id="contactStatus" class="contact-status" style="display:none;"></span>
           </div>
-
-          
         </form>
       </div>
+
     </section>
 
     <footer>
@@ -319,23 +302,19 @@
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // Envoi du formulaire via Formspree (sans recharger la page)
   const form = document.getElementById("contactForm");
   const statusEl = document.getElementById("contactStatus");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     statusEl.style.display = "inline";
     statusEl.className = "contact-status";
     statusEl.textContent = "Envoi en cours…";
 
-    const data = new FormData(form);
-
     try {
       const res = await fetch("https://formspree.io/f/xgoowark", {
         method: "POST",
-        body: data,
+        body: new FormData(form),
         headers: { "Accept": "application/json" }
       });
 
@@ -347,7 +326,7 @@
         statusEl.classList.add("err");
         statusEl.textContent = "Erreur ❌ Réessaie plus tard.";
       }
-    } catch (err) {
+    } catch {
       statusEl.classList.add("err");
       statusEl.textContent = "Connexion impossible ❌";
     }
