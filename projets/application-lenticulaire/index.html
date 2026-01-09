@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Application lenticulaire – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:900px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:32px 16px 60px;
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+
+    header{ margin-bottom:24px; }
+
+    .back{ font-size:14px; color:var(--muted); }
+
+    h1{ margin:12px 0 8px; font-size:34px; }
+
+    p{ color:var(--muted); line-height:1.6; margin: 10px 0; }
+
+    .card{
+      background:rgba(17,24,36,.70);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-top:20px;
+    }
+
+    h2{ margin:0 0 10px; font-size:22px; }
+
+    .btns{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:600;
+    }
+
+    .btn:hover{
+      border-color:rgba(88,166,255,.55);
+      background:rgba(88,166,255,.08);
+    }
+
+    .media{
+      margin-top:14px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .media img{
+      width:100%;
+      display:block;
+      height:auto;
+    }
+
+    .pdf-preview{
+      margin-top:14px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .pdf-preview iframe{
+      width:100%;
+      height:600px;
+      border:none;
+      display:block;
+    }
+
+    .small{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:10px;
+    }
+
+    footer{
+      margin-top:40px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="back">
+        ← <a href="../index.html">Retour à la liste des projets</a>
+      </div>
+
+      <h1>👁️ Application lenticulaire</h1>
+
+      <p>
+        Application exploitant l’effet lenticulaire pour générer un visuel (bandes) à partir de
+        deux images, selon l’angle de vue.
+      </p>
+
+      <div class="btns">
+        <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+          🚀 Ouvrir l’application
+        </a>
+
+        <a class="btn" href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+          📄 Ouvrir le guide (PDF)
+        </a>
+      </div>
+
+      <p class="small">
+        Astuce : si l’app fonctionne mieux sur mobile, tu peux conseiller Safari sur iPhone (comme dans ton guide).
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>✨ Aperçu</h2>
+      <p>Exemple de rendu et interface de l’application :</p>
+
+      <div class="media">
+        <img
+          src="../../images/application-lenticulaire/apercu.png"
+          alt="Aperçu de l’application lenticulaire"
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📘 Guide d’utilisation</h2>
+      <p>Le guide explique l’accès rapide (QR Code), l’ajout à l’écran d’accueil et les paramètres (format, bandes, export).</p>
+
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/guide-application-lenticulaire.pdf"
+          title="Guide d’utilisation – Application lenticulaire"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <p style="margin-top:12px;">
+        📎 <a href="../../pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+          Ouvrir le guide dans un nouvel onglet
+        </a>
+      </p>
+    </section>
+
+    <footer>
+      © 2026 Maker Lab du Mouton à 5 Pattes
+    </footer>
+
+  </div>
+</body>
+</html>
 
