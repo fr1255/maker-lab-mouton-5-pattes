@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Journal – Maker Lab du Mouton à 5 Pattes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:980px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    /* NAVIGATION GLOBALE */
+    header.top-nav{
+      position:fixed;
+      top:0;
+      right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+
+    header.top-nav nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    header.top-nav nav a:hover{
+      border-color:var(--accent);
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:96px 16px 60px;
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size:34px;
+    }
+
+    .lead{
+      max-width:70ch;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .card{
+      background: rgba(17,24,36,.7);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      margin-top:28px;
+      max-width:70ch;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+    }
+
+    footer{
+      margin-top:48px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top-nav">
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <h1>🧪 Journal</h1>
+  <p class="lead">
+    Espace de travail et de réflexion.  
+    Pas de publication régulière, pas de plan éditorial.
+  </p>
+
+  <section class="card">
+    <p>
+      Ce journal est volontairement peu rempli.<br><br>
+      Il est destiné à accueillir des notes, des essais, des détours,
+      des décisions techniques ou des idées encore mal formées.<br><br>
+      Rien n’y sera publié par obligation.<br>
+      Seulement ce qui mérite d’être noté.
+    </p>
+  </section>
+
+  <footer>
+    © 2026 Maker Lab du Mouton à 5 Pattes
+  </footer>
+
+</div>
+
+</body>
+</html>
