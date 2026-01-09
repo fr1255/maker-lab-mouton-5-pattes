@@ -127,6 +127,86 @@
       color:var(--muted);
     }
 
+    /* --- AJOUT : styles du formulaire Contact --- */
+    .contact-form{
+      margin-top:14px;
+      display:grid;
+      gap:12px;
+    }
+
+    .field{
+      display:grid;
+      gap:6px;
+    }
+
+    .field label{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .field input,
+    .field textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+    }
+
+    .field input:focus,
+    .field textarea:focus{
+      border-color:rgba(126,231,135,.7);
+      box-shadow:0 0 0 3px rgba(126,231,135,.15);
+    }
+
+    .contact-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top:4px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.20);
+      background:rgba(126,231,135,.12);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .btn:hover{
+      border-color:var(--accent);
+    }
+
+    .contact-status{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .contact-status.ok{ color: var(--accent); }
+    .contact-status.err{ color: #ff7b72; }
+
+    .small-note{
+      margin-top:10px;
+      font-size:12px;
+      color:rgba(169,180,196,.9);
+    }
+
+    .small-note a{
+      color:var(--accent);
+      text-decoration:none;
+    }
+
+    .small-note a:hover{
+      text-decoration:underline;
+    }
+
     /* MOBILE */
     @media (max-width:900px){
       .layout{
@@ -180,30 +260,55 @@
     </section>
 
     <section class="grid">
-     <div class="card" id="projets">
-  <h2>🔧 Projets</h2>
-  <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
+      <div class="card" id="projets">
+        <h2>🔧 Projets</h2>
+        <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
 
-  <div style="margin-top:12px;">
-  <a href="projets/" style="color: var(--accent); text-decoration: none;">
-    → Voir tous les projets
-  </a>
-</div>
-
-</div>
-
+        <div style="margin-top:12px;">
+          <a href="projets/" style="color: var(--accent); text-decoration: none;">
+            → Voir tous les projets
+          </a>
+        </div>
+      </div>
 
       <div class="card" id="journal">
         <h2>🧪 Journal</h2>
         <p>Notes, tests, erreurs utiles et apprentissages.</p>
       </div>
 
+      <!-- CONTACT : remplacé par le formulaire -->
       <div class="card" id="contact">
         <h2>✉️ Contact</h2>
-        <p>
-          Une idée, une question ?<br>
-          <a href="mailto:tonmail@exemple.com">tonmail@exemple.com</a>
-        </p>
+        <p>Une idée, une question ? Envoie-moi un message :</p>
+
+        <form id="contactForm" class="contact-form">
+          <div class="field">
+            <label for="name">Nom</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+
+          <input type="hidden" name="_subject" value="Nouveau message depuis Maker Lab du Mouton à 5 Pattes">
+
+          <div class="contact-actions">
+            <button class="btn" type="submit">Envoyer</button>
+            <span id="contactStatus" class="contact-status" style="display:none;"></span>
+          </div>
+
+          <div class="small-note">
+            Ou écris directement à
+            <a href="mailto:fr.12@hotmail.fr">fr.12@hotmail.fr</a>
+          </div>
+        </form>
       </div>
     </section>
 
@@ -216,6 +321,40 @@
 
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Envoi du formulaire via Formspree (sans recharger la page)
+  const form = document.getElementById("contactForm");
+  const statusEl = document.getElementById("contactStatus");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    statusEl.style.display = "inline";
+    statusEl.className = "contact-status";
+    statusEl.textContent = "Envoi en cours…";
+
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch("https://formspree.io/f/xgoowark", {
+        method: "POST",
+        body: data,
+        headers: { "Accept": "application/json" }
+      });
+
+      if (res.ok) {
+        form.reset();
+        statusEl.classList.add("ok");
+        statusEl.textContent = "Message envoyé ✅ Merci !";
+      } else {
+        statusEl.classList.add("err");
+        statusEl.textContent = "Erreur ❌ Réessaie plus tard.";
+      }
+    } catch (err) {
+      statusEl.classList.add("err");
+      statusEl.textContent = "Connexion impossible ❌";
+    }
+  });
 </script>
 
 </body>
