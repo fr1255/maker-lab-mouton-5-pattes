@@ -108,14 +108,222 @@
       font-size:14px;
       color:var(--muted);
     }
+
+    /* ---- JOURNAL : OUTILS + POST-ITS ---- */
+
+    .journal-tools{
+      margin-top:22px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      max-width:70ch;
+    }
+
+    .btn{
+      background:#1f2a3a;
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      padding:.55rem .9rem;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:14px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+
+    .btn.ghost{
+      background:transparent;
+      color:var(--muted);
+    }
+
+    .btn.small{
+      padding:.42rem .7rem;
+      font-weight:600;
+      font-size:13px;
+    }
+
+    .notes-wrap{
+      margin-top:18px;
+      max-width:var(--max);
+    }
+
+    .notes-board{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1.2rem;
+    }
+
+    .note{
+      background: linear-gradient(180deg, #182233, #101826);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      transition: transform .2s ease, box-shadow .2s ease;
+      min-height: 120px;
+    }
+    .note:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 16px 45px rgba(0,0,0,.6);
+    }
+
+    .note__header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:.8rem;
+      margin-bottom:.5rem;
+    }
+
+    .note__title{
+      margin:0;
+      font-size:.95rem;
+      color:#cde1ff;
+    }
+
+    .note__meta{
+      font-size:.75rem;
+      color:var(--muted);
+      margin-top:.2rem;
+    }
+
+    .note__text{
+      font-size:.86rem;
+      color:var(--muted);
+      line-height:1.45;
+      white-space: pre-wrap;
+      margin:.6rem 0 0 0;
+    }
+
+    .note__actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      margin-top:.8rem;
+    }
+
+    .chip{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      padding:.35rem .55rem;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:.78rem;
+    }
+    .chip:hover{ color: var(--text); }
+
+    .icon-btn{
+      background:transparent;
+      border:none;
+      color:var(--muted);
+      cursor:pointer;
+      font-size:1.05rem;
+      line-height:1;
+      padding:.2rem .25rem;
+    }
+    .icon-btn:hover{ color:var(--text); }
+
+    .note__images{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:.5rem;
+      margin-top:.8rem;
+    }
+
+    .note__images img{
+      width:100%;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.08);
+      display:block;
+    }
+
+    /* Modal form */
+    .note-form{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 1rem;
+      z-index: 50;
+    }
+
+    .note-form[hidden]{ display:none; }
+
+    .note-form__card{
+      width:min(720px, 100%);
+      background: #0f1624;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      padding: 1rem;
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+    }
+
+    .note-form__top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:.6rem;
+    }
+
+    .note-form__card h2{
+      margin:0;
+      font-size:1rem;
+      color: var(--text);
+    }
+
+    #addNoteForm label{
+      display:block;
+      margin-top:.75rem;
+      color: var(--text);
+      font-size:.85rem;
+    }
+
+    #addNoteForm input[type="text"],
+    #addNoteForm textarea{
+      width:100%;
+      margin-top:.35rem;
+      background:#0b0f14;
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      border-radius:12px;
+      padding:.65rem .7rem;
+      outline:none;
+      font-family: inherit;
+    }
+
+    #addNoteForm input[type="file"]{
+      width:100%;
+      margin-top:.35rem;
+      color: var(--muted);
+    }
+
+    #addNoteForm small{
+      display:block;
+      margin-top:.35rem;
+      color: var(--muted);
+      font-size:.75rem;
+      line-height:1.4;
+    }
+
+    .note-form__actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:.6rem;
+      margin-top:1rem;
+      flex-wrap:wrap;
+    }
   </style>
 
- <script
-  data-goatcounter="https://fr1255.goatcounter.com/count"
-  async
-  src="//gc.zgo.at/count.js">
-</script>
-
+  <!-- GoatCounter -->
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js">
+  </script>
 </head>
 
 <body>
@@ -133,7 +341,7 @@
 
   <h1>🧪 Journal</h1>
   <p class="lead">
-    Espace de travail et de réflexion.  
+    Espace de travail et de réflexion.<br>
     Pas de publication régulière, pas de plan éditorial.
   </p>
 
@@ -146,6 +354,58 @@
       Rien n’y sera publié par obligation.<br>
       Seulement ce qui mérite d’être noté.
     </p>
+  </section>
+
+  <!-- OUTILS JOURNAL -->
+  <section class="journal-tools" aria-label="Outils du journal">
+    <button class="btn" id="openNoteForm">+ Nouvelle note</button>
+    <button class="btn ghost" id="exportNotes">Exporter (JSON)</button>
+    <label class="btn ghost" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
+      Importer (JSON)
+      <input id="importNotes" type="file" accept="application/json" hidden>
+    </label>
+    <button class="btn ghost" id="clearAllNotes" title="Supprime toutes les notes locales">Tout effacer</button>
+  </section>
+
+  <!-- BOARD NOTES -->
+  <section class="notes-wrap" aria-label="Notes du journal">
+    <div class="notes-board" id="notesBoard"></div>
+  </section>
+
+  <!-- MODAL FORM -->
+  <section class="note-form" id="noteForm" hidden>
+    <div class="note-form__card" role="dialog" aria-modal="true" aria-label="Créer une note">
+      <div class="note-form__top">
+        <h2>Nouvelle note</h2>
+        <button class="icon-btn" id="closeNoteForm" aria-label="Fermer">✕</button>
+      </div>
+
+      <form id="addNoteForm">
+        <label>
+          Titre (optionnel)
+          <input type="text" id="noteTitle" maxlength="80" placeholder="Ex : Détour technique…" />
+        </label>
+
+        <label>
+          Note
+          <textarea id="noteText" rows="6" maxlength="4000" placeholder="Écris ici…"></textarea>
+        </label>
+
+        <label>
+          Photos (optionnel)
+          <input type="file" id="noteImages" accept="image/*" multiple />
+          <small>
+            Les images sont stockées localement. Pour éviter de saturer le navigateur :
+            préfère des images légères (ex : &lt; 1 Mo).
+          </small>
+        </label>
+
+        <div class="note-form__actions">
+          <button type="submit" class="btn">Ajouter</button>
+          <button type="button" class="btn ghost" id="cancelNote">Annuler</button>
+        </div>
+      </form>
+    </div>
   </section>
 
   <!-- Carte Audience -->
@@ -168,6 +428,306 @@
   </footer>
 
 </div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "journal_notes_v1";
+
+  const notesBoard = document.getElementById("notesBoard");
+
+  const noteFormOverlay = document.getElementById("noteForm");
+  const openBtn = document.getElementById("openNoteForm");
+  const closeBtn = document.getElementById("closeNoteForm");
+  const cancelBtn = document.getElementById("cancelNote");
+
+  const exportBtn = document.getElementById("exportNotes");
+  const importInput = document.getElementById("importNotes");
+  const clearAllBtn = document.getElementById("clearAllNotes");
+
+  const form = document.getElementById("addNoteForm");
+  const titleEl = document.getElementById("noteTitle");
+  const textEl = document.getElementById("noteText");
+  const imagesEl = document.getElementById("noteImages");
+
+  function uid() {
+    return (crypto?.randomUUID)
+      ? crypto.randomUUID()
+      : String(Date.now()) + Math.random().toString(16).slice(2);
+  }
+
+  function loadNotes() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function saveNotes(notes) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  }
+
+  function formatDate(ts) {
+    const d = new Date(ts);
+    return d.toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function escapeHtml(str) {
+    return (str || "").replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[m]));
+  }
+
+  function render() {
+    const notes = loadNotes();
+
+    if (notes.length === 0) {
+      notesBoard.innerHTML = `
+        <article class="note" style="opacity:.75">
+          <div class="note__header">
+            <div>
+              <h3 class="note__title">Aucune note pour l’instant</h3>
+              <div class="note__meta">Ajoute un post-it avec “Nouvelle note”.</div>
+            </div>
+          </div>
+          <p class="note__text">Tes notes sont stockées localement sur ce navigateur. Tu peux aussi les exporter/importer en JSON.</p>
+        </article>
+      `;
+      return;
+    }
+
+    notesBoard.innerHTML = notes.map(note => {
+      const title = note.title?.trim() ? escapeHtml(note.title.trim()) : "Note";
+      const text = note.text?.trim() ? escapeHtml(note.text.trim()) : "";
+
+      const imagesHtml = (note.images && note.images.length)
+        ? `<div class="note__images">${note.images.map(src => `<img src="${src}" alt="">`).join("")}</div>`
+        : "";
+
+      return `
+        <article class="note" data-id="${note.id}">
+          <div class="note__header">
+            <div>
+              <h3 class="note__title">${title}</h3>
+              <div class="note__meta">${formatDate(note.createdAt)}</div>
+            </div>
+            <button class="icon-btn" data-action="delete" title="Supprimer">🗑</button>
+          </div>
+
+          ${text ? `<p class="note__text">${text}</p>` : ""}
+
+          ${imagesHtml}
+
+          <div class="note__actions">
+            <button class="chip" data-action="duplicate">Dupliquer</button>
+            <button class="chip" data-action="copyjson" title="Copie la note en JSON dans le presse-papiers">Copier JSON</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function openForm() {
+    noteFormOverlay.hidden = false;
+    titleEl.focus();
+  }
+
+  function closeForm() {
+    noteFormOverlay.hidden = true;
+    form.reset();
+  }
+
+  function filesToDataUrls(files) {
+    const list = Array.from(files || []);
+    return Promise.all(list.map(file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    })));
+  }
+
+  // UI events
+  openBtn.addEventListener("click", openForm);
+  closeBtn.addEventListener("click", closeForm);
+  cancelBtn.addEventListener("click", closeForm);
+
+  noteFormOverlay.addEventListener("click", (e) => {
+    if (e.target === noteFormOverlay) closeForm();
+  });
+
+  // Add note
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const title = titleEl.value || "";
+    const text = textEl.value || "";
+
+    let images = [];
+    try {
+      images = await filesToDataUrls(imagesEl.files);
+    } catch {
+      alert("Impossible de lire une ou plusieurs images.");
+      return;
+    }
+
+    const notes = loadNotes();
+    const note = { id: uid(), title, text, images, createdAt: Date.now() };
+
+    notes.unshift(note);
+
+    try {
+      saveNotes(notes);
+    } catch {
+      alert("Stockage plein. Essaie avec moins d’images ou des images plus légères.");
+      return;
+    }
+
+    closeForm();
+    render();
+  });
+
+  // Note actions
+  notesBoard.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+
+    const action = btn.getAttribute("data-action");
+    const noteEl = btn.closest(".note");
+    const id = noteEl?.getAttribute("data-id");
+    if (!id) return;
+
+    const notes = loadNotes();
+
+    if (action === "delete") {
+      const ok = confirm("Supprimer cette note ?");
+      if (!ok) return;
+      saveNotes(notes.filter(n => n.id !== id));
+      render();
+    }
+
+    if (action === "duplicate") {
+      const original = notes.find(n => n.id === id);
+      if (!original) return;
+      const copy = { ...original, id: uid(), createdAt: Date.now() };
+      saveNotes([copy, ...notes]);
+      render();
+    }
+
+    if (action === "copyjson") {
+      const original = notes.find(n => n.id === id);
+      if (!original) return;
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(original, null, 2));
+        alert("JSON copié dans le presse-papiers.");
+      } catch {
+        alert("Impossible de copier automatiquement. (Permission refusée)");
+      }
+    }
+  });
+
+  // Export notes as JSON file
+  exportBtn.addEventListener("click", () => {
+    const notes = loadNotes();
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: 1,
+      notes
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "journal-notes.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  });
+
+  // Import notes from JSON file
+  importInput.addEventListener("change", async () => {
+    const file = importInput.files?.[0];
+    if (!file) return;
+
+    let text = "";
+    try {
+      text = await file.text();
+    } catch {
+      alert("Impossible de lire le fichier.");
+      importInput.value = "";
+      return;
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      alert("JSON invalide.");
+      importInput.value = "";
+      return;
+    }
+
+    // accepte soit {notes:[...]} soit un tableau direct
+    const incoming = Array.isArray(data) ? data : data.notes;
+
+    if (!Array.isArray(incoming)) {
+      alert("Format non reconnu (attendu: { notes: [...] } ).");
+      importInput.value = "";
+      return;
+    }
+
+    // Normalisation + filtre minimal
+    const sanitized = incoming
+      .map(n => ({
+        id: n.id || uid(),
+        title: typeof n.title === "string" ? n.title : "",
+        text: typeof n.text === "string" ? n.text : "",
+        images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
+        createdAt: typeof n.createdAt === "number" ? n.createdAt : Date.now()
+      }))
+      .filter(n => (n.title.trim() || n.text.trim() || (n.images && n.images.length)));
+
+    const ok = confirm(`Importer ${sanitized.length} note(s) ?\n\nOK = fusionner avec l’existant\nAnnuler = ne rien faire`);
+    if (!ok) {
+      importInput.value = "";
+      return;
+    }
+
+    // fusion (évite doublons par id)
+    const existing = loadNotes();
+    const byId = new Map(existing.map(n => [n.id, n]));
+    for (const n of sanitized) byId.set(n.id, n);
+
+    const merged = Array.from(byId.values()).sort((a,b) => b.createdAt - a.createdAt);
+
+    try {
+      saveNotes(merged);
+    } catch {
+      alert("Import impossible : stockage plein (trop d’images ?).");
+      importInput.value = "";
+      return;
+    }
+
+    importInput.value = "";
+    render();
+  });
+
+  // Clear all
+  clearAllBtn.addEventListener("click", () => {
+    const ok = confirm("Supprimer toutes les notes locales de ce navigateur ?");
+    if (!ok) return;
+    localStorage.removeItem(STORAGE_KEY);
+    render();
+  });
+
+  // Init
+  render();
+})();
+</script>
 
 </body>
 </html>
