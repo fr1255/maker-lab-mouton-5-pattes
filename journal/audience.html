@@ -2,12 +2,15 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Audience – Maker Lab</title>
+  <title>Audience – Maker Lab du Mouton à 5 Pattes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- GoatCounter (tracking de cette page) -->
-  <script data-goatcounter="https://fr1255.goatcounter.com/count"
-          async src="//gc.zgo.at/count.js"></script>
+  <!-- GoatCounter (collecte automatique) -->
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js">
+  </script>
 
   <style>
     :root{
@@ -33,134 +36,97 @@
       color:var(--text);
     }
 
-    /* NAVIGATION GLOBALE */
+    /* NAVIGATION */
     header.top-nav{
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: flex-end;
-      background: rgba(11,15,20,.72);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    header.top-nav nav{
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      position:fixed;
+      top:0;
+      right:0;
+      padding:16px 24px;
+      z-index:10;
     }
 
     header.top-nav nav a{
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      text-decoration: none;
-      color: var(--text);
-      font-size: 14px;
-      white-space: nowrap;
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
     }
 
     header.top-nav nav a:hover{
-      border-color: var(--accent);
-    }
-
-    header.top-nav nav a.active{
-      border-color: var(--accent);
-      background: rgba(88,166,255,.12);
+      border-color:var(--accent);
     }
 
     .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 96px 16px 60px;
+      max-width:var(--max);
+      margin:0 auto;
+      padding:96px 16px 60px;
     }
 
     h1{
-      margin: 10px 0 8px;
-      font-size: 34px;
+      margin:10px 0 8px;
+      font-size:34px;
     }
 
-    .lead{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 70ch;
+    p{
+      color:var(--muted);
+      line-height:1.6;
+      max-width:70ch;
+      margin:0;
     }
 
     .card{
       background: rgba(17,24,36,.7);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-top: 20px;
-    }
-
-    .card h2{
-      margin: 0 0 10px;
-      font-size: 22px;
-    }
-
-    .card p{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 80ch;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      margin-top:24px;
     }
 
     .actions{
-      margin-top: 14px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
+      display:flex;
+      gap:12px;
+      margin-top:16px;
+      flex-wrap:wrap;
     }
 
     .btn{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.20);
-      background: rgba(88,166,255,.14);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 650;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgba(88,166,255,.45);
+      background: rgba(88,166,255,.16);
+      color:var(--text);
+      font-weight:600;
+      text-decoration:none;
     }
 
     .btn:hover{
-      border-color: rgba(88,166,255,.85);
-      background: rgba(88,166,255,.20);
+      border-color:rgba(88,166,255,.85);
     }
 
     .btn.secondary{
-      background: rgba(255,255,255,.06);
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.18);
     }
 
     .note{
-      margin-top: 10px;
-      font-size: 12px;
-      color: rgba(169,180,196,.9);
+      margin-top:12px;
+      font-size:13px;
+      color:rgba(169,180,196,.9);
+      max-width:70ch;
     }
 
-    /* OPTIONNEL : embed */
-    .embed{
-      margin-top: 14px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.25);
-    }
-
-    .embed iframe{
-      width: 100%;
-      height: 760px;
-      border: 0;
+    footer{
+      margin-top:48px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      color:var(--muted);
     }
   </style>
 </head>
@@ -171,62 +137,54 @@
   <nav>
     <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
     <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
-    <a href="/maker-lab-mouton-5-pattes/journal/" class="active">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
     <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
   </nav>
 </header>
 
 <div class="wrap">
+
   <h1>📈 Audience</h1>
-  <p class="lead">
-    Ici, pas de magie noire marketing : juste un compteur propre et léger.
-    Les statistiques détaillées vivent dans GoatCounter.
+  <p>
+    Ici, pas de magie noire marketing : juste un compteur propre et léger.<br>
+    Les statistiques détaillées sont collectées automatiquement via GoatCounter.
   </p>
 
   <section class="card">
-    <h2>Tableau de bord</h2>
+    <h2 style="margin:0 0 10px; font-size:22px;">Tableau de bord</h2>
     <p>
-      Accès direct au dashboard GoatCounter (visites, pages, navigateurs, sources, etc.).
-      C’est la version “officielle” et toujours à jour.
+      Les données complètes (visites, pages, navigateurs, sources, systèmes…)
+      sont consultables dans l’interface officielle GoatCounter.
+      C’est la version fiable et toujours à jour.
     </p>
 
     <div class="actions">
-      <a class="btn" href="https://fr1255.goatcounter.com" target="_blank" rel="noopener">
-        🚀 Ouvrir GoatCounter
+      <a
+        class="btn"
+        href="https://www.goatcounter.com/login"
+        target="_blank"
+        rel="noopener">
+        🔐 Accéder au tableau de bord
       </a>
 
-      <a class="btn secondary" href="https://fr1255.goatcounter.com" target="_blank" rel="noopener">
-        🔎 Voir les détails
+      <a
+        class="btn secondary"
+        href="https://www.goatcounter.com/help"
+        target="_blank"
+        rel="noopener">
+        📘 Documentation GoatCounter
       </a>
     </div>
 
     <div class="note">
-      Note : le dashboard peut demander d’être connecté à ton compte GoatCounter.
+      Note : le tableau de bord est privé et nécessite une connexion.
+      Aucun accès direct aux statistiques internes depuis ce site public.
     </div>
   </section>
 
-  <!--
-    OPTIONNEL : intégration directe (iframe)
-    ⚠️ Si GoatCounter bloque l’affichage en iframe, laisse cette section commentée.
-  -->
-  <!--
-  <section class="card">
-    <h2>Vue intégrée</h2>
-    <p>Si ton navigateur l’autorise, tu peux consulter les stats sans quitter le site.</p>
-
-    <div class="embed">
-      <iframe
-        src="https://fr1255.goatcounter.com"
-        title="Dashboard GoatCounter"
-        loading="lazy">
-      </iframe>
-    </div>
-
-    <div class="note">
-      Si ça reste vide ou refuse de s’afficher, c’est normal : certains sites bloquent l’intégration en iframe.
-    </div>
-  </section>
-  -->
+  <footer>
+    © 2026 Maker Lab du Mouton à 5 Pattes
+  </footer>
 
 </div>
 
