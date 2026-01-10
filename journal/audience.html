@@ -1,1 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Audience – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- GoatCounter -->
+  <script data-goatcounter="https://fr1255.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:980px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    header.top-nav{
+      position:fixed;
+      top:0;
+      right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+
+    header.top-nav nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    header.top-nav nav a:hover{
+      border-color:var(--accent);
+    }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:96px 16px 60px;
+    }
+
+    h1{ margin:10px 0 8px; font-size:34px; }
+    p{ color:var(--muted); line-height:1.6; margin:0; max-width:70ch; }
+
+    .card{
+      background: rgba(17,24,36,.7);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-top:20px;
+    }
+
+    .chart-wrap{
+      margin-top:12px;
+      background: rgba(0,0,0,.20);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .note{
+      margin-top:10px;
+      font-size:12px;
+      color:rgba(169,180,196,.9);
+    }
+
+    code{
+      background: rgba(255,255,255,.06);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top-nav">
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/" class="active">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <h1>📈 Audience</h1>
+  <p>Un petit tableau de bord maison. Mise à jour quand j’y pense (donc… de temps en temps).</p>
+
+  <section class="card">
+    <h2 style="margin:0 0 8px; font-size:22px;">Visites</h2>
+    <p>Exemple sur 7 points (jour ou semaine, comme tu veux).</p>
+
+    <div class="chart-wrap">
+      <canvas id="visitsChart" height="120"></canvas>
+    </div>
+
+    <div class="note">
+      Astuce : tu mets à jour les chiffres ci-dessous (tableaux <code>labels</code> et <code>visits</code>) en recopiant depuis GoatCounter.
+    </div>
+  </section>
+</div>
+
+<script>
+  // ✅ Remplace ces valeurs par les tiennes (vue "day" ou "week" dans GoatCounter)
+  const labels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+  const visits = [0, 1, 0, 2, 0, 0, 0];
+
+  new Chart(document.getElementById("visitsChart"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Visites",
+        data: visits,
+        borderColor: "#58a6ff",
+        backgroundColor: "rgba(88,166,255,.18)",
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
 
