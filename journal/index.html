@@ -81,10 +81,24 @@
       max-width:70ch;
     }
 
+    .card h2{
+      margin:0 0 10px;
+      font-size:22px;
+    }
+
     .card p{
       margin:0;
       color:var(--muted);
       line-height:1.7;
+    }
+
+    .card + .card{
+      margin-top:20px;
+    }
+
+    .card .cta{
+      margin-top:14px;
+      font-weight:600;
     }
 
     footer{
@@ -116,6 +130,7 @@
     Pas de publication régulière, pas de plan éditorial.
   </p>
 
+  <!-- Carte de présentation du journal -->
   <section class="card">
     <p>
       Ce journal est volontairement peu rempli.<br><br>
@@ -124,6 +139,21 @@
       Rien n’y sera publié par obligation.<br>
       Seulement ce qui mérite d’être noté.
     </p>
+  </section>
+
+  <!-- Carte Audience -->
+  <section class="card">
+    <h2>📈 Audience</h2>
+    <p>
+      Un aperçu de la fréquentation du site.<br>
+      Pas pour optimiser quoi que ce soit — juste pour observer.
+    </p>
+
+    <div class="cta">
+      → <a href="/maker-lab-mouton-5-pattes/journal/audience.html">
+        Voir l’audience
+      </a>
+    </div>
   </section>
 
   <footer>
