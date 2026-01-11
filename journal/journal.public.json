@@ -1,1 +1,11 @@
+[
+  {
+    "id": "pub_001",
+    "zone": "banc",
+    "title": "Note validée (exemple)",
+    "text": "Ceci est visible par tout le monde.",
+    "images": [],
+    "createdAt": "2026-01-11T10:00:00.000Z"
+  }
+]
 
