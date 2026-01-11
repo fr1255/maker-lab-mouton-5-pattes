@@ -116,7 +116,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      max-width:70ch;
+      max-width:var(--max);
     }
 
     .btn{
@@ -151,7 +151,7 @@
       display:grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 1.2rem;
-      margin-top: 1.2rem;
+      margin-top: 1.0rem;
     }
 
     .note{
@@ -239,6 +239,96 @@
       display:block;
     }
 
+    /* ---- ZONES (Banc / Établi / Tas) ---- */
+
+    .zone{
+      margin-top:22px;
+      padding:18px;
+      background: rgba(17,24,36,.55);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+    }
+
+    .zone__top{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .zone__title{
+      margin:0;
+      font-size:20px;
+    }
+
+    .zone__desc{
+      margin:6px 0 0 0;
+      color:var(--muted);
+      max-width:70ch;
+      line-height:1.6;
+    }
+
+    .zone__tools{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .zone__split{
+      height:1px;
+      background:var(--line);
+      margin:14px 0;
+    }
+
+    details.zone__private{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(0,0,0,.08);
+    }
+    details.zone__private > summary{
+      cursor:pointer;
+      color:var(--muted);
+      font-weight:650;
+      list-style:none;
+    }
+    details.zone__private > summary::-webkit-details-marker{ display:none; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:1px solid rgba(255,255,255,.14);
+      padding:.22rem .5rem;
+      border-radius:999px;
+      font-size:.75rem;
+      color:var(--muted);
+      background: rgba(255,255,255,.04);
+      margin-left:8px;
+    }
+
+    .badge.pending{
+      border-color: rgba(255,200,90,.35);
+      color: rgba(255,200,90,.95);
+    }
+
+    .badge.public{
+      border-color: rgba(126,231,135,.35);
+      color: rgba(126,231,135,.95);
+    }
+
+    .muted-small{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      margin-top:8px;
+      max-width:70ch;
+    }
+
     /* Modal form */
     .note-form{
       position:fixed;
@@ -283,7 +373,8 @@
     }
 
     #addNoteForm input[type="text"],
-    #addNoteForm textarea{
+    #addNoteForm textarea,
+    #addNoteForm select{
       width:100%;
       margin-top:.35rem;
       background:#0b0f14;
@@ -359,28 +450,120 @@
   <!-- OUTILS JOURNAL -->
   <section class="journal-tools" aria-label="Outils du journal">
     <button class="btn" id="openNoteForm">+ Nouvelle note</button>
+
     <button class="btn ghost" id="exportNotes">Exporter (JSON)</button>
+
     <label class="btn ghost" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
       Importer (JSON)
       <input id="importNotes" type="file" accept="application/json" hidden>
     </label>
+
+    <button class="btn ghost" id="exportPending" title="Exporte uniquement les notes en attente (pour l’admin)">
+      Exporter (en attente)
+    </button>
+
+    <button class="btn ghost" id="reloadPublic" title="Recharge le mur public depuis journal.public.json">
+      Recharger public
+    </button>
+
     <button class="btn ghost" id="clearAllNotes" title="Supprime toutes les notes locales">Tout effacer</button>
   </section>
 
-  <!-- BOARD NOTES -->
-  <section class="notes-wrap" aria-label="Notes du journal">
-    <div class="notes-board" id="notesBoard"></div>
+  <p class="muted-small">
+    <span class="badge public">✅ public</span> vient de <code>journal.public.json</code> (notes validées).<br>
+    <span class="badge">📝 brouillon</span> et <span class="badge pending">⏳ en attente</span> restent sur ton navigateur.
+  </p>
+
+  <!-- ZONES -->
+  <section class="notes-wrap" aria-label="Journal : zones">
+    <!-- Banc -->
+    <section class="zone" data-zone="banc" aria-label="Banc de travail">
+      <div class="zone__top">
+        <div>
+          <h2 class="zone__title">🛠 Banc de travail</h2>
+          <p class="zone__desc">Ce qui est manipulé en ce moment.</p>
+        </div>
+        <div class="zone__tools">
+          <button class="btn small" data-action="new" data-zone="banc">+ Nouveau post-it</button>
+        </div>
+      </div>
+
+      <div class="zone__split"></div>
+      <div class="muted-small">Mur public (validés)</div>
+      <div class="notes-board" id="public_banc"></div>
+
+      <details class="zone__private">
+        <summary>Mon espace (non publié)</summary>
+        <div class="muted-small">Brouillons + en attente (local)</div>
+        <div class="notes-board" id="local_banc"></div>
+      </details>
+    </section>
+
+    <!-- Établi -->
+    <section class="zone" data-zone="etabli" aria-label="Établi">
+      <div class="zone__top">
+        <div>
+          <h2 class="zone__title">🪚 Établi</h2>
+          <p class="zone__desc">Ce qui se structure, s’organise, se clarifie.</p>
+        </div>
+        <div class="zone__tools">
+          <button class="btn small" data-action="new" data-zone="etabli">+ Nouveau post-it</button>
+        </div>
+      </div>
+
+      <div class="zone__split"></div>
+      <div class="muted-small">Mur public (validés)</div>
+      <div class="notes-board" id="public_etabli"></div>
+
+      <details class="zone__private">
+        <summary>Mon espace (non publié)</summary>
+        <div class="muted-small">Brouillons + en attente (local)</div>
+        <div class="notes-board" id="local_etabli"></div>
+      </details>
+    </section>
+
+    <!-- Tas -->
+    <section class="zone" data-zone="tas" aria-label="Tas">
+      <div class="zone__top">
+        <div>
+          <h2 class="zone__title">🪵 Tas</h2>
+          <p class="zone__desc">Idées, fragments, projets non rangés.</p>
+        </div>
+        <div class="zone__tools">
+          <button class="btn small" data-action="new" data-zone="tas">+ Nouveau post-it</button>
+        </div>
+      </div>
+
+      <div class="zone__split"></div>
+      <div class="muted-small">Mur public (validés)</div>
+      <div class="notes-board" id="public_tas"></div>
+
+      <details class="zone__private">
+        <summary>Mon espace (non publié)</summary>
+        <div class="muted-small">Brouillons + en attente (local)</div>
+        <div class="notes-board" id="local_tas"></div>
+      </details>
+    </section>
   </section>
 
   <!-- MODAL FORM -->
   <section class="note-form" id="noteForm" hidden>
     <div class="note-form__card" role="dialog" aria-modal="true" aria-label="Créer une note">
       <div class="note-form__top">
-        <h2>Nouvelle note</h2>
+        <h2 id="modalTitle">Nouvelle note</h2>
         <button class="icon-btn" id="closeNoteForm" aria-label="Fermer">✕</button>
       </div>
 
       <form id="addNoteForm">
+        <label>
+          Zone
+          <select id="noteZone">
+            <option value="banc">🛠 Banc de travail</option>
+            <option value="etabli">🪚 Établi</option>
+            <option value="tas">🪵 Tas</option>
+          </select>
+        </label>
+
         <label>
           Titre (optionnel)
           <input type="text" id="noteTitle" maxlength="80" placeholder="Ex : Détour technique…" />
@@ -401,7 +584,7 @@
         </label>
 
         <div class="note-form__actions">
-          <button type="submit" class="btn">Ajouter</button>
+          <button type="submit" class="btn">Ajouter (brouillon)</button>
           <button type="button" class="btn ghost" id="cancelNote">Annuler</button>
         </div>
       </form>
@@ -431,9 +614,8 @@
 
 <script>
 (() => {
-  const STORAGE_KEY = "journal_notes_v1";
-
-  const notesBoard = document.getElementById("notesBoard");
+  const STORAGE_KEY = "journal_notes_v2"; // v2 : ajoute zone + status
+  const PUBLIC_JSON_URL = "journal.public.json"; // notes validées (optionnel)
 
   const noteFormOverlay = document.getElementById("noteForm");
   const openBtn = document.getElementById("openNoteForm");
@@ -443,11 +625,25 @@
   const exportBtn = document.getElementById("exportNotes");
   const importInput = document.getElementById("importNotes");
   const clearAllBtn = document.getElementById("clearAllNotes");
+  const exportPendingBtn = document.getElementById("exportPending");
+  const reloadPublicBtn = document.getElementById("reloadPublic");
 
   const form = document.getElementById("addNoteForm");
+  const zoneEl = document.getElementById("noteZone");
   const titleEl = document.getElementById("noteTitle");
   const textEl = document.getElementById("noteText");
   const imagesEl = document.getElementById("noteImages");
+
+  const modalTitle = document.getElementById("modalTitle");
+
+  const ZONES = ["banc", "etabli", "tas"];
+  const ZONE_LABEL = {
+    banc: "🛠 Banc de travail",
+    etabli: "🪚 Établi",
+    tas: "🪵 Tas"
+  };
+
+  let publicNotes = []; // chargées depuis journal.public.json
 
   function uid() {
     return (crypto?.randomUUID)
@@ -457,7 +653,8 @@
 
   function loadNotes() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(raw) ? raw : [];
     } catch {
       return [];
     }
@@ -478,63 +675,48 @@
     }[m]));
   }
 
-  function render() {
-    const notes = loadNotes();
+  function normalizeLocalNote(n) {
+    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
+    const status = (n.status === "pending") ? "pending" : "draft";
 
-    if (notes.length === 0) {
-      notesBoard.innerHTML = `
-        <article class="note" style="opacity:.75">
-          <div class="note__header">
-            <div>
-              <h3 class="note__title">Aucune note pour l’instant</h3>
-              <div class="note__meta">Ajoute un post-it avec “Nouvelle note”.</div>
-            </div>
-          </div>
-          <p class="note__text">Tes notes sont stockées localement sur ce navigateur. Tu peux aussi les exporter/importer en JSON.</p>
-        </article>
-      `;
-      return;
+    return {
+      id: n.id || uid(),
+      zone,
+      status,
+      title: typeof n.title === "string" ? n.title : "",
+      text: typeof n.text === "string" ? n.text : "",
+      images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
+      createdAt: typeof n.createdAt === "number" ? n.createdAt : Date.now(),
+      sentAt: typeof n.sentAt === "number" ? n.sentAt : undefined
+    };
+  }
+
+  function normalizePublicNote(n) {
+    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
+    const createdAt = (typeof n.createdAt === "number") ? n.createdAt
+                    : (typeof n.createdAt === "string") ? Date.parse(n.createdAt)
+                    : Date.now();
+
+    return {
+      id: n.id || uid(),
+      zone,
+      title: typeof n.title === "string" ? n.title : "",
+      text: typeof n.text === "string" ? n.text : (typeof n.body === "string" ? n.body : ""),
+      images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
+      createdAt: Number.isFinite(createdAt) ? createdAt : Date.now()
+    };
+  }
+
+  async function loadPublic() {
+    try {
+      const res = await fetch(PUBLIC_JSON_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error("No public json");
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data.notes;
+      publicNotes = Array.isArray(list) ? list.map(normalizePublicNote) : [];
+    } catch {
+      publicNotes = [];
     }
-
-    notesBoard.innerHTML = notes.map(note => {
-      const title = note.title?.trim() ? escapeHtml(note.title.trim()) : "Note";
-      const text = note.text?.trim() ? escapeHtml(note.text.trim()) : "";
-
-      const imagesHtml = (note.images && note.images.length)
-        ? `<div class="note__images">${note.images.map(src => `<img src="${src}" alt="">`).join("")}</div>`
-        : "";
-
-      return `
-        <article class="note" data-id="${note.id}">
-          <div class="note__header">
-            <div>
-              <h3 class="note__title">${title}</h3>
-              <div class="note__meta">${formatDate(note.createdAt)}</div>
-            </div>
-            <button class="icon-btn" data-action="delete" title="Supprimer">🗑</button>
-          </div>
-
-          ${text ? `<p class="note__text">${text}</p>` : ""}
-
-          ${imagesHtml}
-
-          <div class="note__actions">
-            <button class="chip" data-action="duplicate">Dupliquer</button>
-            <button class="chip" data-action="copyjson" title="Copie la note en JSON dans le presse-papiers">Copier JSON</button>
-          </div>
-        </article>
-      `;
-    }).join("");
-  }
-
-  function openForm() {
-    noteFormOverlay.hidden = false;
-    titleEl.focus();
-  }
-
-  function closeForm() {
-    noteFormOverlay.hidden = true;
-    form.reset();
   }
 
   function filesToDataUrls(files) {
@@ -547,8 +729,119 @@
     })));
   }
 
+  function noteCardHTML(note, kind) {
+    const title = note.title?.trim() ? escapeHtml(note.title.trim()) : "Note";
+    const text = note.text?.trim() ? escapeHtml(note.text.trim()) : "";
+
+    const imagesHtml = (note.images && note.images.length)
+      ? `<div class="note__images">${note.images.map(src => `<img src="${src}" alt="">`).join("")}</div>`
+      : "";
+
+    const meta = kind === "public"
+      ? `${formatDate(note.createdAt)} <span class="badge public">✅ public</span>`
+      : `${formatDate(note.createdAt)} ${note.status === "pending" ? `<span class="badge pending">⏳ en attente</span>` : `<span class="badge">📝 brouillon</span>`}`;
+
+    const actions = (kind === "public")
+      ? `
+        <div class="note__actions">
+          <button class="chip" data-action="copyjson_public">Copier JSON</button>
+        </div>
+      `
+      : `
+        <div class="note__actions">
+          <button class="chip" data-action="duplicate">Dupliquer</button>
+          <button class="chip" data-action="copyjson" title="Copie la note en JSON dans le presse-papiers">Copier JSON</button>
+          ${note.status === "draft" ? `<button class="chip" data-action="send" title="Envoie la note (validation admin)">Envoyer</button>` : ``}
+          <button class="chip" data-action="move" title="Déplacer vers une autre zone">Déplacer</button>
+        </div>
+      `;
+
+    return `
+      <article class="note" data-id="${note.id}" data-kind="${kind}" data-zone="${note.zone}">
+        <div class="note__header">
+          <div>
+            <h3 class="note__title">${title}</h3>
+            <div class="note__meta">${meta}</div>
+          </div>
+          ${kind === "local" ? `<button class="icon-btn" data-action="delete" title="Supprimer">🗑</button>` : ``}
+        </div>
+
+        ${text ? `<p class="note__text">${text}</p>` : ""}
+
+        ${imagesHtml}
+
+        ${actions}
+      </article>
+    `;
+  }
+
+  function renderZone(zone, localNotes) {
+    const publicBoard = document.getElementById(`public_${zone}`);
+    const localBoard = document.getElementById(`local_${zone}`);
+
+    // Public
+    const pub = publicNotes
+      .filter(n => n.zone === zone)
+      .sort((a,b) => b.createdAt - a.createdAt);
+
+    publicBoard.innerHTML = pub.length
+      ? pub.map(n => noteCardHTML(n, "public")).join("")
+      : `
+        <article class="note" style="opacity:.65">
+          <div class="note__header">
+            <div>
+              <h3 class="note__title">Rien de public pour l’instant</h3>
+              <div class="note__meta">Ajoute un post-it et envoie-le pour validation.</div>
+            </div>
+          </div>
+          <p class="note__text">Le mur public se charge depuis <code>${PUBLIC_JSON_URL}</code>.</p>
+        </article>
+      `;
+
+    // Local
+    const loc = localNotes
+      .filter(n => n.zone === zone)
+      .sort((a,b) => (b.createdAt - a.createdAt));
+
+    localBoard.innerHTML = loc.length
+      ? loc.map(n => noteCardHTML(n, "local")).join("")
+      : `
+        <article class="note" style="opacity:.65">
+          <div class="note__header">
+            <div>
+              <h3 class="note__title">Aucun post-it ici</h3>
+              <div class="note__meta">Brouillons + en attente (local).</div>
+            </div>
+          </div>
+          <p class="note__text">Crée un post-it avec “+ Nouveau post-it”.</p>
+        </article>
+      `;
+  }
+
+  function renderAll() {
+    const localNotes = loadNotes().map(normalizeLocalNote);
+
+    // sauver normalisé (évite vieux formats)
+    saveNotes(localNotes);
+
+    for (const z of ZONES) renderZone(z, localNotes);
+  }
+
+  function openForm(defaultZone = "banc") {
+    modalTitle.textContent = "Nouvelle note";
+    zoneEl.value = ZONES.includes(defaultZone) ? defaultZone : "banc";
+    noteFormOverlay.hidden = false;
+    titleEl.focus();
+  }
+
+  function closeForm() {
+    noteFormOverlay.hidden = true;
+    form.reset();
+    zoneEl.value = "banc";
+  }
+
   // UI events
-  openBtn.addEventListener("click", openForm);
+  openBtn.addEventListener("click", () => openForm("banc"));
   closeBtn.addEventListener("click", closeForm);
   cancelBtn.addEventListener("click", closeForm);
 
@@ -556,10 +849,18 @@
     if (e.target === noteFormOverlay) closeForm();
   });
 
-  // Add note
+  // Zone buttons (+ Nouveau post-it)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest('[data-action="new"][data-zone]');
+    if (!btn) return;
+    openForm(btn.getAttribute("data-zone"));
+  });
+
+  // Add note (draft)
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const zone = ZONES.includes(zoneEl.value) ? zoneEl.value : "banc";
     const title = titleEl.value || "";
     const text = textEl.value || "";
 
@@ -571,8 +872,16 @@
       return;
     }
 
-    const notes = loadNotes();
-    const note = { id: uid(), title, text, images, createdAt: Date.now() };
+    const notes = loadNotes().map(normalizeLocalNote);
+    const note = {
+      id: uid(),
+      zone,
+      status: "draft",
+      title,
+      text,
+      images,
+      createdAt: Date.now()
+    };
 
     notes.unshift(note);
 
@@ -584,54 +893,106 @@
     }
 
     closeForm();
-    render();
+    renderAll();
   });
 
-  // Note actions
-  notesBoard.addEventListener("click", async (e) => {
+  // Note actions (local + public copy)
+  document.addEventListener("click", async (e) => {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
 
     const action = btn.getAttribute("data-action");
     const noteEl = btn.closest(".note");
-    const id = noteEl?.getAttribute("data-id");
-    if (!id) return;
+    if (!noteEl) return;
 
-    const notes = loadNotes();
+    const id = noteEl.getAttribute("data-id");
+    const kind = noteEl.getAttribute("data-kind");
 
-    if (action === "delete") {
-      const ok = confirm("Supprimer cette note ?");
-      if (!ok) return;
-      saveNotes(notes.filter(n => n.id !== id));
-      render();
-    }
-
-    if (action === "duplicate") {
-      const original = notes.find(n => n.id === id);
-      if (!original) return;
-      const copy = { ...original, id: uid(), createdAt: Date.now() };
-      saveNotes([copy, ...notes]);
-      render();
-    }
-
-    if (action === "copyjson") {
-      const original = notes.find(n => n.id === id);
-      if (!original) return;
+    // Copier JSON (public)
+    if (action === "copyjson_public" && kind === "public") {
+      const n = publicNotes.find(x => x.id === id);
+      if (!n) return;
       try {
-        await navigator.clipboard.writeText(JSON.stringify(original, null, 2));
-        alert("JSON copié dans le presse-papiers.");
+        await navigator.clipboard.writeText(JSON.stringify(n, null, 2));
+        alert("JSON copié (public).");
       } catch {
         alert("Impossible de copier automatiquement. (Permission refusée)");
       }
+      return;
+    }
+
+    // Actions local uniquement
+    if (kind !== "local") return;
+
+    let notes = loadNotes().map(normalizeLocalNote);
+    const idx = notes.findIndex(n => n.id === id);
+    if (idx < 0) return;
+
+    if (action === "delete") {
+      const ok = confirm("Supprimer ce post-it local ?");
+      if (!ok) return;
+      notes.splice(idx, 1);
+      saveNotes(notes);
+      renderAll();
+      return;
+    }
+
+    if (action === "duplicate") {
+      const original = notes[idx];
+      const copy = { ...original, id: uid(), createdAt: Date.now() };
+      notes.unshift(copy);
+      saveNotes(notes);
+      renderAll();
+      return;
+    }
+
+    if (action === "copyjson") {
+      const original = notes[idx];
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(original, null, 2));
+        alert("JSON copié (local).");
+      } catch {
+        alert("Impossible de copier automatiquement. (Permission refusée)");
+      }
+      return;
+    }
+
+    if (action === "send") {
+      const original = notes[idx];
+      if (original.status !== "draft") return;
+      notes[idx] = { ...original, status: "pending", sentAt: Date.now() };
+      saveNotes(notes);
+      renderAll();
+      alert("Envoyé (en attente de validation).");
+      return;
+    }
+
+    if (action === "move") {
+      const original = notes[idx];
+      const current = original.zone;
+      const next = prompt(
+        `Déplacer vers quelle zone ?\n\n- banc\n- etabli\n- tas`,
+        current
+      );
+      if (!next) return;
+      const nz = next.trim().toLowerCase();
+      if (!ZONES.includes(nz)) {
+        alert("Zone invalide. Choisis : banc, etabli, tas.");
+        return;
+      }
+      notes[idx] = { ...original, zone: nz };
+      saveNotes(notes);
+      renderAll();
+      return;
     }
   });
 
-  // Export notes as JSON file
+  // Export notes (local) as JSON file
   exportBtn.addEventListener("click", () => {
-    const notes = loadNotes();
+    const notes = loadNotes().map(normalizeLocalNote);
     const payload = {
       exportedAt: new Date().toISOString(),
-      version: 1,
+      version: 2,
       notes
     };
 
@@ -646,6 +1007,44 @@
     a.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), 500);
+  });
+
+  // Export pending only (for admin)
+  exportPendingBtn.addEventListener("click", () => {
+    const notes = loadNotes().map(normalizeLocalNote);
+    const pending = notes
+      .filter(n => n.status === "pending")
+      .map(n => ({
+        id: n.id,
+        zone: n.zone,
+        title: n.title,
+        text: n.text,
+        images: n.images,
+        createdAt: n.createdAt,
+        sentAt: n.sentAt || n.createdAt
+      }));
+
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: 2,
+      notes: pending
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "journal-pending.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+
+    if (pending.length === 0) {
+      alert("Aucune note en attente.");
+    }
   });
 
   // Import notes from JSON file
@@ -680,15 +1079,8 @@
       return;
     }
 
-    // Normalisation + filtre minimal
     const sanitized = incoming
-      .map(n => ({
-        id: n.id || uid(),
-        title: typeof n.title === "string" ? n.title : "",
-        text: typeof n.text === "string" ? n.text : "",
-        images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
-        createdAt: typeof n.createdAt === "number" ? n.createdAt : Date.now()
-      }))
+      .map(normalizeLocalNote)
       .filter(n => (n.title.trim() || n.text.trim() || (n.images && n.images.length)));
 
     const ok = confirm(`Importer ${sanitized.length} note(s) ?\n\nOK = fusionner avec l’existant\nAnnuler = ne rien faire`);
@@ -697,8 +1089,7 @@
       return;
     }
 
-    // fusion (évite doublons par id)
-    const existing = loadNotes();
+    const existing = loadNotes().map(normalizeLocalNote);
     const byId = new Map(existing.map(n => [n.id, n]));
     for (const n of sanitized) byId.set(n.id, n);
 
@@ -713,19 +1104,29 @@
     }
 
     importInput.value = "";
-    render();
+    renderAll();
   });
 
-  // Clear all
+  // Reload public
+  reloadPublicBtn.addEventListener("click", async () => {
+    await loadPublic();
+    renderAll();
+    alert("Mur public rechargé (si journal.public.json existe).");
+  });
+
+  // Clear all local
   clearAllBtn.addEventListener("click", () => {
     const ok = confirm("Supprimer toutes les notes locales de ce navigateur ?");
     if (!ok) return;
     localStorage.removeItem(STORAGE_KEY);
-    render();
+    renderAll();
   });
 
   // Init
-  render();
+  (async function init() {
+    await loadPublic();
+    renderAll();
+  })();
 })();
 </script>
 
