@@ -1,1 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Journal — Validation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#111824; --text:#e7eef7; --muted:#a9b4c4; --line:rgba(255,255,255,.12);
+      --accent:#58a6ff; --ok:#3ddc97; --bad:#ff6b6b; --warn:#ffcc66; --radius:16px; --max:980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui, sans-serif; color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.12), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.16), transparent 55%),
+        var(--bg);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:24px 16px 60px;}
+    h1{margin:0 0 6px; font-size:24px;}
+    p{margin:0 0 14px; color:var(--muted); line-height:1.6;}
+    .card{
+      margin-top:14px; padding:16px; border-radius:var(--radius);
+      background:rgba(17,24,36,.75); border:1px solid var(--line);
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .btn{
+      background:#1f2a3a; border:1px solid rgba(255,255,255,.12); color:var(--text);
+      padding:.55rem .9rem; border-radius:12px; cursor:pointer; font-weight:650; font-size:14px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.ghost{background:transparent; color:var(--muted)}
+    .btn.ok{border-color:rgba(61,220,151,.5)}
+    .btn.bad{border-color:rgba(255,107,107,.5)}
+    .btn.warn{border-color:rgba(255,204,102,.5)}
+    input[type="file"]{color:var(--muted)}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:12px;}
+    .note{
+      background:linear-gradient(180deg,#182233,#101826);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px; padding:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .note h3{margin:0 0 6px; font-size:15px; color:#cde1ff;}
+    .meta{font-size:12px; color:var(--muted); margin-bottom:8px;}
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px;}
+    input[type="text"], textarea, select{
+      width:100%; background:#0b0f14; border:1px solid rgba(255,255,255,.10);
+      color:var(--text); border-radius:12px; padding:.6rem .65rem; outline:none; font-family:inherit;
+    }
+    textarea{min-height:110px; resize:vertical;}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+    .badge{
+      display:inline-flex; gap:6px; align-items:center;
+      border:1px solid rgba(255,255,255,.14);
+      padding:3px 8px; border-radius:999px;
+      font-size:12px; color:var(--muted); background:rgba(255,255,255,.04);
+    }
+    .badge.ok{border-color:rgba(61,220,151,.45); color:rgba(61,220,151,.95)}
+    .badge.bad{border-color:rgba(255,107,107,.45); color:rgba(255,107,107,.95)}
+    .badge.pending{border-color:rgba(255,204,102,.45); color:rgba(255,204,102,.95)}
+    .imgs{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:10px;}
+    .imgs img{width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.08); display:block;}
+    .small{font-size:12px; color:var(--muted); line-height:1.5}
+    code{color:#cde1ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Admin Journal — Validation</h1>
+    <p>
+      Cette page sert à importer <code>journal-pending.json</code>, valider/refuser,
+      puis exporter un nouveau <code>journal.public.json</code> à commit dans GitHub.
+    </p>
+
+    <div class="card">
+      <div class="row">
+        <label class="btn ghost" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
+          Importer (pending JSON)
+          <input id="inPending" type="file" accept="application/json" hidden>
+        </label>
+
+        <button class="btn ghost" id="loadPublic">Charger public existant</button>
+        <button class="btn ok" id="exportPublic">Exporter journal.public.json</button>
+        <button class="btn warn" id="exportApprovedOnly">Exporter (validés seulement)</button>
+        <button class="btn bad" id="resetAll">Réinitialiser</button>
+
+        <span class="small" id="status"></span>
+      </div>
+      <p class="small" style="margin-top:10px;">
+        ⚠️ Sur GitHub Pages, une page admin n’est pas “protégée”. La protection réelle est : seul l’admin commit <code>journal.public.json</code>.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <span class="badge pending">⏳ en attente importée</span>
+        <span class="badge ok">✅ validé</span>
+        <span class="badge bad">❌ refusé</span>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const PUBLIC_URL = "journal.public.json"; // dans /journal/
+  const ZONES = ["banc", "etabli", "tas"];
+  const ZONE_LABEL = {banc:"🛠 Banc", etabli:"🪚 Établi", tas:"🪵 Tas"};
+
+  const $ = (id) => document.getElementById(id);
+  const grid = $("grid");
+  const status = $("status");
+
+  let publicNotes = [];   // existant (fetch)
+  let pendingNotes = [];  // importé
+  let decisions = new Map(); // id -> "approved" | "rejected" | "pending"
+  let edits = new Map();     // id -> {zone,title,text,images}
+
+  function setStatus(msg){ status.textContent = msg || ""; }
+
+  function uid(){
+    return (crypto?.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+  }
+
+  function normalizePublic(n){
+    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
+    const createdAt = (typeof n.createdAt === "number") ? n.createdAt
+                  : (typeof n.createdAt === "string") ? Date.parse(n.createdAt)
+                  : Date.now();
+    return {
+      id: n.id || uid(),
+      zone,
+      title: typeof n.title === "string" ? n.title : "",
+      text: typeof n.text === "string" ? n.text : (typeof n.body === "string" ? n.body : ""),
+      images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
+      createdAt: Number.isFinite(createdAt) ? createdAt : Date.now()
+    };
+  }
+
+  function normalizePending(n){
+    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
+    const createdAt = (typeof n.createdAt === "number") ? n.createdAt : Date.now();
+    const sentAt = (typeof n.sentAt === "number") ? n.sentAt : createdAt;
+    return {
+      id: n.id || uid(),
+      zone,
+      title: typeof n.title === "string" ? n.title : "",
+      text: typeof n.text === "string" ? n.text : "",
+      images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
+      createdAt,
+      sentAt
+    };
+  }
+
+  async function loadPublic(){
+    try{
+      const res = await fetch(PUBLIC_URL, { cache:"no-store" });
+      if(!res.ok) throw new Error("no public");
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data.notes;
+      publicNotes = Array.isArray(list) ? list.map(normalizePublic) : [];
+      setStatus(`Public chargé: ${publicNotes.length} note(s).`);
+    }catch{
+      publicNotes = [];
+      setStatus("Aucun public existant (normal au début).");
+    }
+  }
+
+  function render(){
+    grid.innerHTML = "";
+    if(!pendingNotes.length){
+      grid.innerHTML = `<div class="small">Importe un <code>journal-pending.json</code> pour commencer.</div>`;
+      return;
+    }
+
+    pendingNotes.forEach(n => {
+      const state = decisions.get(n.id) || "pending";
+      const e = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
+
+      const badge = state === "approved"
+        ? `<span class="badge ok">✅ validé</span>`
+        : state === "rejected"
+          ? `<span class="badge bad">❌ refusé</span>`
+          : `<span class="badge pending">⏳ en attente importée</span>`;
+
+      const imgs = (e.images?.length)
+        ? `<div class="imgs">${e.images.slice(0,4).map(src => `<img src="${src}" alt="">`).join("")}</div>
+           <div class="small">Images: ${e.images.length} (elles seront publiées si validées)</div>`
+        : `<div class="small">Aucune image</div>`;
+
+      const card = document.createElement("div");
+      card.className = "note";
+      card.innerHTML = `
+        <div class="meta">${badge} · id: <code>${n.id}</code></div>
+
+        <label>Zone</label>
+        <select data-field="zone">
+          ${ZONES.map(z => `<option value="${z}" ${e.zone===z?"selected":""}>${ZONE_LABEL[z]}</option>`).join("")}
+        </select>
+
+        <label>Titre</label>
+        <input type="text" data-field="title" value="${escapeAttr(e.title)}" placeholder="Titre (optionnel)">
+
+        <label>Texte</label>
+        <textarea data-field="text" placeholder="Note">${escapeText(e.text)}</textarea>
+
+        ${imgs}
+
+        <div class="actions">
+          <button class="btn ok" data-act="approve">Valider</button>
+          <button class="btn bad" data-act="reject">Refuser</button>
+          <button class="btn ghost" data-act="clearImages">Retirer les images</button>
+          <button class="btn ghost" data-act="resetEdits">Annuler modifs</button>
+        </div>
+      `;
+
+      // events
+      card.addEventListener("click", (ev) => {
+        const b = ev.target.closest("[data-act]");
+        if(!b) return;
+        const act = b.getAttribute("data-act");
+
+        if(act === "approve") decisions.set(n.id, "approved");
+        if(act === "reject") decisions.set(n.id, "rejected");
+        if(act === "clearImages"){
+          const cur = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
+          edits.set(n.id, { ...cur, images: [] });
+        }
+        if(act === "resetEdits"){
+          edits.delete(n.id);
+        }
+        render();
+      });
+
+      card.addEventListener("input", (ev) => {
+        const field = ev.target?.getAttribute?.("data-field");
+        if(!field) return;
+        const cur = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
+
+        const v = (field === "zone") ? ev.target.value : ev.target.value;
+        edits.set(n.id, { ...cur, [field]: v });
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  function escapeAttr(s){
+    return String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function escapeText(s){
+    return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function buildPublicPayload({onlyApproved=false}={}){
+    const existing = publicNotes.slice(); // conserve l’existant
+    const approved = pendingNotes
+      .filter(n => (decisions.get(n.id) === "approved"))
+      .map(n => {
+        const e = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
+        return normalizePublic({
+          id: n.id,
+          zone: e.zone,
+          title: e.title,
+          text: e.text,
+          images: e.images,
+          createdAt: new Date().toISOString()
+        });
+      });
+
+    if(onlyApproved){
+      return approved;
+    }
+
+    // Merge sans doublons par id (pending validés écrasent si même id)
+    const byId = new Map(existing.map(n => [n.id, n]));
+    for(const n of approved) byId.set(n.id, n);
+
+    return Array.from(byId.values()).sort((a,b) => b.createdAt - a.createdAt);
+  }
+
+  function downloadJSON(filename, data){
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  }
+
+  $("inPending").addEventListener("change", async () => {
+    const file = $("inPending").files?.[0];
+    if(!file) return;
+
+    let txt = "";
+    try{ txt = await file.text(); } catch { alert("Impossible de lire le fichier."); return; }
+
+    let data;
+    try{ data = JSON.parse(txt); } catch { alert("JSON invalide."); return; }
+
+    const list = Array.isArray(data) ? data : data.notes;
+    if(!Array.isArray(list)){ alert("Format non reconnu."); return; }
+
+    pendingNotes = list.map(normalizePending);
+    decisions = new Map(pendingNotes.map(n => [n.id, "pending"]));
+    edits = new Map();
+
+    setStatus(`Pending importé: ${pendingNotes.length} note(s).`);
+    render();
+  });
+
+  $("loadPublic").addEventListener("click", async () => {
+    await loadPublic();
+    render();
+  });
+
+  $("exportPublic").addEventListener("click", () => {
+    const payload = buildPublicPayload({onlyApproved:false});
+    downloadJSON("journal.public.json", payload);
+    setStatus("Export journal.public.json (merge existant + validés).");
+  });
+
+  $("exportApprovedOnly").addEventListener("click", () => {
+    const payload = buildPublicPayload({onlyApproved:true});
+    downloadJSON("journal.public.approved-only.json", payload);
+    setStatus("Export validés seulement.");
+  });
+
+  $("resetAll").addEventListener("click", () => {
+    const ok = confirm("Réinitialiser (vider pending/decisions/edits) ?");
+    if(!ok) return;
+    pendingNotes = [];
+    decisions = new Map();
+    edits = new Map();
+    render();
+    setStatus("Réinitialisé.");
+  });
+
+  // init
+  loadPublic().then(render);
+})();
+</script>
+</body>
+</html>
 
