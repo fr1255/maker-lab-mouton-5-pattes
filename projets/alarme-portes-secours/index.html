@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Système d’alarme des portes de secours – Maker Lab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Canonical (optionnel mais propre) -->
+  <link rel="canonical" href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/alarme-portes-secours/">
 
   <style>
     :root {
@@ -29,38 +32,24 @@
       color: var(--text);
     }
 
-    /* NAVIGATION GLOBALE */
-    header.top-nav {
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 16px 24px;
-      z-index: 10;
-    }
-
-    header.top-nav nav a {
-      margin-left: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      text-decoration: none;
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    header.top-nav nav a:hover {
-      border-color: var(--accent);
-    }
-
     .wrap {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 96px 16px 60px; /* décalage menu fixe */
+      padding: 32px 16px 60px;
     }
 
     a {
       color: var(--accent);
       text-decoration: none;
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    .back {
+      font-size: 14px;
+      color: var(--muted);
     }
 
     h1 {
@@ -94,7 +83,6 @@
       color: var(--muted);
     }
 
-    /* PDF preview */
     .pdf-preview {
       margin-top: 16px;
       border-radius: 12px;
@@ -108,168 +96,103 @@
       height: 600px;
       border: none;
     }
-
-    /* 🔒 Protection */
-    #project-content { display: none; }
-
-    #lock-screen {
-      max-width: 420px;
-      margin: 140px auto;
-      padding: 24px;
-      text-align: center;
-      background: rgba(17,24,36,.85);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.4);
-    }
-
-    #lock-screen input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: #0b0f14;
-      color: var(--text);
-      font-size: 16px;
-    }
-
-    #lock-screen button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 10px;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    #lock-screen button:hover { opacity: .9; }
-
-    #lock-error {
-      margin-top: 12px;
-      color: #ff7b72;
-      display: none;
-      font-size: 14px;
-    }
   </style>
 
+  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
   <script>
-    // ⚠️ Dissuasion uniquement (le code est visible dans le HTML)
-    const SECRET_CODE = "LMT@2026";
-
-    function checkCode() {
-      const input = document.getElementById("access-code").value;
-      const error = document.getElementById("lock-error");
-
-      if (input === SECRET_CODE) {
-        document.getElementById("lock-screen").style.display = "none";
-        document.getElementById("project-content").style.display = "block";
-        error.style.display = "none";
-      } else {
-        error.style.display = "block";
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
       }
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && document.getElementById("lock-screen")) {
-        checkCode();
-      }
-    });
+    };
   </script>
-  
- <script
-  data-goatcounter="https://fr1255.goatcounter.com/count"
-  async
-  src="//gc.zgo.at/count.js">
-</script>
 
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
+  <div class="wrap">
 
-<header class="top-nav">
-  <nav>
-    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
-    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
-    <a href="/maker-lab-mouton-5-pattes/#journal">Journal</a>
-    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
-  </nav>
-</header>
+    <header>
+      <div class="back">
+        ← <a href="../../">Retour à l’accueil</a>
+      </div>
+      <h1>Système d’alarme des portes de secours</h1>
+      <p>
+        Ce système d’alarme assure la surveillance intelligente des portes de secours afin de détecter toute ouverture non autorisée,
+        sans dépendre du réseau Internet du site.
+      </p>
+    </header>
 
-<!-- 🔒 Écran code -->
-<div id="lock-screen">
-  <h2>Accès protégé</h2>
-  <p>Entrez le code pour consulter ce projet.</p>
-  <input id="access-code" type="password" placeholder="Code d’accès…" autocomplete="off" />
-  <button type="button" onclick="checkCode()">Déverrouiller</button>
-  <div id="lock-error">Code incorrect. Réessayez.</div>
-</div>
+    <section class="card">
+      <h2>🎯 Objectif</h2>
+      <p>
+        Alerter immédiatement les responsables par SMS lors de l’ouverture d’une issue de secours.
+      </p>
+    </section>
 
-<!-- ✅ Contenu du projet -->
-<div class="wrap" id="project-content">
+    <section class="card">
+      <h2>🛠️ Principe de fonctionnement</h2>
+      <p>
+        Chaque porte de secours est équipée d’un capteur d’ouverture radio. Lorsqu’une porte est ouverte,
+        l’information est transmise à un module de traitement qui centralise les données et déclenche l’envoi d’un SMS via un module GSM.
+        L’architecture garantit un fonctionnement fiable et continu, même en cas de coupure secteur.
+      </p>
+    </section>
 
-  <h1>Système d’alarme des portes de secours</h1>
-  <p>
-    Ce système d’alarme assure la surveillance intelligente des portes de secours afin
-    de détecter toute ouverture non autorisée, sans dépendre du réseau Internet du site.
-  </p>
+    <section class="card">
+      <h2>📄 Documentation – Version 1</h2>
+      <p>Documentation technique du projet :</p>
 
-  <section class="card">
-    <h2>🎯 Objectif</h2>
-    <p>Alerter immédiatement les responsables par SMS lors de l’ouverture d’une issue de secours.</p>
-  </section>
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/alarme-portes-secours-version1.pdf"
+          title="Documentation technique – Alarme portes de secours"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <section class="card">
-    <h2>🛠️ Principe de fonctionnement</h2>
-    <p>
-      Chaque porte de secours est équipée d’un capteur d’ouverture radio. Lorsqu’une porte est ouverte,
-      l’information est transmise à un module de traitement qui centralise les données et déclenche
-      l’envoi d’un SMS via un module GSM. L’architecture garantit un fonctionnement fiable et continu,
-      même en cas de coupure secteur.
-    </p>
-  </section>
+      <p style="margin-top:12px;">
+        📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf"
+             target="_blank" rel="noopener">
+          Ouvrir le PDF dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-  <section class="card">
-    <h2>📄 Documentation – Version 1</h2>
+    <section class="card">
+      <h2>📄 Documentation – Version 2</h2>
 
-    <div class="pdf-preview">
-      <iframe
-        src="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf"
-        title="Documentation technique – Version 1"
-        loading="lazy"></iframe>
-    </div>
+      <p>
+        Version optimisée suite à la visite du bâtiment et à l’analyse de ses contraintes structurelles.
+      </p>
 
-    <p style="margin-top:12px;">
-      📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf" target="_blank" rel="noopener">
-        Ouvrir le PDF dans un nouvel onglet
-      </a>
-    </p>
-  </section>
+      <div class="pdf-preview">
+        <iframe
+          src="../../pdf/alarme-portes-secours-version2.pdf"
+          title="Documentation technique – Version 2"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <section class="card">
-    <h2>📄 Documentation – Version 2</h2>
+      <p style="margin-top:12px;">
+        📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf"
+             target="_blank" rel="noopener">
+          Ouvrir le PDF V2 dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-    <div class="pdf-preview">
-      <iframe
-        src="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf"
-        title="Documentation technique – Version 2"
-        loading="lazy"></iframe>
-    </div>
+    <footer>
+      © 2026 Maker Lab du Mouton à 5 Pattes
+    </footer>
 
-    <p style="margin-top:12px;">
-      📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf" target="_blank" rel="noopener">
-        Ouvrir le PDF V2 dans un nouvel onglet
-      </a>
-    </p>
-  </section>
-
-  <footer>© 2026 Maker Lab du Mouton à 5 Pattes</footer>
-
-</div>
-
+  </div>
 </body>
 </html>
