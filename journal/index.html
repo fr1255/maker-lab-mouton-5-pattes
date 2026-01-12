@@ -309,6 +309,17 @@
       color: rgba(126,231,135,.95);
     }
 
+    /* ✅ Badge admin/visiteur */
+    .role-badge{ margin-left:6px; }
+    .role-badge.admin{
+      border-color: rgba(51, 209, 122, .35);
+      color: rgba(51, 209, 122, .95);
+    }
+    .role-badge.visitor{
+      border-color: rgba(255, 204, 102, .35);
+      color: rgba(255, 204, 102, .95);
+    }
+
     .muted-small{
       color:var(--muted);
       font-size:13px;
@@ -445,6 +456,9 @@
     <button class="btn ghost" id="clearAllNotes" title="Supprime toutes les notes locales de ce navigateur">
       Réinitialiser mes notes
     </button>
+
+    <!-- ✅ Badge admin/visiteur -->
+    <span class="badge role-badge visitor" id="roleBadge" title="Détecté via localStorage (ml_is_admin)">🧭 visiteur</span>
   </section>
 
   <p class="muted-small">
@@ -595,6 +609,29 @@
   const STORAGE_KEY = "journal_notes_v3_simple";
   const PUBLIC_JSON_URL = "journal.public.json";
 
+  // ✅ Badge admin/visiteur (partagé avec journal/admin.html)
+  const ADMIN_KEY = "ml_is_admin";
+  const roleBadge = document.getElementById("roleBadge");
+
+  function isAdminBrowser(){
+    return localStorage.getItem(ADMIN_KEY) === "true";
+  }
+
+  function updateRoleBadge(){
+    if (!roleBadge) return;
+    const on = isAdminBrowser();
+    roleBadge.textContent = on ? "✅ admin" : "🧭 visiteur";
+    roleBadge.classList.toggle("admin", on);
+    roleBadge.classList.toggle("visitor", !on);
+  }
+
+  // Mise à jour au chargement + quand on revient sur l’onglet
+  updateRoleBadge();
+  window.addEventListener("focus", updateRoleBadge);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) updateRoleBadge();
+  });
+
   const noteFormOverlay = document.getElementById("noteForm");
   const openBtn = document.getElementById("openNoteForm");
   const closeBtn = document.getElementById("closeNoteForm");
@@ -725,7 +762,8 @@
         sentAt: n.sentAt || n.createdAt
       }));
 
-    downloadJSON("journal-pending.json", {
+    // ✅ harmonisé avec admin.html (journal.pending.json)
+    downloadJSON("journal.pending.json", {
       exportedAt: new Date().toISOString(),
       version: 3,
       notes: pending
@@ -934,10 +972,10 @@
       saveNotes(notes);
       renderAll();
 
-      // 2) télécharge automatiquement le fichier pending (pour éviter la confusion)
+      // 2) télécharge automatiquement le fichier pending
       exportPendingNow();
 
-      alert("Envoyé pour validation ✅\nUn fichier 'journal-pending.json' a été téléchargé.");
+      alert("Envoyé pour validation ✅\nUn fichier 'journal.pending.json' a été téléchargé.");
       return;
     }
   });
