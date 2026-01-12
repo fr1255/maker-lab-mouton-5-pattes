@@ -70,7 +70,7 @@
     }
 
     .row-left{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-    .row-right{ color:var(--muted); font-size:13px; }
+    .row-right{ color:var(--muted); font-size:13px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
 
     .btn{
       background:#1f2a3a;
@@ -175,6 +175,11 @@
     .badge.good{ border-color: rgba(51, 209, 122, .35); color: rgba(51, 209, 122, .95); }
     .badge.bad{ border-color: rgba(255, 92, 92, .35); color: rgba(255, 92, 92, .95); }
     .badge.warn{ border-color: rgba(255, 204, 102, .35); color: rgba(255, 204, 102, .95); }
+
+    /* badge “mode admin/visiteur” */
+    .badge.mode { background: rgba(255,255,255,.03); }
+    .badge.mode.admin { border-color: rgba(51, 209, 122, .35); color: rgba(51, 209, 122, .95); }
+    .badge.mode.visitor { border-color: rgba(255, 204, 102, .35); color: rgba(255, 204, 102, .95); }
 
     .note__text{
       color:var(--muted);
@@ -331,14 +336,23 @@
         <button class="btn ghost" id="resetSession" title="Revenir aux fichiers publiés (si chargés) + vider l’import pending en mémoire">
           Réinitialiser la session
         </button>
+
+        <!-- ✅ Nouveau: bouton mode admin -->
+        <button class="btn warn" id="toggleAdmin" title="Marque ce navigateur comme ADMIN (ou le remet en visiteur)">
+          Activer mode admin
+        </button>
       </div>
 
-      <div class="row-right" id="statusLine">—</div>
+      <div class="row-right">
+        <!-- ✅ Nouveau: badge mode -->
+        <span class="badge mode visitor" id="adminBadge">🧭 mode visiteur</span>
+        <span id="statusLine">—</span>
+      </div>
     </div>
 
     <p class="hint">
       ⚠️ Sur GitHub Pages, cette page n’est pas “protégée”. La vraie protection, c’est : <strong>seul l’admin commit</strong> le fichier <strong>journal.public.json</strong>.<br>
-      Astuce : tu peux aussi charger le public existant depuis le site (si tu l’héberges dans <code>/journal/data/journal.public.json</code>).
+      Astuce : le bouton <strong>mode admin</strong> enregistre un flag dans ce navigateur (<code>localStorage</code>) — tes autres pages pourront s’en servir pour éviter d’envoyer un email quand c’est toi.
     </p>
   </section>
 
@@ -404,6 +418,49 @@
   // Exemple GitHub Pages: "/maker-lab-mouton-5-pattes/journal/data/journal.public.json"
   const BASE_PATH = "/maker-lab-mouton-5-pattes";
   const PUBLIC_URL = `${BASE_PATH}/journal/journal.public.json`;
+
+  /* =========================
+     ✅ MODE ADMIN (localStorage)
+     ========================= */
+  const ADMIN_KEY = "ml_is_admin"; // même clé à utiliser dans le journal privé
+  function isAdminBrowser(){ return localStorage.getItem(ADMIN_KEY) === "true"; }
+  function setAdminBrowser(v){
+    if (v) localStorage.setItem(ADMIN_KEY, "true");
+    else localStorage.removeItem(ADMIN_KEY);
+  }
+
+  const toggleAdminBtn = document.getElementById("toggleAdmin");
+  const adminBadge = document.getElementById("adminBadge");
+
+  function updateAdminUI(){
+    const on = isAdminBrowser();
+    if (on){
+      adminBadge.textContent = "✅ mode admin";
+      adminBadge.classList.remove("visitor");
+      adminBadge.classList.add("admin");
+      toggleAdminBtn.textContent = "Désactiver mode admin";
+      toggleAdminBtn.classList.remove("warn");
+      toggleAdminBtn.classList.add("ghost");
+      toggleAdminBtn.title = "Ce navigateur est ADMIN. Clique pour repasser en visiteur.";
+    } else {
+      adminBadge.textContent = "🧭 mode visiteur";
+      adminBadge.classList.remove("admin");
+      adminBadge.classList.add("visitor");
+      toggleAdminBtn.textContent = "Activer mode admin";
+      toggleAdminBtn.classList.remove("ghost");
+      toggleAdminBtn.classList.add("warn");
+      toggleAdminBtn.title = "Marque ce navigateur comme ADMIN.";
+    }
+  }
+
+  toggleAdminBtn.addEventListener("click", () => {
+    const on = isAdminBrowser();
+    setAdminBrowser(!on);
+    updateAdminUI();
+  });
+
+  // Init UI mode
+  updateAdminUI();
 
   const importPendingInput = document.getElementById("importPending");
   const exportPublicBtn = document.getElementById("exportPublic");
@@ -680,6 +737,7 @@
   cancelEditBtn.addEventListener("click", closeEdit);
   editModal.addEventListener("click", (e) => {
     if (e.target === editModal) closeEdit();
+ 
   });
 
   editForm.addEventListener("submit", (e) => {
