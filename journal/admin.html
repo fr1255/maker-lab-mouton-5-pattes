@@ -12,57 +12,65 @@
       --text:#e7eef7;
       --muted:#a9b4c4;
       --line:rgba(255,255,255,.12);
-      --ok:#3ddc97;
-      --bad:#ff6b6b;
+      --accent:#58a6ff;
+      --good:#33d17a;
+      --bad:#ff5c5c;
+      --warn:#ffcc66;
       --radius:16px;
-      --max:980px;
+      --max:1100px;
     }
 
     *{ box-sizing:border-box; }
-
     body{
       margin:0;
       font-family:system-ui, sans-serif;
-      color:var(--text);
       background:
         radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.12), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.16), transparent 55%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.14), transparent 55%),
         var(--bg);
+      color:var(--text);
     }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
 
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:96px 16px 60px;
+      padding:40px 16px 60px;
     }
 
     h1{
       margin:0 0 8px;
       font-size:28px;
+      letter-spacing:.2px;
     }
 
-    p{
-      margin:0 0 14px;
+    .lead{
+      margin:0 0 18px;
       color:var(--muted);
       line-height:1.6;
       max-width:80ch;
     }
 
-    .card{
-      margin-top:14px;
-      padding:16px;
-      border-radius:var(--radius);
-      background:rgba(17,24,36,.75);
+    .panel{
+      background: rgba(17,24,36,.70);
       border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      margin-top:18px;
     }
 
     .row{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
+      gap:10px;
       align-items:center;
       justify-content:space-between;
     }
+
+    .row-left{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .row-right{ color:var(--muted); font-size:13px; }
 
     .btn{
       background:#1f2a3a;
@@ -73,336 +81,518 @@
       cursor:pointer;
       font-weight:650;
       font-size:14px;
+      user-select:none;
     }
     .btn:hover{ transform: translateY(-1px); }
-
     .btn.ghost{ background:transparent; color:var(--muted); }
-    .btn.ok{ border-color: rgba(61,220,151,.55); }
-    .btn.bad{ border-color: rgba(255,107,107,.55); }
+    .btn.good{ border-color: rgba(51, 209, 122, .35); }
+    .btn.bad{ border-color: rgba(255, 92, 92, .35); }
+    .btn.warn{ border-color: rgba(255, 204, 102, .35); }
 
-    .small{
-      font-size:12px;
+    .hint{
+      margin-top:10px;
       color:var(--muted);
-      line-height:1.5;
+      font-size:13px;
+      line-height:1.55;
     }
 
-    code{ color:#cde1ff; }
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      cursor:pointer;
+      font-size:13px;
+      user-select:none;
+    }
+    .pill strong{ color:var(--text); font-weight:700; }
+    .pill.active{
+      border-color: rgba(88,166,255,.45);
+      color: var(--text);
+    }
 
     .grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
-      gap:12px;
-      margin-top:12px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap:14px;
+      margin-top:14px;
     }
 
     .note{
-      background:linear-gradient(180deg,#182233,#101826);
+      background: linear-gradient(180deg, #182233, #101826);
       border:1px solid rgba(255,255,255,.08);
       border-radius:14px;
-      padding:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      transition: transform .2s ease, box-shadow .2s ease;
+      min-height: 120px;
+    }
+    .note:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 16px 45px rgba(0,0,0,.6);
     }
 
-    .meta{
+    .note__head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+      margin-bottom:8px;
+    }
+    .note__title{
+      margin:0;
+      font-size:15px;
+      color:#cde1ff;
+      line-height:1.2;
+    }
+    .note__meta{
+      margin-top:4px;
       font-size:12px;
       color:var(--muted);
-      margin-bottom:8px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
     }
-
     .badge{
       display:inline-flex;
-      gap:6px;
       align-items:center;
-      border:1px solid rgba(255,255,255,.14);
-      padding:3px 8px;
+      gap:6px;
+      padding:4px 8px;
       border-radius:999px;
       font-size:12px;
+      border:1px solid rgba(255,255,255,.12);
       color:var(--muted);
-      background:rgba(255,255,255,.04);
+      white-space:nowrap;
     }
-    .badge.ok{ border-color:rgba(61,220,151,.45); color:rgba(61,220,151,.95); }
-    .badge.bad{ border-color:rgba(255,107,107,.45); color:rgba(255,107,107,.95); }
-    .badge.pending{ border-color:rgba(255,200,90,.45); color:rgba(255,200,90,.95); }
+    .badge.good{ border-color: rgba(51, 209, 122, .35); color: rgba(51, 209, 122, .95); }
+    .badge.bad{ border-color: rgba(255, 92, 92, .35); color: rgba(255, 92, 92, .95); }
+    .badge.warn{ border-color: rgba(255, 204, 102, .35); color: rgba(255, 204, 102, .95); }
 
-    label{
-      display:block;
-      font-size:12px;
+    .note__text{
       color:var(--muted);
-      margin:10px 0 6px;
+      font-size:13px;
+      line-height:1.55;
+      white-space: pre-wrap;
+      margin: 10px 0 0 0;
     }
 
-    input[type="text"], textarea, select{
-      width:100%;
-      background:#0b0f14;
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      border-radius:12px;
-      padding:.6rem .65rem;
-      outline:none;
-      font-family:inherit;
-    }
-
-    textarea{
-      min-height:110px;
-      resize:vertical;
-    }
-
-    .actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
-    .images{
+    .note__images{
       display:grid;
-      grid-template-columns:repeat(2, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap:8px;
       margin-top:10px;
     }
-    .images img{
+    .note__images img{
       width:100%;
       border-radius:10px;
       border:1px solid rgba(255,255,255,.08);
       display:block;
     }
 
-    .top-actions{
+    .actions{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .chip{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      padding:.35rem .55rem;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:12px;
+      user-select:none;
+    }
+    .chip:hover{ color: var(--text); }
+
+    .chip.good{ border-color: rgba(51, 209, 122, .35); color: rgba(51, 209, 122, .95); }
+    .chip.bad{ border-color: rgba(255, 92, 92, .35); color: rgba(255, 92, 92, .95); }
+    .chip.warn{ border-color: rgba(255, 204, 102, .35); color: rgba(255, 204, 102, .95); }
+
+    .muted{ color:var(--muted); }
+
+    /* Modal edit */
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:flex;
       align-items:center;
+      justify-content:center;
+      padding: 1rem;
+      z-index: 50;
+    }
+    .modal[hidden]{ display:none; }
+
+    .modal__card{
+      width:min(780px, 100%);
+      background: #0f1624;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      padding: 1rem;
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+    }
+    .modal__top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:.6rem;
+    }
+    .modal__card h2{
+      margin:0;
+      font-size:1rem;
+      color: var(--text);
+    }
+    .icon-btn{
+      background:transparent;
+      border:none;
+      color:var(--muted);
+      cursor:pointer;
+      font-size:1.05rem;
+      line-height:1;
+      padding:.2rem .25rem;
+    }
+    .icon-btn:hover{ color:var(--text); }
+
+    label{
+      display:block;
+      margin-top:.75rem;
+      color: var(--text);
+      font-size:.85rem;
+    }
+    input[type="text"], textarea{
+      width:100%;
+      margin-top:.35rem;
+      background:#0b0f14;
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      border-radius:12px;
+      padding:.65rem .7rem;
+      outline:none;
+      font-family: inherit;
+    }
+    textarea{ resize: vertical; min-height: 140px; }
+
+    .modal__actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:.6rem;
+      margin-top:1rem;
+      flex-wrap:wrap;
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+      margin-top:8px;
+    }
+
+    .empty{
+      padding:16px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:14px;
+      color:var(--muted);
+      background: rgba(255,255,255,.02);
     }
   </style>
-
-  <!-- GoatCounter -->
-  <script
-    data-goatcounter="https://fr1255.goatcounter.com/count"
-    async
-    src="//gc.zgo.at/count.js">
-  </script>
 </head>
 
 <body>
-  <div class="wrap">
-    <h1>Admin Journal — Validation</h1>
-    <p class="small">
-      1) Importe <code>journal-pending.json</code> (fichier téléchargé depuis le Journal).<br>
-      2) Valide / refuse les notes.<br>
-      3) Exporte <code>journal.public.json</code>, puis remplace le fichier dans GitHub et commit.
+<div class="wrap">
+  <h1>Admin Journal — Validation</h1>
+  <p class="lead">
+    1) Importer <strong>journal.pending.json</strong> (exporté depuis le Journal privé)<br>
+    2) Publier / refuser / modifier / supprimer<br>
+    3) Exporter <strong>journal.public.json</strong> et le remplacer dans GitHub (commit).
+  </p>
+
+  <section class="panel">
+    <div class="row">
+      <div class="row-left">
+        <label class="btn" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
+          Importer les notes
+          <input id="importPending" type="file" accept="application/json" hidden>
+        </label>
+
+        <button class="btn good" id="exportPublic">Exporter journal.public.json</button>
+
+        <button class="btn ghost" id="resetSession" title="Revenir aux fichiers publiés (si chargés) + vider l’import pending en mémoire">
+          Réinitialiser la session
+        </button>
+      </div>
+
+      <div class="row-right" id="statusLine">—</div>
+    </div>
+
+    <p class="hint">
+      ⚠️ Sur GitHub Pages, cette page n’est pas “protégée”. La vraie protection, c’est : <strong>seul l’admin commit</strong> le fichier <strong>journal.public.json</strong>.<br>
+      Astuce : tu peux aussi charger le public existant depuis le site (si tu l’héberges dans <code>/journal/data/journal.public.json</code>).
     </p>
+  </section>
 
-    <!-- 2 boutons -->
-    <div class="card">
-      <div class="row">
-        <div class="top-actions">
-          <label class="btn ghost" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
-            Importer les notes
-            <input id="inPending" type="file" accept="application/json" hidden>
-          </label>
+  <section class="panel">
+    <div class="tabs" id="tabs">
+      <div class="pill active" data-tab="all">Tout <strong id="countAll">0</strong></div>
+      <div class="pill" data-tab="pending">🕒 En attente <strong id="countPending">0</strong></div>
+      <div class="pill" data-tab="published">✅ Publié <strong id="countPublished">0</strong></div>
+      <div class="pill" data-tab="rejected">❌ Refusé <strong id="countRejected">0</strong></div>
+      <div class="pill" data-tab="deleted">🗑 Supprimé <strong id="countDeleted">0</strong></div>
+    </div>
 
-          <button class="btn ok" id="exportPublic">Exporter journal.public.json</button>
+    <div class="hint">
+      <span class="muted">Chaque action modifie uniquement l’état en mémoire. Rien n’est publié tant que tu n’exportes pas puis commits.</span>
+    </div>
+
+    <div class="grid" id="notesGrid" aria-label="Liste de notes"></div>
+    <div id="emptyState" class="empty" hidden>Importe un <strong>journal.pending.json</strong> pour afficher des notes (ou charge le public existant).</div>
+  </section>
+</div>
+
+<!-- Modal edit -->
+<section class="modal" id="editModal" hidden>
+  <div class="modal__card" role="dialog" aria-modal="true" aria-label="Modifier une note">
+    <div class="modal__top">
+      <h2>Modifier la note</h2>
+      <button class="icon-btn" id="closeEdit" aria-label="Fermer">✕</button>
+    </div>
+
+    <form id="editForm">
+      <input type="hidden" id="editId">
+
+      <label>
+        Titre
+        <input type="text" id="editTitle" maxlength="120" placeholder="Titre (optionnel)">
+      </label>
+
+      <label>
+        Texte
+        <textarea id="editText" maxlength="8000" placeholder="Texte…"></textarea>
+      </label>
+
+      <label>
+        Images (DataURL) — option avancée
+        <textarea id="editImages" placeholder='Un tableau JSON de DataURL, ex: ["data:image/png;base64,..."]'></textarea>
+        <div class="small">
+          Tu peux laisser vide. (Les images importées depuis le Journal sont conservées telles quelles.)<br>
+          Note : stocker beaucoup d’images en DataURL rend les JSON lourds.
         </div>
+      </label>
 
-        <div class="small" id="status"></div>
+      <div class="modal__actions">
+        <button type="button" class="btn ghost" id="cancelEdit">Annuler</button>
+        <button type="submit" class="btn good">Enregistrer</button>
       </div>
-
-      <p class="small" style="margin-top:10px;">
-        ⚠️ Sur GitHub Pages, cette page n’est pas “protégée”. La protection réelle, c’est : seul l’admin commit <code>journal.public.json</code>.
-      </p>
-    </div>
-
-    <div class="card">
-      <div class="meta">
-        <span class="badge pending">⏳ importé</span>
-        <span class="badge ok">✅ validé</span>
-        <span class="badge bad">❌ refusé</span>
-      </div>
-      <div class="grid" id="grid"></div>
-    </div>
+    </form>
   </div>
+</section>
 
 <script>
 (() => {
-  const PUBLIC_JSON_URL = "journal.public.json";
-  const ZONES = ["banc", "etabli", "tas"];
-  const ZONE_LABEL = {banc:"🛠 Banc", etabli:"🪚 Établi", tas:"🪵 Tas"};
+  // IMPORTANT: adapte BASE_PATH si ton site est sous /maker-lab-mouton-5-pattes/
+  // Exemple GitHub Pages: "/maker-lab-mouton-5-pattes/journal/data/journal.public.json"
+  const BASE_PATH = "/maker-lab-mouton-5-pattes";
+  const PUBLIC_URL = `${BASE_PATH}/journal/data/journal.public.json`;
 
-  const $ = (id) => document.getElementById(id);
-  const grid = $("grid");
-  const statusEl = $("status");
+  const importPendingInput = document.getElementById("importPending");
+  const exportPublicBtn = document.getElementById("exportPublic");
+  const resetBtn = document.getElementById("resetSession");
 
-  let publicNotes = [];     // notes déjà publiques (pour merge)
-  let pendingNotes = [];    // notes importées
-  let decisions = new Map(); // id -> "pending" | "approved" | "rejected"
-  let edits = new Map();     // id -> {zone,title,text,images}
+  const statusLine = document.getElementById("statusLine");
 
-  function setStatus(msg){ statusEl.textContent = msg || ""; }
+  const tabs = document.getElementById("tabs");
+  const notesGrid = document.getElementById("notesGrid");
+  const emptyState = document.getElementById("emptyState");
 
-  function uid(){
-    return (crypto?.randomUUID)
-      ? crypto.randomUUID()
-      : String(Date.now()) + Math.random().toString(16).slice(2);
+  const countAll = document.getElementById("countAll");
+  const countPending = document.getElementById("countPending");
+  const countPublished = document.getElementById("countPublished");
+  const countRejected = document.getElementById("countRejected");
+  const countDeleted = document.getElementById("countDeleted");
+
+  const editModal = document.getElementById("editModal");
+  const closeEditBtn = document.getElementById("closeEdit");
+  const cancelEditBtn = document.getElementById("cancelEdit");
+  const editForm = document.getElementById("editForm");
+  const editId = document.getElementById("editId");
+  const editTitle = document.getElementById("editTitle");
+  const editText = document.getElementById("editText");
+  const editImages = document.getElementById("editImages");
+
+  let currentTab = "all";
+
+  // In-memory store
+  // state:
+  //  - pending    : en attente
+  //  - published  : publié
+  //  - rejected   : refusé
+  //  - deleted    : supprimé (retiré partout)
+  const stateById = new Map();
+
+  // Utilities
+  function escapeHtml(str) {
+    return (str || "").replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[m]));
   }
 
-  function escapeAttr(s){
-    return String(s ?? "")
-      .replace(/&/g,"&amp;")
-      .replace(/"/g,"&quot;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;");
+  function formatDate(ts) {
+    if (!ts) return "—";
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return "—";
+    return d.toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
   }
 
-  function escapeText(s){
-    return String(s ?? "")
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;");
-  }
+  function normalizeIncoming(incoming, defaultState) {
+    const arr = Array.isArray(incoming) ? incoming : (incoming?.notes || []);
+    if (!Array.isArray(arr)) return [];
 
-  function normalizePublic(n){
-    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
-    const createdAt = (typeof n.createdAt === "number") ? n.createdAt
-                  : (typeof n.createdAt === "string") ? Date.parse(n.createdAt)
-                  : Date.now();
-
-    return {
-      id: n.id || uid(),
-      zone,
-      title: typeof n.title === "string" ? n.title : "",
-      text: typeof n.text === "string" ? n.text : (typeof n.body === "string" ? n.body : ""),
-      images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
-      createdAt: Number.isFinite(createdAt) ? createdAt : Date.now()
-    };
-  }
-
-  function normalizePending(n){
-    const zone = ZONES.includes(n.zone) ? n.zone : "banc";
-    const createdAt = (typeof n.createdAt === "number") ? n.createdAt
-                    : (typeof n.createdAt === "string") ? Date.parse(n.createdAt)
-                    : Date.now();
-
-    return {
-      id: n.id || uid(),
-      zone,
+    return arr.map(n => ({
+      id: (typeof n.id === "string" && n.id) ? n.id : String(Date.now()) + Math.random().toString(16).slice(2),
       title: typeof n.title === "string" ? n.title : "",
       text: typeof n.text === "string" ? n.text : "",
       images: Array.isArray(n.images) ? n.images.filter(x => typeof x === "string") : [],
-      createdAt: Number.isFinite(createdAt) ? createdAt : Date.now()
+      createdAt: (typeof n.createdAt === "number") ? n.createdAt : Date.now(),
+      state: n.state && ["pending","published","rejected","deleted"].includes(n.state) ? n.state : defaultState
+    }))
+    .filter(n => (n.title.trim() || n.text.trim() || (n.images && n.images.length)));
+  }
+
+  function setStatus(msg) {
+    statusLine.textContent = msg;
+  }
+
+  function computeCounts() {
+    const all = Array.from(stateById.values());
+    const counts = {
+      all: all.filter(n => n.state !== "deleted").length,
+      pending: all.filter(n => n.state === "pending").length,
+      published: all.filter(n => n.state === "published").length,
+      rejected: all.filter(n => n.state === "rejected").length,
+      deleted: all.filter(n => n.state === "deleted").length,
     };
+    countAll.textContent = counts.all;
+    countPending.textContent = counts.pending;
+    countPublished.textContent = counts.published;
+    countRejected.textContent = counts.rejected;
+    countDeleted.textContent = counts.deleted;
   }
 
-  async function loadPublic(){
-    try{
-      const res = await fetch(PUBLIC_JSON_URL, { cache:"no-store" });
-      if(!res.ok) throw new Error("no public");
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : data.notes;
-      publicNotes = Array.isArray(list) ? list.map(normalizePublic) : [];
-      setStatus(`Public chargé: ${publicNotes.length} note(s).`);
-    } catch {
-      publicNotes = [];
-      setStatus("Public: aucun (ou fichier absent).");
-    }
+  function getBadge(note) {
+    if (note.state === "published") return `<span class="badge good">✅ publié</span>`;
+    if (note.state === "pending") return `<span class="badge warn">🕒 en attente</span>`;
+    if (note.state === "rejected") return `<span class="badge bad">❌ refusé</span>`;
+    if (note.state === "deleted") return `<span class="badge">🗑 supprimé</span>`;
+    return `<span class="badge">—</span>`;
   }
 
-  function badgeFor(state){
-    if(state === "approved") return `<span class="badge ok">✅ validé</span>`;
-    if(state === "rejected") return `<span class="badge bad">❌ refusé</span>`;
-    return `<span class="badge pending">⏳ importé</span>`;
+  function filterByTab(note) {
+    if (currentTab === "all") return note.state !== "deleted";
+    return note.state === currentTab;
   }
 
-  function render(){
-    grid.innerHTML = "";
-    if(!pendingNotes.length){
-      grid.innerHTML = `<div class="small">Importe un <code>journal-pending.json</code> pour afficher des notes.</div>`;
+  function render() {
+    computeCounts();
+    const notes = Array.from(stateById.values())
+      .filter(filterByTab)
+      .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    emptyState.hidden = (stateById.size !== 0);
+    if (stateById.size === 0) {
+      notesGrid.innerHTML = "";
       return;
     }
 
-    pendingNotes.forEach(n => {
-      const state = decisions.get(n.id) || "pending";
-      const e = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
+    if (notes.length === 0) {
+      notesGrid.innerHTML = `<div class="empty">Aucune note dans cet onglet.</div>`;
+      return;
+    }
 
-      const card = document.createElement("div");
-      card.className = "note";
-      card.innerHTML = `
-        <div class="meta">
-          ${badgeFor(state)}
-          <span>id: <code>${n.id}</code></span>
-        </div>
+    notesGrid.innerHTML = notes.map(n => {
+      const title = n.title?.trim() ? escapeHtml(n.title.trim()) : "Note";
+      const text = n.text?.trim() ? escapeHtml(n.text.trim()) : "";
+      const imagesHtml = (n.images && n.images.length)
+        ? `<div class="note__images">${n.images.slice(0,6).map(src => `<img src="${src}" alt="">`).join("")}</div>`
+        : "";
 
-        <label>Zone</label>
-        <select data-field="zone">
-          ${ZONES.map(z => `<option value="${z}" ${e.zone===z?"selected":""}>${ZONE_LABEL[z]}</option>`).join("")}
-        </select>
-
-        <label>Titre</label>
-        <input type="text" data-field="title" value="${escapeAttr(e.title)}" placeholder="Titre (optionnel)">
-
-        <label>Texte</label>
-        <textarea data-field="text" placeholder="Note">${escapeText(e.text)}</textarea>
-
-        ${(e.images && e.images.length) ? `
-          <div class="images">
-            ${e.images.map(src => `<img src="${src}" alt="">`).join("")}
+      return `
+        <article class="note" data-id="${escapeHtml(n.id)}">
+          <div class="note__head">
+            <div>
+              <h3 class="note__title">${title}</h3>
+              <div class="note__meta">${formatDate(n.createdAt)}</div>
+            </div>
+            ${getBadge(n)}
           </div>
-          <div class="small" style="margin-top:6px;">Images: ${e.images.length} (elles seront publiques si validées)</div>
-        ` : `<div class="small" style="margin-top:8px;">Aucune image</div>`}
 
-        <div class="actions">
-          <button class="btn ok" data-act="approve">Valider</button>
-          <button class="btn bad" data-act="reject">Refuser</button>
-        </div>
+          ${text ? `<p class="note__text">${text}</p>` : ""}
+
+          ${imagesHtml}
+
+          <div class="actions">
+            <button class="chip good" data-action="publish">Publier</button>
+            <button class="chip warn" data-action="pending">Mettre en attente</button>
+            <button class="chip bad" data-action="reject">Refuser</button>
+            <button class="chip" data-action="edit">Modifier</button>
+            <button class="chip" data-action="delete">Supprimer</button>
+          </div>
+        </article>
       `;
-
-      card.addEventListener("click", (ev) => {
-        const b = ev.target.closest("[data-act]");
-        if(!b) return;
-        const act = b.getAttribute("data-act");
-        if(act === "approve") decisions.set(n.id, "approved");
-        if(act === "reject") decisions.set(n.id, "rejected");
-        render();
-      });
-
-      card.addEventListener("input", (ev) => {
-        const field = ev.target?.getAttribute?.("data-field");
-        if(!field) return;
-        const cur = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
-        edits.set(n.id, { ...cur, [field]: ev.target.value });
-      });
-
-      grid.appendChild(card);
-    });
+    }).join("");
   }
 
-  function buildPublicMerged(){
-    const approved = pendingNotes
-      .filter(n => decisions.get(n.id) === "approved")
-      .map(n => {
-        const e = edits.get(n.id) || { zone:n.zone, title:n.title, text:n.text, images:n.images };
-        return normalizePublic({
-          id: n.id,
-          zone: e.zone,
-          title: e.title,
-          text: e.text,
-          images: e.images,
-          createdAt: new Date().toISOString()
+  function upsertMany(list, sourceLabel) {
+    // Si une note existe déjà, on garde son state actuel sauf si c’est nouveau.
+    let added = 0;
+    let updated = 0;
+
+    for (const n of list) {
+      const existing = stateById.get(n.id);
+      if (!existing) {
+        stateById.set(n.id, n);
+        added++;
+      } else {
+        // Merge contenu, mais garde l'état existant
+        stateById.set(n.id, {
+          ...existing,
+          title: n.title,
+          text: n.text,
+          images: n.images,
+          createdAt: n.createdAt || existing.createdAt,
+          state: existing.state
         });
-      });
+        updated++;
+      }
+    }
 
-    // merge (évite doublons)
-    const byId = new Map(publicNotes.map(n => [n.id, n]));
-    for(const n of approved) byId.set(n.id, n);
-
-    return Array.from(byId.values()).sort((a,b) => b.createdAt - a.createdAt);
+    setStatus(`${sourceLabel}: +${added} ajouté(s), ${updated} mis à jour.`);
   }
 
-  function downloadJSON(filename, data){
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  async function loadPublicFromSite() {
+    try {
+      const res = await fetch(PUBLIC_URL, { cache: "no-store" });
+      if (!res.ok) return { ok:false, notes: [] };
+      const data = await res.json();
+      const normalized = normalizeIncoming(data, "published").map(n => ({ ...n, state: "published" }));
+      return { ok:true, notes: normalized };
+    } catch {
+      return { ok:false, notes: [] };
+    }
+  }
+
+  function downloadJSON(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -413,43 +603,183 @@
     setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
-  $("inPending").addEventListener("change", async () => {
-    const file = $("inPending").files?.[0];
-    if(!file) return;
+  // Tabs
+  tabs.addEventListener("click", (e) => {
+    const pill = e.target.closest(".pill");
+    if (!pill) return;
+    const tab = pill.getAttribute("data-tab");
+    if (!tab) return;
 
-    let txt = "";
-    try { txt = await file.text(); }
-    catch { alert("Impossible de lire le fichier."); return; }
-
-    let data;
-    try { data = JSON.parse(txt); }
-    catch { alert("JSON invalide."); return; }
-
-    const list = Array.isArray(data) ? data : data.notes;
-    if(!Array.isArray(list)){ alert("Format non reconnu."); return; }
-
-    pendingNotes = list.map(normalizePending);
-    decisions = new Map(pendingNotes.map(n => [n.id, "pending"]));
-    edits = new Map();
-
-    setStatus(`Pending importé: ${pendingNotes.length} note(s).`);
+    currentTab = tab;
+    tabs.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
     render();
   });
 
-  $("exportPublic").addEventListener("click", () => {
-    const merged = buildPublicMerged();
-    downloadJSON("journal.public.json", merged);
+  // Note actions
+  notesGrid.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
 
-    const approvedCount = pendingNotes.filter(n => decisions.get(n.id) === "approved").length;
-    alert(
-      `Export prêt ✅\n` +
-      `Notes validées: ${approvedCount}\n\n` +
-      `Étape suivante : remplacer /journal/journal.public.json dans GitHub puis commit.`
-    );
+    const action = btn.getAttribute("data-action");
+    const noteEl = btn.closest(".note");
+    const id = noteEl?.getAttribute("data-id");
+    if (!id) return;
+
+    const note = stateById.get(id);
+    if (!note) return;
+
+    if (action === "publish") {
+      note.state = "published";
+      stateById.set(id, note);
+      render();
+      return;
+    }
+
+    if (action === "pending") {
+      note.state = "pending";
+      stateById.set(id, note);
+      render();
+      return;
+    }
+
+    if (action === "reject") {
+      note.state = "rejected";
+      stateById.set(id, note);
+      render();
+      return;
+    }
+
+    if (action === "delete") {
+      const ok = confirm("Supprimer définitivement cette note (elle ne sera plus exportée) ?");
+      if (!ok) return;
+      note.state = "deleted";
+      stateById.set(id, note);
+      render();
+      return;
+    }
+
+    if (action === "edit") {
+      // open modal
+      editId.value = note.id;
+      editTitle.value = note.title || "";
+      editText.value = note.text || "";
+      editImages.value = (note.images && note.images.length) ? JSON.stringify(note.images, null, 2) : "";
+      editModal.hidden = false;
+      editTitle.focus();
+      return;
+    }
   });
 
-  // Init
-  loadPublic().then(render);
+  function closeEdit() {
+    editModal.hidden = true;
+    editForm.reset();
+  }
+
+  closeEditBtn.addEventListener("click", closeEdit);
+  cancelEditBtn.addEventListener("click", closeEdit);
+  editModal.addEventListener("click", (e) => {
+    if (e.target === editModal) closeEdit();
+  });
+
+  editForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = editId.value;
+    const note = stateById.get(id);
+    if (!note) return;
+
+    note.title = editTitle.value || "";
+    note.text = editText.value || "";
+
+    const raw = (editImages.value || "").trim();
+    if (raw) {
+      try {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          note.images = arr.filter(x => typeof x === "string");
+        } else {
+          alert("Images: attendu un tableau JSON.");
+          return;
+        }
+      } catch {
+        alert("Images: JSON invalide.");
+        return;
+      }
+    }
+    // si vide, on ne touche pas aux images (évite d’effacer par erreur)
+    stateById.set(id, note);
+    closeEdit();
+    render();
+  });
+
+  // Import pending file
+  importPendingInput.addEventListener("change", async () => {
+    const file = importPendingInput.files?.[0];
+    if (!file) return;
+
+    let text = "";
+    try {
+      text = await file.text();
+    } catch {
+      alert("Impossible de lire le fichier.");
+      importPendingInput.value = "";
+      return;
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      alert("JSON invalide.");
+      importPendingInput.value = "";
+      return;
+    }
+
+    const normalized = normalizeIncoming(data, "pending").map(n => ({ ...n, state: "pending" }));
+    upsertMany(normalized, "Import pending");
+    importPendingInput.value = "";
+    render();
+  });
+
+  // Export public file (published only)
+  exportPublicBtn.addEventListener("click", () => {
+    const notes = Array.from(stateById.values())
+      .filter(n => n.state === "published")
+      .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0))
+      .map(({ state, ...rest }) => rest);
+
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      notes
+    };
+
+    downloadJSON(payload, "journal.public.json");
+    setStatus(`Export: ${notes.length} note(s) publiée(s) exportée(s).`);
+  });
+
+  // Reset session
+  resetBtn.addEventListener("click", async () => {
+    const ok = confirm("Réinitialiser la session ? (tu perds les modifications non exportées)");
+    if (!ok) return;
+    stateById.clear();
+    await bootstrap();
+  });
+
+  // Boot: load existing public notes from hosted file (if present)
+  async function bootstrap() {
+    setStatus("Chargement du public…");
+    const pub = await loadPublicFromSite();
+    if (pub.ok) {
+      upsertMany(pub.notes, "Public chargé");
+      setStatus(`Public chargé: ${pub.notes.length} note(s).`);
+    } else {
+      setStatus("Public non trouvé (ok si premier lancement).");
+    }
+    render();
+  }
+
+  bootstrap();
 })();
 </script>
 </body>
