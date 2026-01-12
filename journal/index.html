@@ -116,6 +116,9 @@
       cursor:pointer;
       font-weight:650;
       font-size:14px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
     }
     .btn:hover{ transform: translateY(-1px); }
 
@@ -434,7 +437,6 @@
     Pas de publication régulière, pas de plan éditorial.
   </p>
 
-  <!-- Carte de présentation du journal -->
   <section class="card">
     <p>
       Ce journal est volontairement peu rempli.<br><br>
@@ -445,7 +447,6 @@
     </p>
   </section>
 
-  <!-- OUTILS JOURNAL (SIMPLIFIÉS) -->
   <section class="journal-tools" aria-label="Outils du journal">
     <button class="btn" id="openNoteForm">+ Nouvelle note</button>
 
@@ -457,6 +458,14 @@
       Réinitialiser mes notes
     </button>
 
+    <!-- ✅ lien admin (visible seulement si admin) -->
+    <a class="btn ghost" id="openAdminLink"
+       href="/maker-lab-mouton-5-pattes/journal/admin.html"
+       style="display:none;"
+       title="Ouvrir la page d’administration (validation)">
+      Ouvrir l’admin
+    </a>
+
     <!-- ✅ Badge admin/visiteur -->
     <span class="badge role-badge visitor" id="roleBadge" title="Détecté via localStorage (ml_is_admin)">🧭 visiteur</span>
   </section>
@@ -466,7 +475,6 @@
     <span class="badge">📝 brouillon</span> et <span class="badge pending">⏳ en attente</span> restent sur ton navigateur.
   </p>
 
-  <!-- ZONES -->
   <section class="notes-wrap" aria-label="Journal : zones">
     <!-- Banc -->
     <section class="zone" data-zone="banc" aria-label="Banc de travail">
@@ -583,7 +591,6 @@
     </div>
   </section>
 
-  <!-- Carte Audience -->
   <section class="card">
     <h2>📈 Audience</h2>
     <p>
@@ -592,9 +599,7 @@
     </p>
 
     <div class="cta">
-      → <a href="/maker-lab-mouton-5-pattes/journal/audience.html">
-        Voir l’audience
-      </a>
+      → <a href="/maker-lab-mouton-5-pattes/journal/audience.html">Voir l’audience</a>
     </div>
   </section>
 
@@ -612,6 +617,7 @@
   // ✅ Badge admin/visiteur (partagé avec journal/admin.html)
   const ADMIN_KEY = "ml_is_admin";
   const roleBadge = document.getElementById("roleBadge");
+  const openAdminLink = document.getElementById("openAdminLink");
 
   function isAdminBrowser(){
     return localStorage.getItem(ADMIN_KEY) === "true";
@@ -623,14 +629,68 @@
     roleBadge.textContent = on ? "✅ admin" : "🧭 visiteur";
     roleBadge.classList.toggle("admin", on);
     roleBadge.classList.toggle("visitor", !on);
+    if (openAdminLink) openAdminLink.style.display = on ? "inline-flex" : "none";
   }
 
-  // Mise à jour au chargement + quand on revient sur l’onglet
   updateRoleBadge();
   window.addEventListener("focus", updateRoleBadge);
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) updateRoleBadge();
   });
+
+  // ✉️ Formspree — mail uniquement pour les visiteurs
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgoowark";
+
+  // 🔕 anti-doublons
+  const LAST_SENT_KEY = "journal_last_validation_signature_v1";
+  function pendingSignature(pendingNotes){
+    return JSON.stringify(pendingNotes.map(n => ({
+      id: n.id,
+      zone: n.zone,
+      title: (n.title || "").slice(0,120),
+      text: (n.text || "").slice(0,400),
+      createdAt: n.createdAt
+    })));
+  }
+  function alreadySent(sig){ return localStorage.getItem(LAST_SENT_KEY) === sig; }
+  function markSent(sig){ localStorage.setItem(LAST_SENT_KEY, sig); }
+
+  async function sendValidationEmail(pendingNotes){
+    if (isAdminBrowser()) return;
+    const sig = pendingSignature(pendingNotes);
+    if (alreadySent(sig)) return;
+
+    const lines = pendingNotes.map((n, i) => {
+      const title = (n.title || "").trim() || "(sans titre)";
+      const zone = n.zone || "";
+      const date = new Date(n.createdAt || Date.now()).toLocaleString("fr-FR");
+      const text = (n.text || "").trim();
+      return `#${i+1} — ${title}\nZone: ${zone}\nDate: ${date}\n${text}\n`;
+    }).join("\n----------------------\n\n");
+
+    try{
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type":"application/json", "Accept":"application/json" },
+        body: JSON.stringify({
+          subject: `📝 Journal — ${pendingNotes.length} note(s) à valider`,
+          message:
+`Un visiteur a envoyé des notes pour validation.
+
+Un fichier "journal.pending.json" a aussi été téléchargé sur son navigateur.
+Pour valider : récupérer le fichier puis l’importer dans /journal/admin.html.
+
+Résumé :
+${lines}`
+        })
+      });
+
+      if (res.ok) markSent(sig);
+      else console.warn("Formspree: réponse non OK", await res.text());
+    }catch(err){
+      console.warn("Formspree: mail non envoyé", err);
+    }
+  }
 
   const noteFormOverlay = document.getElementById("noteForm");
   const openBtn = document.getElementById("openNoteForm");
@@ -762,12 +822,22 @@
         sentAt: n.sentAt || n.createdAt
       }));
 
-    // ✅ harmonisé avec admin.html (journal.pending.json)
+    // ✉️ mail seulement si visiteur (anti-doublon inclus)
+    if (pending.length > 0) sendValidationEmail(pending);
+
+    // ✅ harmonisé avec admin.html
     downloadJSON("journal.pending.json", {
       exportedAt: new Date().toISOString(),
       version: 3,
       notes: pending
     });
+
+    // 🧹 après export : repasser pending en draft (évite re-envoi involontaire)
+    if (pending.length > 0) {
+      const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
+      saveNotes(updated);
+      renderAll();
+    }
 
     if (pending.length === 0) alert("Aucune note en attente à exporter.");
   }
@@ -871,7 +941,6 @@
     zoneEl.value = "banc";
   }
 
-  // UI events
   openBtn.addEventListener("click", () => openForm("banc"));
   closeBtn.addEventListener("click", closeForm);
   cancelBtn.addEventListener("click", closeForm);
@@ -889,14 +958,12 @@
     renderAll();
   });
 
-  // Zone buttons (+ Nouveau post-it)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest('[data-action="new"][data-zone]');
     if (!btn) return;
     openForm(btn.getAttribute("data-zone"));
   });
 
-  // Add note (draft)
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -926,7 +993,6 @@
     renderAll();
   });
 
-  // Note actions (local)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
@@ -967,12 +1033,10 @@
     if (action === "send") {
       if (notes[idx].status !== "draft") return;
 
-      // 1) passe en attente
       notes[idx] = { ...notes[idx], status:"pending", sentAt: Date.now() };
       saveNotes(notes);
       renderAll();
 
-      // 2) télécharge automatiquement le fichier pending
       exportPendingNow();
 
       alert("Envoyé pour validation ✅\nUn fichier 'journal.pending.json' a été téléchargé.");
@@ -980,7 +1044,6 @@
     }
   });
 
-  // Init
   (async function init() {
     await loadPublic();
     renderAll();
