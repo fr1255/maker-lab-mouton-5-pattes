@@ -5,6 +5,9 @@
   <title>Application lenticulaire – Maker Lab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Canonical (optionnel mais propre) -->
+  <link rel="canonical" href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/application-lenticulaire/">
+
   <style>
     :root{
       --bg:#0b0f14;
@@ -169,13 +172,22 @@
     }
   </style>
 
-  <script
-  data-goatcounter="https://fr1255.goatcounter.com/count"
-  async
-  src="//gc.zgo.at/count.js">
-</script>
+  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
+      }
+    };
+  </script>
 
-  
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -184,7 +196,7 @@
   <nav>
     <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
     <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
-    <a href="/maker-lab-mouton-5-pattes/#journal">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
     <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
   </nav>
 </header>
