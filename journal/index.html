@@ -641,12 +641,13 @@
   });
 
   /* =========================
-     ✉️ Formspree (avec PJ)
+     ✉️ Formspree (SANS PJ)
+     -> JSON inclus dans le mail
      ========================= */
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgoowark";
 
   // anti-doublons (évite spam si clic multiple)
-  const LAST_SENT_KEY = "journal_last_validation_signature_v2";
+  const LAST_SENT_KEY = "journal_last_validation_signature_v3_mailjson";
   function pendingSignature(pendingNotes){
     // signature légère (sans images)
     return JSON.stringify(pendingNotes.map(n => ({
@@ -687,37 +688,50 @@
 
     return `Un visiteur a envoyé des notes pour validation.
 
-Le fichier joint "journal.pending.json" contient toutes les notes en attente.
+Le fichier "journal.pending.json" a été téléchargé sur son navigateur.
 Pour valider : ouvrir /journal/admin.html puis importer le fichier.
 
 Résumé :
 ${lines}`;
   }
 
-  async function sendValidationEmailWithAttachment(pendingNotes, payloadObj){
+  async function sendValidationEmailEmbeddedJSON(pendingNotes, payloadObj){
+    // mail uniquement visiteurs
     if (isAdminBrowser()) return { ok:false, skipped:true, reason:"admin" };
 
     const sig = pendingSignature(pendingNotes);
     if (alreadySent(sig)) return { ok:false, skipped:true, reason:"duplicate" };
 
-    // fichier JSON en mémoire
     const jsonStr = JSON.stringify(payloadObj, null, 2);
-    const file = new File([jsonStr], "journal.pending.json", { type: "application/json" });
 
-    const fd = new FormData();
-    fd.append("subject", `📝 Journal — ${pendingNotes.length} note(s) à valider`);
-    fd.append("message", buildMailSummary(pendingNotes));
-    fd.append("count", String(pendingNotes.length));
-    fd.append("page", location.href);
+    // évite un mail gigantesque si beaucoup d'images
+    const MAX_CHARS = 120000;
+    const jsonForMail = (jsonStr.length <= MAX_CHARS)
+      ? jsonStr
+      : (jsonStr.slice(0, MAX_CHARS) + "\n\n--- TRONQUÉ (trop long). Utiliser le fichier téléchargé 'journal.pending.json' ---\n");
 
-    // ✅ pièce jointe (Formspree doit autoriser les fichiers)
-    fd.append("attachment", file);
+    const message =
+`${buildMailSummary(pendingNotes)}
+
+==============================
+JSON (journal.pending.json)
+==============================
+${jsonForMail}
+`;
 
     try{
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
-        body: fd,
-        headers: { "Accept":"application/json" }
+        headers: {
+          "Content-Type":"application/json",
+          "Accept":"application/json"
+        },
+        body: JSON.stringify({
+          subject: `📝 Journal — ${pendingNotes.length} note(s) à valider`,
+          message,
+          count: pendingNotes.length,
+          page: location.href
+        })
       });
 
       if (!res.ok) {
@@ -863,8 +877,8 @@ ${lines}`;
     // 1) Téléchargement local (toujours)
     downloadJSON("journal.pending.json", payload);
 
-    // 2) Email avec pièce jointe (uniquement visiteurs)
-    const mailRes = await sendValidationEmailWithAttachment(pendingNotes, payload);
+    // 2) Email (uniquement visiteurs) avec JSON dans le corps
+    const mailRes = await sendValidationEmailEmbeddedJSON(pendingNotes, payload);
 
     // 3) Eviter ré-envoi involontaire: repasser pending -> draft après export
     const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
@@ -878,7 +892,7 @@ ${lines}`;
     } else if (mailRes.skipped && mailRes.reason === "duplicate") {
       alert("Déjà envoyé (anti-doublon) ✅\nLe fichier 'journal.pending.json' a été téléchargé.");
     } else {
-      alert("Le fichier a été téléchargé ✅\nMais l’email n’a pas pu être envoyé (ou Formspree refuse les pièces jointes).");
+      alert("Le fichier a été téléchargé ✅\nMais l’email n’a pas pu être envoyé.");
     }
   }
 
@@ -1082,7 +1096,7 @@ ${lines}`;
       saveNotes(notes);
       renderAll();
 
-      // export + mail + PJ
+      // export + mail
       exportPendingNow();
       return;
     }
