@@ -85,20 +85,36 @@
     }
 
     .pdf-preview {
-  margin-top: 16px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: #000;
-}
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+    }
 
-.pdf-preview iframe {
-  width: 100%;
-  height: 600px;
-  border: none;
-}
-
+    .pdf-preview iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
   </style>
+
+  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
+      }
+    };
+  </script>
+
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -106,12 +122,12 @@
 
     <header>
       <div class="back">
-        ← <a href="../index.html">Retour à l’accueil</a>
+        ← <a href="../../">Retour à l’accueil</a>
       </div>
-      <h1>Système d’alarme des portes de secours </h1>
+      <h1>Système d’alarme des portes de secours</h1>
       <p>
         Ce système d’alarme assure la surveillance intelligente des portes de secours afin de détecter toute ouverture non autorisée,
-        sans dépendre du réseau Internet du site. 
+        sans dépendre du réseau Internet du site.
       </p>
     </header>
 
@@ -131,53 +147,49 @@
       </p>
     </section>
 
-   <section class="card">
-  <h2>📄 Documentation – Version 1</h2>
-  <p>Documentation technique du projet :</p>
+    <section class="card">
+      <h2>📄 Documentation – Version 1</h2>
+      <p>Documentation technique du projet :</p>
 
-  <!-- Aperçu PDF intégré -->
-  <div class="pdf-preview">
-    <iframe
-      src="../pdf/alarme-portes-secours-version1.pdf"
-      title="Documentation technique – Alarme portes de secours"
-      loading="lazy">
-    </iframe>
-  </div>
+      <div class="pdf-preview">
+        <iframe
+          src="../pdf/alarme-portes-secours-version1.pdf"
+          title="Documentation technique – Alarme portes de secours"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <!-- Lien de secours -->
-  <p style="margin-top:12px;">
-    📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf"
-   target="_blank" rel="noopener">
-  Ouvrir le PDF dans un nouvel onglet
-</a>
+      <p style="margin-top:12px;">
+        📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version1.pdf"
+             target="_blank" rel="noopener">
+          Ouvrir le PDF dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-  </p>
-</section>
+    <section class="card">
+      <h2>📄 Documentation – Version 2</h2>
 
-<section class="card">
-  <h2>📄 Documentation – Version 2</h2>
+      <p>
+        Version optimisée suite à la visite du bâtiment et à l’analyse de ses contraintes structurelles.
+      </p>
 
-  <p>
-    Version optimisée suite à la visite du bâtiment et à l’analyse de ses contraintes structurelles.
-  </p>
+      <div class="pdf-preview">
+        <iframe
+          src="../pdf/alarme-portes-secours-version2.pdf"
+          title="Documentation technique – Version 2"
+          loading="lazy">
+        </iframe>
+      </div>
 
-  <div class="pdf-preview">
-    <iframe
-      src="../pdf/alarme-portes-secours-version2.pdf"
-      title="Documentation technique – Version 2"
-      loading="lazy">
-    </iframe>
-  </div>
+      <p style="margin-top:12px;">
+        📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf"
+             target="_blank" rel="noopener">
+          Ouvrir le PDF V2 dans un nouvel onglet
+        </a>
+      </p>
+    </section>
 
-  <p style="margin-top:12px;">
-    📎 <a href="/maker-lab-mouton-5-pattes/pdf/alarme-portes-secours-version2.pdf"
-   target="_blank" rel="noopener">
-  Ouvrir le PDF V2 dans un nouvel onglet
-</a>
-  </p>
-</section>
-
-    
     <footer>
       © 2026 Maker Lab du Mouton à 5 Pattes
     </footer>
@@ -185,4 +197,3 @@
   </div>
 </body>
 </html>
-
