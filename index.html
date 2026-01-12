@@ -209,13 +209,23 @@
       .qrcode{ width:110px; }
     }
   </style>
- </style>
 
-<script data-goatcounter="https://fr1255.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];               // enlève les query params
+        p = p.replace(/\/index\.html$/, '/'); // /index.html -> /
+        if (p.length > 1) p = p.replace(/\/$/, ''); // enlève slash final sauf racine
+        return p;
+      }
+    };
+  </script>
 
-
- 
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
