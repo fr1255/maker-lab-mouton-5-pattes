@@ -311,6 +311,23 @@
       color:var(--muted);
       background: rgba(255,255,255,.02);
     }
+
+    /* ✅ zone drop */
+    .drop-hint{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.20);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    body.dragover .drop-hint{
+      border-color: rgba(88,166,255,.55);
+      color: var(--text);
+      background: rgba(88,166,255,.08);
+    }
   </style>
 </head>
 
@@ -331,6 +348,11 @@
           <input id="importPending" type="file" accept="application/json" hidden>
         </label>
 
+        <!-- ✅ Nouveau : import presse-papier -->
+        <button class="btn" id="pasteImport" title="Lit le presse-papier et colle le JSON (si autorisé)">Importer depuis presse-papier</button>
+        <button class="btn good" id="pasteApply" title="Parse le texte collé et importe les notes">Importer le texte collé</button>
+        <button class="btn ghost" id="pasteClear" title="Effacer la zone de collage">Effacer</button>
+
         <button class="btn good" id="exportPublic">Exporter journal.public.json</button>
 
         <button class="btn ghost" id="resetSession" title="Revenir aux fichiers publiés (si chargés) + vider l’import pending en mémoire">
@@ -338,7 +360,7 @@
         </button>
 
         <!-- ✅ Nouveau: bouton mode admin -->
-        <button class="btn warn" id="toggleAdmin" title="Marque ce navigateur comme ADMIN (ou le remet en visiteur)">
+        <button class="btn warn" id="toggleAdmin" title="Marque ce navigateur comme ADMIN (ouhi le remet en visiteur)">
           Activer mode admin
         </button>
       </div>
@@ -354,6 +376,20 @@
       ⚠️ Sur GitHub Pages, cette page n’est pas “protégée”. La vraie protection, c’est : <strong>seul l’admin commit</strong> le fichier <strong>journal.public.json</strong>.<br>
       Astuce : le bouton <strong>mode admin</strong> enregistre un flag dans ce navigateur (<code>localStorage</code>) — tes autres pages pourront s’en servir pour éviter d’envoyer un email quand c’est toi.
     </p>
+
+    <!-- ✅ Nouveau : zone texte pour coller le JSON -->
+    <label style="margin-top:10px;">
+      Coller ici le JSON (bloc du mail ou contenu de journal.pending.json)
+      <textarea id="pasteArea" placeholder='{"version":3,"notes":[...]}'></textarea>
+    </label>
+    <div class="small">
+      Tu peux copier/coller tout le mail : l’admin essaye de retrouver automatiquement le premier bloc <code>{...}</code>.
+    </div>
+
+    <!-- ✅ Nouveau : hint drag & drop -->
+    <div class="drop-hint">
+      💡 Astuce : tu peux aussi <strong>glisser-déposer</strong> un fichier <code>journal.pending.json</code> n’importe où sur cette page pour l’importer.
+    </div>
   </section>
 
   <section class="panel">
@@ -486,6 +522,12 @@
   const editTitle = document.getElementById("editTitle");
   const editText = document.getElementById("editText");
   const editImages = document.getElementById("editImages");
+
+  // ✅ presse-papier UI
+  const pasteImportBtn = document.getElementById("pasteImport");
+  const pasteApplyBtn = document.getElementById("pasteApply");
+  const pasteClearBtn = document.getElementById("pasteClear");
+  const pasteArea = document.getElementById("pasteArea");
 
   let currentTab = "all";
 
@@ -660,6 +702,90 @@
     setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
+  // ✅ helper: extraire un JSON depuis un mail (texte autour possible)
+  function extractFirstJsonObject(str){
+    const s = String(str || "");
+    const first = s.indexOf("{");
+    const last = s.lastIndexOf("}");
+    if (first >= 0 && last > first) return s.slice(first, last + 1);
+    return s.trim();
+  }
+
+  async function importFromText(rawText, sourceLabel){
+    const raw = extractFirstJsonObject(rawText);
+    if (!raw) throw new Error("empty");
+
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { throw new Error("json"); }
+
+    const normalized = normalizeIncoming(data, "pending").map(n => ({ ...n, state: "pending" }));
+    upsertMany(normalized, sourceLabel);
+    render();
+    return normalized.length;
+  }
+
+  // ✅ Import presse-papier
+  pasteImportBtn?.addEventListener("click", async () => {
+    try{
+      const t = await navigator.clipboard.readText();
+      pasteArea.value = extractFirstJsonObject(t || "");
+      setStatus("Presse-papier collé. Clique « Importer le texte collé ».");
+    }catch(e){
+      alert("Impossible de lire le presse-papier.\nCopie le JSON puis colle-le manuellement dans la zone.");
+    }
+  });
+
+  pasteClearBtn?.addEventListener("click", () => {
+    pasteArea.value = "";
+  });
+
+  pasteApplyBtn?.addEventListener("click", async () => {
+    const raw = pasteArea.value || "";
+    if (!raw.trim()) { alert("Colle d’abord un JSON."); return; }
+    try{
+      const n = await importFromText(raw, "Import collé");
+      setStatus(`Import collé: ${n} note(s).`);
+    }catch(err){
+      alert(err.message === "json" ? "JSON invalide." : "Rien à importer.");
+    }
+  });
+
+  // ✅ Drag & Drop fichier
+  async function importFileObject(file, label){
+    const txt = await file.text();
+    await importFromText(txt, label);
+  }
+
+  window.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    document.body.classList.add("dragover");
+  });
+
+  window.addEventListener("dragleave", () => {
+    document.body.classList.remove("dragover");
+  });
+
+  window.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    document.body.classList.remove("dragover");
+
+    const file = e.dataTransfer?.files?.[0];
+    if (!file) return;
+
+    if (!/json/i.test(file.type) && !/\.json$/i.test(file.name)) {
+      alert("Dépose un fichier .json (journal.pending.json).");
+      return;
+    }
+
+    try{
+      await importFileObject(file, "Import (drag&drop)");
+      setStatus(`Import (drag&drop): ${file.name}`);
+    }catch{
+      alert("Impossible d’importer ce fichier (JSON invalide ?).");
+    }
+  });
+
   // Tabs
   tabs.addEventListener("click", (e) => {
     const pill = e.target.closest(".pill");
@@ -737,7 +863,6 @@
   cancelEditBtn.addEventListener("click", closeEdit);
   editModal.addEventListener("click", (e) => {
     if (e.target === editModal) closeEdit();
- 
   });
 
   editForm.addEventListener("submit", (e) => {
@@ -770,33 +895,19 @@
     render();
   });
 
-  // Import pending file
+  // Import pending file (input)
   importPendingInput.addEventListener("change", async () => {
     const file = importPendingInput.files?.[0];
     if (!file) return;
 
-    let text = "";
-    try {
-      text = await file.text();
-    } catch {
-      alert("Impossible de lire le fichier.");
+    try{
+      await importFileObject(file, "Import pending");
       importPendingInput.value = "";
-      return;
-    }
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      alert("JSON invalide.");
+      render();
+    }catch{
+      alert("Impossible d’importer le fichier (JSON invalide ?).");
       importPendingInput.value = "";
-      return;
     }
-
-    const normalized = normalizeIncoming(data, "pending").map(n => ({ ...n, state: "pending" }));
-    upsertMany(normalized, "Import pending");
-    importPendingInput.value = "";
-    render();
   });
 
   // Export public file (published only)
