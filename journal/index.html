@@ -450,7 +450,7 @@
   <section class="journal-tools" aria-label="Outils du journal">
     <button class="btn" id="openNoteForm">+ Nouvelle note</button>
 
-    <button class="btn ghost" id="exportPending" title="Télécharge les notes en attente pour les envoyer à l’admin">
+    <button class="btn ghost" id="exportPending" title="Télécharge + envoie par email (visiteurs) les notes en attente">
       Exporter pour validation
     </button>
 
@@ -614,7 +614,9 @@
   const STORAGE_KEY = "journal_notes_v3_simple";
   const PUBLIC_JSON_URL = "journal.public.json";
 
-  // ✅ Badge admin/visiteur (partagé avec journal/admin.html)
+  /* =========================
+     ✅ Admin / Visiteur
+     ========================= */
   const ADMIN_KEY = "ml_is_admin";
   const roleBadge = document.getElementById("roleBadge");
   const openAdminLink = document.getElementById("openAdminLink");
@@ -638,12 +640,15 @@
     if (!document.hidden) updateRoleBadge();
   });
 
-  // ✉️ Formspree — mail uniquement pour les visiteurs
+  /* =========================
+     ✉️ Formspree (avec PJ)
+     ========================= */
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgoowark";
 
-  // 🔕 anti-doublons
-  const LAST_SENT_KEY = "journal_last_validation_signature_v1";
+  // anti-doublons (évite spam si clic multiple)
+  const LAST_SENT_KEY = "journal_last_validation_signature_v2";
   function pendingSignature(pendingNotes){
+    // signature légère (sans images)
     return JSON.stringify(pendingNotes.map(n => ({
       id: n.id,
       zone: n.zone,
@@ -655,11 +660,23 @@
   function alreadySent(sig){ return localStorage.getItem(LAST_SENT_KEY) === sig; }
   function markSent(sig){ localStorage.setItem(LAST_SENT_KEY, sig); }
 
-  async function sendValidationEmail(pendingNotes){
-    if (isAdminBrowser()) return;
-    const sig = pendingSignature(pendingNotes);
-    if (alreadySent(sig)) return;
+  function buildPendingPayload(pendingNotes){
+    return {
+      exportedAt: new Date().toISOString(),
+      version: 3,
+      notes: pendingNotes.map(n => ({
+        id: n.id,
+        zone: n.zone,
+        title: n.title,
+        text: n.text,
+        images: n.images,
+        createdAt: n.createdAt,
+        sentAt: n.sentAt || n.createdAt
+      }))
+    };
+  }
 
+  function buildMailSummary(pendingNotes){
     const lines = pendingNotes.map((n, i) => {
       const title = (n.title || "").trim() || "(sans titre)";
       const zone = n.zone || "";
@@ -668,30 +685,57 @@
       return `#${i+1} — ${title}\nZone: ${zone}\nDate: ${date}\n${text}\n`;
     }).join("\n----------------------\n\n");
 
+    return `Un visiteur a envoyé des notes pour validation.
+
+Le fichier joint "journal.pending.json" contient toutes les notes en attente.
+Pour valider : ouvrir /journal/admin.html puis importer le fichier.
+
+Résumé :
+${lines}`;
+  }
+
+  async function sendValidationEmailWithAttachment(pendingNotes, payloadObj){
+    if (isAdminBrowser()) return { ok:false, skipped:true, reason:"admin" };
+
+    const sig = pendingSignature(pendingNotes);
+    if (alreadySent(sig)) return { ok:false, skipped:true, reason:"duplicate" };
+
+    // fichier JSON en mémoire
+    const jsonStr = JSON.stringify(payloadObj, null, 2);
+    const file = new File([jsonStr], "journal.pending.json", { type: "application/json" });
+
+    const fd = new FormData();
+    fd.append("subject", `📝 Journal — ${pendingNotes.length} note(s) à valider`);
+    fd.append("message", buildMailSummary(pendingNotes));
+    fd.append("count", String(pendingNotes.length));
+    fd.append("page", location.href);
+
+    // ✅ pièce jointe (Formspree doit autoriser les fichiers)
+    fd.append("attachment", file);
+
     try{
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type":"application/json", "Accept":"application/json" },
-        body: JSON.stringify({
-          subject: `📝 Journal — ${pendingNotes.length} note(s) à valider`,
-          message:
-`Un visiteur a envoyé des notes pour validation.
-
-Un fichier "journal.pending.json" a aussi été téléchargé sur son navigateur.
-Pour valider : récupérer le fichier puis l’importer dans /journal/admin.html.
-
-Résumé :
-${lines}`
-        })
+        body: fd,
+        headers: { "Accept":"application/json" }
       });
 
-      if (res.ok) markSent(sig);
-      else console.warn("Formspree: réponse non OK", await res.text());
-    }catch(err){
-      console.warn("Formspree: mail non envoyé", err);
+      if (!res.ok) {
+        console.warn("Formspree non OK:", await res.text());
+        return { ok:false, skipped:false, reason:"http" };
+      }
+
+      markSent(sig);
+      return { ok:true };
+    } catch(err){
+      console.warn("Formspree erreur:", err);
+      return { ok:false, skipped:false, reason:"network" };
     }
   }
 
+  /* =========================
+     UI / Notes
+     ========================= */
   const noteFormOverlay = document.getElementById("noteForm");
   const openBtn = document.getElementById("openNoteForm");
   const closeBtn = document.getElementById("closeNoteForm");
@@ -705,11 +749,9 @@ ${lines}`
   const titleEl = document.getElementById("noteTitle");
   const textEl = document.getElementById("noteText");
   const imagesEl = document.getElementById("noteImages");
-
   const modalTitle = document.getElementById("modalTitle");
 
   const ZONES = ["banc", "etabli", "tas"];
-
   let publicNotes = [];
 
   function uid() {
@@ -745,7 +787,6 @@ ${lines}`
   function normalizeLocalNote(n) {
     const zone = ZONES.includes(n.zone) ? n.zone : "banc";
     const status = (n.status === "pending") ? "pending" : "draft";
-
     return {
       id: n.id || uid(),
       zone,
@@ -808,38 +849,37 @@ ${lines}`
     setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
-  function exportPendingNow() {
+  async function exportPendingNow() {
     const notes = loadNotes().map(normalizeLocalNote);
-    const pending = notes
-      .filter(n => n.status === "pending")
-      .map(n => ({
-        id: n.id,
-        zone: n.zone,
-        title: n.title,
-        text: n.text,
-        images: n.images,
-        createdAt: n.createdAt,
-        sentAt: n.sentAt || n.createdAt
-      }));
+    const pendingNotes = notes.filter(n => n.status === "pending");
 
-    // ✉️ mail seulement si visiteur (anti-doublon inclus)
-    if (pending.length > 0) sendValidationEmail(pending);
-
-    // ✅ harmonisé avec admin.html
-    downloadJSON("journal.pending.json", {
-      exportedAt: new Date().toISOString(),
-      version: 3,
-      notes: pending
-    });
-
-    // 🧹 après export : repasser pending en draft (évite re-envoi involontaire)
-    if (pending.length > 0) {
-      const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
-      saveNotes(updated);
-      renderAll();
+    if (pendingNotes.length === 0) {
+      alert("Aucune note en attente à exporter.");
+      return;
     }
 
-    if (pending.length === 0) alert("Aucune note en attente à exporter.");
+    const payload = buildPendingPayload(pendingNotes);
+
+    // 1) Téléchargement local (toujours)
+    downloadJSON("journal.pending.json", payload);
+
+    // 2) Email avec pièce jointe (uniquement visiteurs)
+    const mailRes = await sendValidationEmailWithAttachment(pendingNotes, payload);
+
+    // 3) Eviter ré-envoi involontaire: repasser pending -> draft après export
+    const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
+    saveNotes(updated);
+    renderAll();
+
+    if (mailRes.ok) {
+      alert("Envoyé pour validation ✅\nEmail envoyé + fichier 'journal.pending.json' téléchargé.");
+    } else if (mailRes.skipped && mailRes.reason === "admin") {
+      alert("Mode admin : email non envoyé.\nLe fichier 'journal.pending.json' a été téléchargé.");
+    } else if (mailRes.skipped && mailRes.reason === "duplicate") {
+      alert("Déjà envoyé (anti-doublon) ✅\nLe fichier 'journal.pending.json' a été téléchargé.");
+    } else {
+      alert("Le fichier a été téléchargé ✅\nMais l’email n’a pas pu être envoyé (ou Formspree refuse les pièces jointes).");
+    }
   }
 
   function noteCardHTML(note, kind) {
@@ -941,6 +981,7 @@ ${lines}`
     zoneEl.value = "banc";
   }
 
+  // UI events
   openBtn.addEventListener("click", () => openForm("banc"));
   closeBtn.addEventListener("click", closeForm);
   cancelBtn.addEventListener("click", closeForm);
@@ -958,12 +999,14 @@ ${lines}`
     renderAll();
   });
 
+  // Zone buttons (+ Nouveau post-it)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest('[data-action="new"][data-zone]');
     if (!btn) return;
     openForm(btn.getAttribute("data-zone"));
   });
 
+  // Add note (draft)
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -993,6 +1036,7 @@ ${lines}`
     renderAll();
   });
 
+  // Note actions (local)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
@@ -1033,17 +1077,18 @@ ${lines}`
     if (action === "send") {
       if (notes[idx].status !== "draft") return;
 
+      // passe en attente
       notes[idx] = { ...notes[idx], status:"pending", sentAt: Date.now() };
       saveNotes(notes);
       renderAll();
 
+      // export + mail + PJ
       exportPendingNow();
-
-      alert("Envoyé pour validation ✅\nUn fichier 'journal.pending.json' a été téléchargé.");
       return;
     }
   });
 
+  // Init
   (async function init() {
     await loadPublic();
     renderAll();
