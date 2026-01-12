@@ -1,165 +1,291 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Projets – Maker Lab du Mouton à 5 Pattes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Application lenticulaire – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Canonical (optionnel mais propre) -->
+  <link rel="canonical" href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/application-lenticulaire/">
 
   <style>
-    :root {
-      --bg: #0b0f14;
-      --card: #111824;
-      --text: #e7eef7;
-      --muted: #a9b4c4;
-      --line: rgba(255,255,255,.12);
-      --accent: #58a6ff;
-      --radius: 16px;
-      --max: 1000px;
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:980px;
     }
 
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(126,231,135,.15), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,166,255,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
     }
 
     /* NAVIGATION GLOBALE */
-    header {
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 16px 24px;
-      z-index: 10;
+    header.top-nav{
+      position:fixed;
+      top:0;
+      right:0;
+      padding:16px 24px;
+      z-index:10;
     }
 
-    nav a {
-      margin-left: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      text-decoration: none;
-      color: var(--text);
-      font-size: 14px;
+    header.top-nav nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
     }
 
-    nav a:hover {
-      border-color: var(--accent);
+    header.top-nav nav a:hover{
+      border-color:var(--accent);
     }
 
-    .wrap {
-      max-width: var(--max);
-      margin: auto;
-      padding: 96px 16px 60px; /* décalage pour le menu fixe */
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:96px 16px 60px; /* décalage pour menu fixe */
     }
 
-    a { color: var(--accent); text-decoration: none; }
-
-    h1 { margin: 16px 0 8px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      margin-top: 32px;
+    h1{
+      margin:10px 0 8px;
+      font-size:34px;
     }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px;
-      transition: transform .2s ease, border-color .2s ease;
+    p{
+      color:var(--muted);
+      line-height:1.6;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
+    .card{
+      background: rgba(17,24,36,.7);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-top:20px;
     }
 
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
+    h2{
+      margin:0 0 10px;
+      font-size:22px;
     }
 
-    .card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(88,166,255,.45);
+      background: rgba(88,166,255,.16);
+      color:var(--text);
+      font-weight:600;
     }
 
-    .cta {
-      margin-top: 12px;
-      font-weight: 600;
+    .btn:hover{
+      text-decoration:none;
+      border-color:rgba(88,166,255,.8);
+    }
+
+    /* --- DEMO --- */
+    .row{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap:20px;
+      align-items:start;
+    }
+
+    @media (max-width: 900px){
+      .row{ grid-template-columns:1fr; }
+    }
+
+    .app-preview{
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .app-preview iframe{
+      width:100%;
+      height:680px;
+      border:none;
+    }
+
+    .side{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
+      text-align:center;
+    }
+
+    .side img{
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .note{
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .pdf-preview{
+      margin-top:12px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    .pdf-preview iframe{
+      width:100%;
+      height:640px;
+      border:none;
+    }
+
+    footer{
+      margin-top:40px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      font-size:14px;
+      color:var(--muted);
     }
   </style>
-  
- <script
-  data-goatcounter="https://fr1255.goatcounter.com/count"
-  async
-  src="//gc.zgo.at/count.js">
-</script>
 
+  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
+      }
+    };
+  </script>
+
+  <script
+    data-goatcounter="https://fr1255.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
 
-<header>
+<header class="top-nav">
   <nav>
     <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
     <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
-    <a href="/maker-lab-mouton-5-pattes/#journal">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
     <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
   </nav>
 </header>
 
 <div class="wrap">
 
-  <h1>🛠️ Projets</h1>
-  <p>Objets, prototypes, bidouilles et expériences concrètes.</p>
+  <header>
+    <h1>👁️ Application lenticulaire</h1>
+    <p>
+      Application web permettant de générer des images lenticulaires à partir de deux images sources
+      strictement identiques en taille et cadrage.
+    </p>
 
-  <div class="grid">
+    <a class="btn" href="https://fr1255.github.io/image-lenticulaire/" target="_blank" rel="noopener">
+      🚀 Ouvrir l’application
+    </a>
+  </header>
 
-    <!-- PROJET 1 -->
-    <div class="card">
-      <h2>🔔 Système d’alarme</h2>
-      <p>
-        Système d’alarme assurant un suivi intelligent et sécurisé des portes de secours.
-      </p>
-      <div class="cta">
-        → <a href="alarme-portes-secours/">Voir le projet</a>
+  <section class="card">
+    <h2>🎯 Objectif</h2>
+    <p>
+      Générer une image lenticulaire imprimable (A5 / A4, portrait ou paysage) avec réglages :
+      unités, nombre de bandes et format d’export (PNG / JPG / WEBP).
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>🧪 Démo et aperçu</h2>
+
+    <div class="row">
+
+      <!-- Aperçu interactif -->
+      <div class="app-preview">
+        <iframe
+          src="https://fr1255.github.io/image-lenticulaire/"
+          title="Aperçu interactif – Application lenticulaire"
+          loading="lazy"></iframe>
       </div>
+
+      <!-- Logo + QR -->
+      <div class="side">
+
+        <img
+          src="/maker-lab-mouton-5-pattes/images/application-lenticulaire/logo-app.png"
+          alt="Logo de l'application lenticulaire">
+
+        <p class="note">
+          QR Code pour accès rapide depuis un smartphone
+        </p>
+
+        <img
+          src="/maker-lab-mouton-5-pattes/images/application-lenticulaire/qrcode-app.png"
+          alt="QR Code vers l'application lenticulaire"
+          style="max-width:260px;">
+      </div>
+
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📄 Guide d’utilisation</h2>
+
+    <div class="pdf-preview">
+      <iframe
+        src="/maker-lab-mouton-5-pattes/pdf/guide-application-lenticulaire.pdf"
+        title="Guide d’utilisation – Application lenticulaire"
+        loading="lazy"></iframe>
     </div>
 
-    <!-- PROJET 2 -->
-    <div class="card">
-      <h2>🌐 Dôme géodésique</h2>
-      <p>
-        Étude et conception, incluant une feuille de calcul de dimensionnement structurel
-        et un cahier technique de construction.
-      </p>
-      <div class="cta">
-        → <a href="dome-geodesique/">Voir le projet</a>
-      </div>
-    </div>
+    <p style="margin-top:12px;">
+      📎 <a href="/maker-lab-mouton-5-pattes/pdf/guide-application-lenticulaire.pdf" target="_blank" rel="noopener">
+        Ouvrir le guide PDF dans un nouvel onglet
+      </a>
+    </p>
+  </section>
 
-    <!-- PROJET 3 -->
-    <div class="card">
-      <h2>👁️ Application lenticulaire</h2>
-      <p>
-        Application exploitant l’effet lenticulaire pour afficher
-        plusieurs visuels selon l’angle de vue.
-      </p>
-      <div class="cta">
-        → <a href="application-lenticulaire/">Voir le projet</a>
-      </div>
-    </div>
+  <section class="card">
+    <h2>⚙️ Points clés</h2>
+    <p>
+      • Deux images strictement identiques (dimensions et cadrage)<br>
+      • Réglages complets : format, orientation, unités, bandes<br>
+      • Export adapté à l’impression ou au web
+    </p>
+  </section>
 
-  </div>
+  <footer>
+    © 2026 Maker Lab du Mouton à 5 Pattes
+  </footer>
 
 </div>
-
 </body>
 </html>
