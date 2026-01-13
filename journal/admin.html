@@ -337,62 +337,6 @@
       color: var(--text);
       background: rgba(88,166,255,.08);
     }
-
-    /* ✅ images modal */
-    .img-tools{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-top:8px;
-    }
-    .img-msg{
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.4;
-      margin-top:8px;
-    }
-    .img-msg.ok{ color: rgba(51, 209, 122, .95); }
-    .img-msg.bad{ color: rgba(255, 92, 92, .95); }
-    .img-strip{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap:10px;
-    }
-    .img-item{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius:12px;
-      overflow:hidden;
-    }
-    .img-item img{
-      width:100%;
-      height:110px;
-      object-fit:cover;
-      display:block;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .img-item .meta{
-      padding:8px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      color:var(--muted);
-      font-size:12px;
-    }
-    .img-item .x{
-      background:transparent;
-      border:1px solid rgba(255,255,255,.16);
-      color:var(--text);
-      border-radius:10px;
-      cursor:pointer;
-      padding:4px 8px;
-      font-weight:700;
-      font-size:12px;
-    }
-    .img-item .x:hover{ transform: translateY(-1px); }
   </style>
 </head>
 
@@ -500,28 +444,12 @@
         <textarea id="editText" maxlength="8000" placeholder="Texte…"></textarea>
       </label>
 
-      <!-- ✅ AJOUT D'IMAGES (optimisées automatiquement) -->
-      <label>
-        Ajouter des images (optimisées automatiquement)
-        <div class="img-tools">
-          <label class="btn" style="display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;">
-            Choisir des images…
-            <input id="editAddImages" type="file" accept="image/*" multiple hidden>
-          </label>
-          <button type="button" class="btn ghost" id="editClearImages">Vider toutes les images</button>
-        </div>
-        <div class="img-msg" id="imgMsg">
-          Max: 1200 px • cible ~250 Ko/image • conversion JPEG (HEIC non supporté par certains navigateurs).
-        </div>
-        <div class="img-strip" id="imgStrip" aria-label="Aperçu images"></div>
-      </label>
-
       <label>
         Images (DataURL) — option avancée
-        <textarea id="editImages" placeholder='Un tableau JSON de DataURL, ex: ["data:image/jpeg;base64,..."]'></textarea>
+        <textarea id="editImages" placeholder='Un tableau JSON de DataURL, ex: ["data:image/png;base64,..."]'></textarea>
         <div class="small">
           Tu peux laisser vide. (Les images importées depuis le Journal sont conservées telles quelles.)<br>
-          Note : stocker beaucoup d’images en DataURL rend les JSON lourds — ici on les compresse automatiquement.
+          Note : stocker beaucoup d’images en DataURL rend les JSON lourds.
         </div>
       </label>
 
@@ -537,113 +465,8 @@
 (() => {
   // Adapter si besoin
   const BASE_PATH = "/maker-lab-mouton-5-pattes";
-  const PUBLIC_URL = `${BASE_PATH}/journal/journal.public.json`;
+  const PUBLIC_URL = ${BASE_PATH}/journal/journal.public.json;
   const ZONES = ["banc","etabli","tas"];
-
-  /* =========================
-     ✅ REGLAGES OPTIMISATION IMAGES
-     ========================= */
-  const IMG_MAX_WIDTH = 1200;
-  const IMG_TARGET_BYTES = 250_000; // ~250KB
-
-  /* =========================
-     ✅ HELPERS IMAGES (resize + limite)
-     ========================= */
-  async function readAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-  }
-
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  function drawToDataURL(img, w, h, mime, quality) {
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    ctx.drawImage(img, 0, 0, w, h);
-    return canvas.toDataURL(mime, quality);
-  }
-
-  function estimateDataURLBytes(dataUrl) {
-    const base64 = String(dataUrl).split(",")[1] || "";
-    return Math.floor(base64.length * 3 / 4);
-  }
-
-  async function processImageFile(file, {
-    maxWidth = IMG_MAX_WIDTH,
-    maxBytes = IMG_TARGET_BYTES,
-    mime = "image/jpeg",
-    initialQuality = 0.82,
-    minQuality = 0.45,
-    downscaleStep = 0.85
-  } = {}) {
-    // Hard cap brut (sécurité)
-    const hardCap = 10 * 1024 * 1024; // 10MB
-    if (file.size > hardCap) {
-      return { ok:false, message:`Fichier trop volumineux (${Math.round(file.size/1024/1024)} Mo). Limite: 10 Mo.` };
-    }
-
-    const dataUrl = await readAsDataURL(file);
-
-    const img = await loadImage(dataUrl).catch(() => null);
-    if (!img) {
-      // Format non décodable (ex: HEIC)
-      return { ok:false, message:`Format non supporté par le navigateur (souvent HEIC). Convertis en JPG/PNG avant import.` };
-    }
-
-    let targetW = img.naturalWidth;
-    let targetH = img.naturalHeight;
-
-    if (targetW > maxWidth) {
-      const ratio = maxWidth / targetW;
-      targetW = Math.round(targetW * ratio);
-      targetH = Math.round(targetH * ratio);
-    }
-
-    let quality = initialQuality;
-    let attempts = 0;
-    let best = null;
-
-    while (attempts < 12) {
-      attempts++;
-      const out = drawToDataURL(img, targetW, targetH, mime, quality);
-      const bytes = estimateDataURLBytes(out);
-
-      best = { dataUrl: out, bytes, width: targetW, height: targetH, mime, quality };
-
-      if (bytes <= maxBytes) break;
-
-      if (quality > minQuality) {
-        quality = Math.max(minQuality, quality - 0.08);
-        continue;
-      }
-
-      targetW = Math.round(targetW * downscaleStep);
-      targetH = Math.round(targetH * downscaleStep);
-
-      if (targetW < 420 || targetH < 420) break;
-    }
-
-    if (!best) return { ok:false, message:"Impossible de traiter l’image." };
-
-    if (best.bytes > maxBytes) {
-      return { ok:false, message:`Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko). Choisis une image plus petite.` };
-    }
-
-    return { ok:true, ...best };
-  }
 
   /* =========================
      ✅ MODE ADMIN (localStorage)
@@ -707,12 +530,6 @@
   const editText = document.getElementById("editText");
   const editImages = document.getElementById("editImages");
 
-  // ✅ nouveaux éléments images
-  const editAddImages = document.getElementById("editAddImages");
-  const editClearImages = document.getElementById("editClearImages");
-  const imgMsg = document.getElementById("imgMsg");
-  const imgStrip = document.getElementById("imgStrip");
-
   // presse-papier UI
   const pasteImportBtn = document.getElementById("pasteImport");
   const pasteApplyBtn = document.getElementById("pasteApply");
@@ -774,11 +591,11 @@
   }
 
   function getBadge(note) {
-    if (note.state === "published") return `<span class="badge good">✅ publié</span>`;
-    if (note.state === "pending") return `<span class="badge warn">🕒 en attente</span>`;
-    if (note.state === "rejected") return `<span class="badge bad">❌ refusé</span>`;
-    if (note.state === "deleted") return `<span class="badge">🗑 supprimé</span>`;
-    return `<span class="badge">—</span>`;
+    if (note.state === "published") return <span class="badge good">✅ publié</span>;
+    if (note.state === "pending") return <span class="badge warn">🕒 en attente</span>;
+    if (note.state === "rejected") return <span class="badge bad">❌ refusé</span>;
+    if (note.state === "deleted") return <span class="badge">🗑 supprimé</span>;
+    return <span class="badge">—</span>;
   }
 
   function filterByTab(note) {
@@ -791,10 +608,10 @@
     const text = n.text?.trim() ? escapeHtml(n.text.trim()) : "";
 
     const imagesHtml = (n.images && n.images.length)
-      ? `<div class="note__images">${n.images.slice(0,6).map(src => `<img src="${src}" alt="">`).join("")}</div>`
+      ? <div class="note__images">${n.images.slice(0,6).map(src => <img src="${src}" alt="">).join("")}</div>
       : "";
 
-    return `
+    return 
       <article class="note" data-id="${escapeHtml(n.id)}">
         <div class="note__head">
           <div>
@@ -807,7 +624,7 @@
           ${getBadge(n)}
         </div>
 
-        ${text ? `<p class="note__text">${text}</p>` : ""}
+        ${text ? <p class="note__text">${text}</p> : ""}
         ${imagesHtml}
 
         <div class="actions">
@@ -818,7 +635,7 @@
           <button class="chip" data-action="delete">Supprimer</button>
         </div>
       </article>
-    `;
+    ;
   }
 
   function render() {
@@ -831,7 +648,7 @@
     if (stateById.size === 0) { notesGrid.innerHTML = ""; return; }
 
     if (notes.length === 0) {
-      notesGrid.innerHTML = `<div class="empty">Aucune note dans cet onglet.</div>`;
+      notesGrid.innerHTML = <div class="empty">Aucune note dans cet onglet.</div>;
       return;
     }
 
@@ -860,7 +677,7 @@
         updated++;
       }
     }
-    setStatus(`${sourceLabel}: +${added} ajouté(s), ${updated} mis à jour.`);
+    setStatus(${sourceLabel}: +${added} ajouté(s), ${updated} mis à jour.);
   }
 
   async function loadPublicFromSite() {
@@ -928,7 +745,7 @@
     if (!raw.trim()) { alert("Colle d’abord un JSON."); return; }
     try{
       const n = await importFromText(raw, "Import collé");
-      setStatus(`Import collé: ${n} note(s).`);
+      setStatus(Import collé: ${n} note(s).);
     }catch(err){
       alert(err.message === "json" ? "JSON invalide." : "Rien à importer.");
     }
@@ -963,7 +780,7 @@
 
     try{
       await importFileObject(file, "Import (drag&drop)");
-      setStatus(`Import (drag&drop): ${file.name}`);
+      setStatus(Import (drag&drop): ${file.name});
     }catch{
       alert("Impossible d’importer ce fichier (JSON invalide ?).");
     }
@@ -982,109 +799,7 @@
     render();
   });
 
-  // =========================
-  // ✅ OUTILS MODAL IMAGES
-  // =========================
-  function currentEditNote() {
-    const id = editId.value;
-    return stateById.get(id) || null;
-  }
-
-  function syncImagesTextareaFromNote(note) {
-    const arr = Array.isArray(note.images) ? note.images : [];
-    editImages.value = arr.length ? JSON.stringify(arr, null, 2) : "";
-  }
-
-  function renderEditImageStrip(note) {
-    const arr = Array.isArray(note.images) ? note.images : [];
-    if (!arr.length) {
-      imgStrip.innerHTML = "";
-      return;
-    }
-    imgStrip.innerHTML = arr.map((src, idx) => {
-      const bytes = estimateDataURLBytes(src);
-      return `
-        <div class="img-item" data-idx="${idx}">
-          <img src="${src}" alt="">
-          <div class="meta">
-            <span>${Math.round(bytes/1024)} Ko</span>
-            <button type="button" class="x" data-remove="${idx}" title="Retirer">✕</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  function setImgMsg(text, kind) {
-    imgMsg.textContent = text;
-    imgMsg.classList.remove("ok","bad");
-    if (kind) imgMsg.classList.add(kind);
-  }
-
-  // Retirer une image
-  imgStrip.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-remove]");
-    if (!btn) return;
-    const idx = Number(btn.getAttribute("data-remove"));
-    const note = currentEditNote();
-    if (!note) return;
-    note.images = Array.isArray(note.images) ? note.images : [];
-    if (idx >= 0 && idx < note.images.length) {
-      note.images.splice(idx, 1);
-      syncImagesTextareaFromNote(note);
-      renderEditImageStrip(note);
-      setImgMsg("Image retirée.", "ok");
-    }
-  });
-
-  // Vider toutes les images
-  editClearImages.addEventListener("click", () => {
-    const note = currentEditNote();
-    if (!note) return;
-    const ok = confirm("Supprimer toutes les images de cette note ?");
-    if (!ok) return;
-    note.images = [];
-    syncImagesTextareaFromNote(note);
-    renderEditImageStrip(note);
-    setImgMsg("Toutes les images ont été supprimées.", "ok");
-  });
-
-  // Ajouter des images (optimisées)
-  editAddImages.addEventListener("change", async () => {
-    const files = Array.from(editAddImages.files || []);
-    editAddImages.value = "";
-    if (!files.length) return;
-
-    const note = currentEditNote();
-    if (!note) return;
-    note.images = Array.isArray(note.images) ? note.images : [];
-
-    setImgMsg("Traitement des images…", null);
-
-    for (const file of files) {
-      const res = await processImageFile(file, {
-        maxWidth: IMG_MAX_WIDTH,
-        maxBytes: IMG_TARGET_BYTES,
-        mime: "image/jpeg",
-        initialQuality: 0.82
-      });
-
-      if (!res.ok) {
-        setImgMsg("❌ " + res.message, "bad");
-        continue;
-      }
-
-      note.images.push(res.dataUrl);
-      setImgMsg(`✅ Ajoutée: ${res.width}×${res.height}, ~${Math.round(res.bytes/1024)} Ko`, "ok");
-    }
-
-    syncImagesTextareaFromNote(note);
-    renderEditImageStrip(note);
-  });
-
-  // =========================
   // Note actions
-  // =========================
   notesGrid.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
@@ -1115,13 +830,7 @@
       editTitle.value = note.title || "";
       editZone.value = ZONES.includes(note.zone) ? note.zone : "banc";
       editText.value = note.text || "";
-
-      // ✅ important: on synchronise et on affiche le strip
-      note.images = Array.isArray(note.images) ? note.images : [];
-      syncImagesTextareaFromNote(note);
-      renderEditImageStrip(note);
-      setImgMsg("Max: 1200 px • cible ~250 Ko/image • conversion JPEG (HEIC non supporté par certains navigateurs).", null);
-
+      editImages.value = (note.images && note.images.length) ? JSON.stringify(note.images, null, 2) : "";
       editModal.hidden = false;
       editTitle.focus();
       return;
@@ -1131,8 +840,6 @@
   function closeEdit() {
     editModal.hidden = true;
     editForm.reset();
-    imgStrip.innerHTML = "";
-    setImgMsg("Max: 1200 px • cible ~250 Ko/image • conversion JPEG (HEIC non supporté par certains navigateurs).", null);
   }
 
   closeEditBtn.addEventListener("click", closeEdit);
@@ -1159,10 +866,7 @@
         alert("Images: JSON invalide.");
         return;
       }
-    } else {
-      note.images = [];
     }
-
     stateById.set(id, note);
     closeEdit();
     render();
@@ -1187,7 +891,7 @@
     const notes = Array.from(stateById.values())
       .filter(n => n.state === "published")
       .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0))
-      .map(({ state, ...rest }) => rest);
+      .map(({ state, ...rest }) => rest); // ✅ garde zone/images/etc.
 
     const payload = {
       version: 1,
@@ -1196,7 +900,7 @@
     };
 
     downloadJSON(payload, "journal.public.json");
-    setStatus(`Export: ${notes.length} note(s) publiée(s) exportée(s).`);
+    setStatus(Export: ${notes.length} note(s) publiée(s) exportée(s).);
   });
 
   // Reset
@@ -1212,7 +916,7 @@
     const pub = await loadPublicFromSite();
     if (pub.ok) {
       upsertMany(pub.notes, "Public chargé");
-      setStatus(`Public chargé: ${pub.notes.length} note(s).`);
+      setStatus(Public chargé: ${pub.notes.length} note(s).);
     } else {
       setStatus("Public non trouvé (ok si premier lancement).");
     }
