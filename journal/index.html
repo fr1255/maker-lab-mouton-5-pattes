@@ -578,8 +578,8 @@
           Photos (optionnel)
           <input type="file" id="noteImages" accept="image/*" multiple />
           <small>
-            Les images sont stockées localement. Pour éviter de saturer le navigateur :
-            préfère des images légères (ex : &lt; 1 Mo).
+            Les images sont compressées automatiquement (max 1200px, cible ~250 Ko/image).
+            Si une photo est en HEIC, convertis-la en JPG avant import.
           </small>
         </label>
 
@@ -613,6 +613,13 @@
 (() => {
   const STORAGE_KEY = "journal_notes_v3_simple";
   const PUBLIC_JSON_URL = "journal.public.json";
+
+  /* =========================
+     ✅ RÉGLAGES COMPRESSION IMAGES (chez le créateur)
+     ========================= */
+  const IMG_MAX_WIDTH = 1200;        // px
+  const IMG_TARGET_BYTES = 250000;   // ~250 KB par image
+  const IMG_MIME = "image/jpeg";     // JPEG = beaucoup plus léger
 
   /* =========================
      ✅ Admin / Visiteur
@@ -748,6 +755,119 @@ ${jsonForMail}
   }
 
   /* =========================
+     ✅ HELPERS IMAGES (resize + limite)
+     ========================= */
+  function readAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function drawToDataURL(img, w, h, mime, quality) {
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    ctx.drawImage(img, 0, 0, w, h);
+    return canvas.toDataURL(mime, quality);
+  }
+
+  function estimateDataURLBytes(dataUrl) {
+    const base64 = String(dataUrl).split(",")[1] || "";
+    return Math.floor(base64.length * 3 / 4);
+  }
+
+  async function processImageFile(file, {
+    maxWidth = IMG_MAX_WIDTH,
+    maxBytes = IMG_TARGET_BYTES,
+    mime = IMG_MIME,
+    initialQuality = 0.82,
+    minQuality = 0.45,
+    downscaleStep = 0.85
+  } = {}) {
+    // hard cap brut (évite freeze sur énormes fichiers)
+    const hardCap = 10 * 1024 * 1024; // 10MB
+    if (file.size > hardCap) {
+      return { ok:false, message:`Fichier trop volumineux (${Math.round(file.size/1024/1024)} Mo). Limite: 10 Mo.` };
+    }
+
+    const dataUrl = await readAsDataURL(file);
+    const img = await loadImage(dataUrl).catch(() => null);
+
+    if (!img) {
+      // Souvent HEIC non décodable
+      return { ok:false, message:`Format non supporté par le navigateur (souvent HEIC). Convertis en JPG/PNG avant import.` };
+    }
+
+    let targetW = img.naturalWidth;
+    let targetH = img.naturalHeight;
+
+    if (targetW > maxWidth) {
+      const ratio = maxWidth / targetW;
+      targetW = Math.round(targetW * ratio);
+      targetH = Math.round(targetH * ratio);
+    }
+
+    let quality = initialQuality;
+    let attempts = 0;
+    let best = null;
+
+    while (attempts < 12) {
+      attempts++;
+      const out = drawToDataURL(img, targetW, targetH, mime, quality);
+      const bytes = estimateDataURLBytes(out);
+
+      best = { dataUrl: out, bytes, width: targetW, height: targetH, mime, quality };
+      if (bytes <= maxBytes) break;
+
+      if (quality > minQuality) {
+        quality = Math.max(minQuality, quality - 0.08);
+        continue;
+      }
+
+      targetW = Math.round(targetW * downscaleStep);
+      targetH = Math.round(targetH * downscaleStep);
+
+      if (targetW < 420 || targetH < 420) break;
+    }
+
+    if (!best) return { ok:false, message:"Impossible de traiter l’image." };
+
+    if (best.bytes > maxBytes) {
+      return { ok:false, message:`Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko). Choisis une image plus petite.` };
+    }
+
+    return { ok:true, ...best };
+  }
+
+  async function filesToDataUrls(files) {
+    const list = Array.from(files || []);
+    const out = [];
+
+    for (const file of list) {
+      const res = await processImageFile(file);
+      if (!res.ok) {
+        // Stop net: sinon l’utilisateur croit que ça a marché
+        throw new Error(res.message);
+      }
+      out.push(res.dataUrl);
+    }
+    return out;
+  }
+
+  /* =========================
      UI / Notes
      ========================= */
   const noteFormOverlay = document.getElementById("noteForm");
@@ -839,16 +959,6 @@ ${jsonForMail}
     } catch {
       publicNotes = [];
     }
-  }
-
-  function filesToDataUrls(files) {
-    const list = Array.from(files || []);
-    return Promise.all(list.map(file => new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    })));
   }
 
   function downloadJSON(filename, data) {
@@ -1029,8 +1139,12 @@ ${jsonForMail}
     const text = textEl.value || "";
 
     let images = [];
-    try { images = await filesToDataUrls(imagesEl.files); }
-    catch { alert("Impossible de lire une ou plusieurs images."); return; }
+    try {
+      images = await filesToDataUrls(imagesEl.files); // ✅ maintenant: compressées
+    } catch (err) {
+      alert(String(err?.message || "Impossible de lire/compresser une ou plusieurs images."));
+      return;
+    }
 
     const notes = loadNotes().map(normalizeLocalNote);
     notes.unshift({
