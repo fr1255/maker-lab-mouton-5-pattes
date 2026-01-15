@@ -1,1 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Étude de la chaîne d’énergie d’un tracker solaire | Maker Lab du Mouton à 5 Pattes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Canonical -->
+  <link rel="canonical"
+        href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/tracker-solaire-chaine-energie/" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:1100px;
+    }
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+
+    /* NAVIGATION */
+    header{
+      position:fixed;
+      top:0; right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+    nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+    nav a:hover{ border-color:var(--accent); }
+
+    .wrap{
+      max-width:var(--max);
+      margin:auto;
+      padding:96px 16px 72px;
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .hero{
+      background:linear-gradient(180deg, rgba(88,166,255,.10), transparent 60%);
+      border:1px solid var(--line);
+      border-radius:calc(var(--radius) + 4px);
+      padding:22px;
+    }
+    .kicker{
+      color:var(--muted);
+      font-size:14px;
+      margin:0 0 6px;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:28px;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      max-width:95ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .chips{
+      margin-top:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chip{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(17,24,36,.35);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    .btn{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      color:var(--text);
+      font-size:14px;
+    }
+    .btn:hover{ border-color:var(--accent); }
+    .btn.primary{
+      border-color:rgba(88,166,255,.55);
+      background:rgba(88,166,255,.10);
+    }
+
+    .pdfWrap{
+      margin-top:20px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .pdfHeader{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:13px;
+      color:var(--muted);
+      flex-wrap:wrap;
+    }
+    .pdfFrame{
+      width:100%;
+      height:min(82vh, 900px);
+      border:0;
+      background:#000;
+    }
+
+    footer{
+      margin-top:26px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      padding-top:16px;
+    }
+  </style>
+
+  <!-- GoatCounter -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
+      }
+    };
+  </script>
+  <script data-goatcounter="https://fr1255.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <p class="kicker">☀️⚡ Projet • Document technique</p>
+
+    <h1>Étude de la chaîne d’énergie d’un tracker solaire</h1>
+
+    <p class="lead">
+      <strong>Objectif :</strong> étudier l’intégration de capteurs et d’actionneurs afin de piloter
+      un tracker solaire via un contrôleur automatique de suivi du soleil,
+      avec gestion de plusieurs niveaux de tension en <strong>DC</strong> et <strong>AC</strong>.
+    </p>
+
+    <div class="chips">
+      <span class="chip">Chaîne d’énergie</span>
+      <span class="chip">Capteurs</span>
+      <span class="chip">Actionneurs</span>
+      <span class="chip">24 V DC</span>
+      <span class="chip">230 V AC</span>
+      <span class="chip">3×400 V AC</span>
+      <span class="chip">Sécurité électrique</span>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Objet du document</h2>
+        <p>
+          Identifier et structurer les différentes étapes de la chaîne d’énergie :
+          alimentation, conversion, distribution, commande et action mécanique
+          d’un tracker solaire orientable.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Approche</h2>
+        <p>
+          Analyse fonctionnelle et électrique à partir des schémas de câblage :
+          entrées capteurs, sorties actionneurs, interfaces de puissance
+          et séparation des domaines DC / AC.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Contenu du PDF</h2>
+        <p>
+          Schémas électriques, architecture d’ensemble,
+          description des composants et logique de fonctionnement
+          du système de suivi solaire.
+        </p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="../">← Retour aux projets</a>
+
+      <a class="btn primary"
+         href="/maker-lab-mouton-5-pattes/pdf/tracker-solaire-chaine-energie.pdf"
+         target="_blank" rel="noopener">
+         Ouvrir le PDF
+      </a>
+
+      <a class="btn"
+         href="/maker-lab-mouton-5-pattes/pdf/tracker-solaire-chaine-energie.pdf"
+         download>
+         Télécharger le PDF
+      </a>
+    </div>
+  </div>
+
+  <div class="pdfWrap">
+    <div class="pdfHeader">
+      <span>📄 Aperçu du document PDF</span>
+      <span>Si l’aperçu ne s’affiche pas, ouvrir le PDF</span>
+    </div>
+
+    <iframe
+      class="pdfFrame"
+      src="/maker-lab-mouton-5-pattes/pdf/tracker-solaire-chaine-energie.pdf#view=FitH"
+      title="Étude de la chaîne d’énergie d’un tracker solaire">
+    </iframe>
+  </div>
+
+  <footer>
+    Maker Lab du Mouton à 5 Pattes — Projet « Étude de la chaîne d’énergie d’un tracker solaire »
+  </footer>
+
+</div>
+
+</body>
+</html>
 
