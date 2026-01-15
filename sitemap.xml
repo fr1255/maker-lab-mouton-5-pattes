@@ -2,25 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://fr1255.github.io/</loc>
+    <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://fr1255.github.io/journal/</loc>
+    <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/journal/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://fr1255.github.io/projets/</loc>
+    <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://fr1255.github.io/projets/alarme-portes-secours/</loc>
+    <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/alarme-portes-secours/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
