@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Socle acier – note de calcul | Maker Lab du Mouton à 5 Pattes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/socle-acier/" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:1100px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+
+    /* NAVIGATION */
+    header{
+      position:fixed;
+      top:0; right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+    nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+    nav a:hover{ border-color:var(--accent); }
+
+    .wrap{
+      max-width:var(--max);
+      margin:auto;
+      padding:96px 16px 72px;
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .hero{
+      background:linear-gradient(180deg, rgba(88,166,255,.10), transparent 60%);
+      border:1px solid var(--line);
+      border-radius:calc(var(--radius) + 4px);
+      padding:22px;
+    }
+    .kicker{
+      color:var(--muted);
+      font-size:14px;
+      margin:0 0 6px;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size:28px;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      max-width:80ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      color:var(--text);
+      font-size:14px;
+    }
+    .btn:hover{ border-color:var(--accent); }
+    .btn.primary{
+      border-color:rgba(88,166,255,.55);
+      background:rgba(88,166,255,.10);
+    }
+
+    .pdfWrap{
+      margin-top:20px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .pdfHeader{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .pdfFrame{
+      width:100%;
+      height:min(82vh, 900px);
+      border:0;
+      background:#000;
+    }
+
+    footer{
+      margin-top:26px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      padding-top:16px;
+    }
+  </style>
+
+  <!-- GoatCounter -->
+  <script>
+    window.goatcounter = {
+      path: function (p) {
+        p = p.split('?')[0];
+        p = p.replace(/\/index\.html$/, '/');
+        if (p.length > 1) p = p.replace(/\/$/, '');
+        return p;
+      }
+    };
+  </script>
+  <script data-goatcounter="https://fr1255.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <p class="kicker">🧱 Projet • Document technique</p>
+    <h1>Socle acier — note de calcul de stabilité</h1>
+    <p class="lead">
+      Cette page présente la note de calcul utilisée pour vérifier la stabilité
+      d’un socle en acier supportant une structure verticale.
+      Le document détaille les hypothèses, les propriétés de masse issues de la CAO
+      et une vérification simple du risque de basculement.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Objet du document</h2>
+        <p>
+          Vérifier que la projection du centre de gravité reste à l’intérieur
+          de l’empreinte du socle pour garantir la stabilité statique.
+        </p>
+      </div>
+      <div class="card">
+        <h2>Résultat synthétique</h2>
+        <p>
+          Le socle acier 400 × 200 × 12 mm est jugé suffisant pour un usage statique.
+          En exposition publique, une fixation ou un anti-dérapant est recommandé.
+        </p>
+      </div>
+      <div class="card">
+        <h2>Contenu</h2>
+        <p>
+          Note de calcul + captures CAO (centre d’inertie, empreinte au sol,
+          repères et vues d’ensemble).
+        </p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="../">← Retour aux projets</a>
+      <a class="btn primary"
+         href="/maker-lab-mouton-5-pattes/pdf/note_de_calcul_stabilite_socle.pdf"
+         target="_blank" rel="noopener">
+         Ouvrir le PDF
+      </a>
+      <a class="btn"
+         href="/maker-lab-mouton-5-pattes/pdf/note_de_calcul_stabilite_socle.pdf"
+         download>
+         Télécharger le PDF
+      </a>
+    </div>
+  </div>
+
+  <div class="pdfWrap">
+    <div class="pdfHeader">
+      <span>📄 Aperçu du document PDF</span>
+      <span>Si l’aperçu ne s’affiche pas, ouvrir le PDF</span>
+    </div>
+
+    <iframe
+      class="pdfFrame"
+      src="/maker-lab-mouton-5-pattes/pdf/note_de_calcul_stabilite_socle.pdf#view=FitH"
+      title="Note de calcul – stabilité du socle">
+    </iframe>
+  </div>
+
+  <footer>
+    Maker Lab du Mouton à 5 Pattes — Projet « Socle acier »
+  </footer>
+
+</div>
+
+</body>
+</html>
