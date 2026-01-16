@@ -1,1 +1,705 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Générateur de QR Code | Maker Lab du Mouton à 5 Pattes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#e7eef7;
+      --muted:#a9b4c4;
+      --line:rgba(255,255,255,.12);
+      --accent:#58a6ff;
+      --radius:16px;
+      --max:1100px;
+      --accent-rgb: 88,166,255;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:system-ui, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+
+    header{
+      position:fixed;
+      top:0; right:0;
+      padding:16px 24px;
+      z-index:10;
+    }
+    nav a{
+      margin-left:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      text-decoration:none;
+      color:var(--text);
+      font-size:14px;
+    }
+    nav a:hover{ border-color:var(--accent); }
+
+    .wrap{
+      max-width:var(--max);
+      margin:auto;
+      padding:96px 16px 72px;
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .hero{
+      background:linear-gradient(180deg, rgba(var(--accent-rgb), .10), transparent 60%);
+      border:1px solid var(--line);
+      border-radius:calc(var(--radius) + 4px);
+      padding:22px;
+    }
+    .kicker{ color:var(--muted); font-size:14px; margin:0 0 6px; }
+    h1{ margin:0 0 10px; font-size:28px; }
+    .lead{ margin:0; color:var(--muted); max-width:80ch; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+    }
+    .card h2{ margin:0 0 8px; font-size:18px; }
+    .card p{ margin:0; color:var(--muted); font-size:14px; }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+    }
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      color:var(--text);
+      font-size:14px;
+      background:transparent;
+      cursor:pointer;
+    }
+    .btn:hover{ border-color:var(--accent); }
+    .btn.primary{
+      border-color:rgba(var(--accent-rgb), .55);
+      background:rgba(var(--accent-rgb), .10);
+    }
+
+    .pdfWrap{
+      margin-top:20px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .pdfHeader{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:13px;
+      color:var(--muted);
+      flex-wrap:wrap;
+    }
+    .pdfFrame{
+      width:100%;
+      min-height:420px;
+      border:0;
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    label{ display:block; color:var(--muted); font-size:13px; margin:10px 0 6px; }
+    input[type="text"], select, input[type="color"], input[type="file"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background:#0e1520;
+      color:var(--text);
+      font-size:15px;
+      outline:none;
+    }
+    input[type="text"]:focus, select:focus, input[type="color"]:focus, input[type="file"]:focus{
+      border-color:rgba(var(--accent-rgb), .55);
+      box-shadow:0 0 0 3px rgba(var(--accent-rgb), .12);
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 720px){
+      .row2{ grid-template-columns: 1fr; }
+    }
+
+    .qrBox{
+      background:rgba(255,255,255,.03);
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:14px;
+      padding:16px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:260px;
+      min-height:260px;
+    }
+    .qrBox canvas{
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display:block;
+      max-width:100%;
+      height:auto;
+    }
+
+    .qrHint{ margin-top:10px; color:var(--muted); font-size:13px; max-width:70ch; }
+    .tiny{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+    footer{
+      margin-top:26px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      padding-top:16px;
+    }
+  </style>
+
+  <!-- QRCode.js (celle qui marchait au début) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+<header>
+  <nav>
+    <a href="/maker-lab-mouton-5-pattes/">Accueil</a>
+    <a href="/maker-lab-mouton-5-pattes/projets/">Projets</a>
+    <a href="/maker-lab-mouton-5-pattes/journal/">Journal</a>
+    <a href="/maker-lab-mouton-5-pattes/#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <p class="kicker">🧾📷 Outil • Générateur</p>
+    <h1>Générateur de QR Code (aperçu + sortie OK)</h1>
+    <p class="lead">
+      Logo centré (PNG/SVG) + fond carré/arrondi/cercle. Détection auto : logo.svg puis logo.png.
+      (Aperçu et sortie utilisent un canvas même si QRCode.js rend en image.)
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Entrée</h2>
+
+        <label for="text">Texte / URL</label>
+        <input id="text" type="text" value="https://example.com" placeholder="https://…" />
+
+        <div class="row2">
+          <div>
+            <label for="size">Taille</label>
+            <select id="size">
+              <option value="256" selected>256 px</option>
+              <option value="384">384 px</option>
+              <option value="512">512 px</option>
+              <option value="768">768 px</option>
+            </select>
+          </div>
+          <div>
+            <label for="eclevel">Correction (logo → H conseillé)</label>
+            <select id="eclevel">
+              <option value="M">M (≈15%)</option>
+              <option value="Q">Q (≈25%)</option>
+              <option value="H" selected>H (≈30%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="colorDark">Couleur du QR</label>
+            <input id="colorDark" type="color" value="#e7eef7" />
+          </div>
+          <div>
+            <label for="colorLight">Couleur de fond</label>
+            <input id="colorLight" type="color" value="#0b0f14" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="accent">Couleur d’accent (UI)</label>
+            <input id="accent" type="color" value="#58a6ff" />
+          </div>
+          <div>
+            <label for="linkAccent">Lier l’accent à la couleur du QR</label>
+            <select id="linkAccent">
+              <option value="off" selected>Non</option>
+              <option value="on">Oui (accent = couleur du QR)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="logoFile">Logo (PNG/SVG, optionnel)</label>
+            <input id="logoFile" type="file" accept="image/png,image/svg+xml,image/jpeg,image/webp" />
+            <div class="tiny">Par défaut : <code>logo.svg</code> si présent, sinon <code>logo.png</code>.</div>
+          </div>
+          <div>
+            <label for="logoSize">Taille du logo (%)</label>
+            <select id="logoSize">
+              <option value="20">20 %</option>
+              <option value="22">22 %</option>
+              <option value="25" selected>25 %</option>
+              <option value="28">28 %</option>
+              <option value="30">30 %</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="logoBgMode">Fond du logo</label>
+            <select id="logoBgMode">
+              <option value="auto" selected>Auto (blanc)</option>
+              <option value="custom">Couleur choisie</option>
+              <option value="transparent">Transparent</option>
+            </select>
+          </div>
+          <div>
+            <label for="logoBg">Couleur fond (si “couleur choisie”)</label>
+            <input id="logoBg" type="color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="logoBgShape">Forme du fond</label>
+            <select id="logoBgShape">
+              <option value="square">Carré</option>
+              <option value="rounded" selected>Arrondi</option>
+              <option value="circle">Cercle</option>
+            </select>
+          </div>
+          <div>
+            <label for="logoBgRound">Arrondi (si “arrondi”)</label>
+            <select id="logoBgRound">
+              <option value="18" selected>18 %</option>
+              <option value="25">25 %</option>
+              <option value="35">35 %</option>
+              <option value="50">50 %</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:14px;">
+          <button class="btn primary" id="btnGenerate">Générer</button>
+          <button class="btn" id="btnDownload">Télécharger PNG</button>
+          <button class="btn" id="btnReset">Réinitialiser</button>
+        </div>
+
+        <p class="qrHint" id="hint">—</p>
+      </div>
+
+      <div class="card">
+        <h2>Aperçu</h2>
+        <p>Le logo doit apparaître ici.</p>
+        <div style="margin-top:14px;">
+          <div class="qrBox"><div id="qrcodeSmall"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="../">← Retour</a>
+      <a class="btn" href="#" id="btnCopy">Copier le texte</a>
+    </div>
+  </div>
+
+  <div class="pdfWrap">
+    <div class="pdfHeader">
+      <span>📦 Sortie (grand format)</span>
+      <span id="status">Prêt.</span>
+    </div>
+
+    <div class="pdfFrame">
+      <div style="text-align:center;">
+        <div class="qrBox"><div id="qrcodeBig"></div></div>
+        <div class="qrHint">Le téléchargement exporte le canvas “grand format”.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Maker Lab du Mouton à 5 Pattes — Outil « Générateur de QR Code »</footer>
+</div>
+
+<script>
+  // UI
+  const elText   = document.getElementById("text");
+  const elSize   = document.getElementById("size");
+  const elEC     = document.getElementById("eclevel");
+  const elDark   = document.getElementById("colorDark");
+  const elLight  = document.getElementById("colorLight");
+  const elAccent = document.getElementById("accent");
+  const elLink   = document.getElementById("linkAccent");
+
+  const elLogoFile    = document.getElementById("logoFile");
+  const elLogoSize    = document.getElementById("logoSize");
+  const elLogoBgMode  = document.getElementById("logoBgMode");
+  const elLogoBg      = document.getElementById("logoBg");
+  const elLogoBgShape = document.getElementById("logoBgShape");
+  const elLogoBgRound = document.getElementById("logoBgRound");
+
+  const btnGenerate = document.getElementById("btnGenerate");
+  const btnDownload = document.getElementById("btnDownload");
+  const btnReset    = document.getElementById("btnReset");
+  const btnCopy     = document.getElementById("btnCopy");
+
+  const statusEl = document.getElementById("status");
+  const hintEl   = document.getElementById("hint");
+
+  const boxSmall = document.getElementById("qrcodeSmall");
+  const boxBig   = document.getElementById("qrcodeBig");
+
+  // Logo auto
+  const DEFAULT_LOGO_SVG = "logo.svg";
+  const DEFAULT_LOGO_PNG = "logo.png";
+
+  let logoImg = new Image();
+  let logoReady = false;
+  let logoEnabled = true;
+  let logoType = "none";
+
+  function hexToRgbTuple(hex){
+    const h = (hex || "").replace("#", "").trim();
+    if (h.length !== 6) return "88,166,255";
+    const r = parseInt(h.slice(0,2), 16);
+    const g = parseInt(h.slice(2,4), 16);
+    const b = parseInt(h.slice(4,6), 16);
+    if ([r,g,b].some(n => Number.isNaN(n))) return "88,166,255";
+    return `${r},${g},${b}`;
+  }
+  function setAccent(hex){
+    document.documentElement.style.setProperty("--accent", hex);
+    document.documentElement.style.setProperty("--accent-rgb", hexToRgbTuple(hex));
+  }
+  function applyAccentRules(){
+    if (elLink.value === "on"){
+      elAccent.value = elDark.value;
+      setAccent(elDark.value);
+    } else {
+      setAccent(elAccent.value);
+    }
+  }
+
+  function ecLevelFromValue(v){
+    switch(v){
+      case "M": return QRCode.CorrectLevel.M;
+      case "Q": return QRCode.CorrectLevel.Q;
+      case "H": return QRCode.CorrectLevel.H;
+      default:  return QRCode.CorrectLevel.H;
+    }
+  }
+
+  function clearNode(node){
+    while(node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  // --- Fond logo (carré/arrondi/cercle)
+  function roundedRectPath(ctx, x, y, w, h, r){
+    const rr = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawLogoBg(ctx, x, y, w, h){
+    let drawBg = true;
+    let bgColor = "#ffffff";
+    if (elLogoBgMode.value === "transparent") drawBg = false;
+    else if (elLogoBgMode.value === "custom") bgColor = elLogoBg.value;
+    if (!drawBg) return;
+
+    ctx.save();
+    ctx.fillStyle = bgColor;
+
+    const shape = elLogoBgShape.value;
+    if (shape === "circle"){
+      const cx = x + w/2, cy = y + h/2;
+      const r = Math.min(w, h)/2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
+    } else if (shape === "rounded"){
+      const pct = parseInt(elLogoBgRound.value, 10) / 100;
+      const r = Math.round(Math.min(w, h) * pct);
+      roundedRectPath(ctx, x, y, w, h, r);
+      ctx.fill();
+    } else {
+      ctx.fillRect(x, y, w, h);
+    }
+
+    ctx.restore();
+  }
+
+  // --- IMPORTANT: si QRCode.js rend un <img>, on le convertit en canvas
+  function ensureCanvasFromBox(box, expectedSize){
+    const canvas = box.querySelector("canvas");
+    if (canvas) return canvas;
+
+    const img = box.querySelector("img");
+    if (img && img.complete && img.naturalWidth > 0){
+      const c = document.createElement("canvas");
+      c.width = expectedSize;
+      c.height = expectedSize;
+
+      const ctx = c.getContext("2d");
+      // dessiner l'image du QR dans le canvas
+      ctx.drawImage(img, 0, 0, expectedSize, expectedSize);
+
+      // remplacer l'image par le canvas
+      box.innerHTML = "";
+      box.appendChild(c);
+      return c;
+    }
+    return null;
+  }
+
+  function drawLogoOnCanvas(canvas){
+    if (!logoEnabled || !logoReady) return;
+
+    const ctx = canvas.getContext("2d");
+    // netteté logo
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+
+    const sizePercent = parseInt(elLogoSize.value, 10);
+
+    const s = Math.round(canvas.width * (sizePercent / 100));
+    const x = Math.round((canvas.width  - s) / 2);
+    const y = Math.round((canvas.height - s) / 2);
+
+    const pad = Math.round(s * 0.18);
+
+    drawLogoBg(ctx, x - pad, y - pad, s + pad*2, s + pad*2);
+    ctx.drawImage(logoImg, x, y, s, s);
+  }
+
+  function renderBox(box, sizePx){
+    clearNode(box);
+
+    const value = elText.value.trim() || " ";
+    const dark  = elDark.value;
+    const light = elLight.value;
+
+    new QRCode(box, {
+      text: value,
+      width: sizePx,
+      height: sizePx,
+      colorDark: dark,
+      colorLight: light,
+      correctLevel: ecLevelFromValue(elEC.value)
+    });
+  }
+
+  // Attendre que QRCode.js ait mis le canvas/img dans le DOM, puis overlay logo
+  function postProcessBox(box, sizePx){
+    let tries = 0;
+    const maxTries = 20;
+
+    function tick(){
+      tries += 1;
+
+      const c = ensureCanvasFromBox(box, sizePx);
+      if (c){
+        drawLogoOnCanvas(c);
+        return;
+      }
+
+      if (tries < maxTries) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  function renderAll(){
+    applyAccentRules();
+
+    const size = parseInt(elSize.value, 10);
+    const small = Math.min(size, 256);
+
+    // 1) générer les QR
+    renderBox(boxSmall, small);
+    renderBox(boxBig, size);
+
+    // 2) convertir en canvas si besoin + dessiner logo
+    postProcessBox(boxSmall, small);
+    postProcessBox(boxBig, size);
+
+    // 3) status
+    statusEl.textContent = (logoEnabled && logoReady)
+      ? `OK — QR + logo (${logoType})`
+      : "OK — QR sans logo (aucun logo trouvé/chargé)";
+  }
+
+  function downloadPNG(){
+    const size = parseInt(elSize.value, 10);
+    const canvas = ensureCanvasFromBox(boxBig, size) || boxBig.querySelector("canvas");
+    if (!canvas){
+      statusEl.textContent = "Impossible : canvas non prêt. Clique sur Générer puis réessaye.";
+      return;
+    }
+    const link = document.createElement("a");
+    link.download = "qrcode.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    statusEl.textContent = "PNG téléchargé.";
+  }
+
+  function loadDefaultLogoAuto(){
+    logoReady = false;
+    logoEnabled = true;
+    logoType = "none";
+
+    const trySvg = new Image();
+    trySvg.onload = () => {
+      logoImg = trySvg;
+      logoReady = true;
+      logoType = "svg";
+      hintEl.textContent = "Logo détecté : logo.svg";
+      renderAll();
+    };
+    trySvg.onerror = () => {
+      const tryPng = new Image();
+      tryPng.onload = () => {
+        logoImg = tryPng;
+        logoReady = true;
+        logoType = "png";
+        hintEl.textContent = "Logo détecté : logo.png";
+        renderAll();
+      };
+      tryPng.onerror = () => {
+        logoEnabled = false;
+        logoReady = false;
+        logoType = "none";
+        hintEl.textContent = "Aucun logo trouvé (logo.svg / logo.png).";
+        renderAll();
+      };
+      tryPng.src = DEFAULT_LOGO_PNG;
+    };
+    trySvg.src = DEFAULT_LOGO_SVG;
+  }
+
+  function loadLogoFromFile(file){
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const isSvg = (file.type === "image/svg+xml") || file.name.toLowerCase().endsWith(".svg");
+
+    logoReady = false;
+    logoEnabled = true;
+    logoType = isSvg ? "svg" : "raster";
+
+    const img = new Image();
+    img.onload = () => {
+      logoImg = img;
+      logoReady = true;
+      hintEl.textContent = `Logo chargé (${logoType}).`;
+      URL.revokeObjectURL(url);
+      renderAll();
+    };
+    img.onerror = () => {
+      logoEnabled = false;
+      logoReady = false;
+      logoType = "none";
+      hintEl.textContent = "Impossible de charger ce logo.";
+      URL.revokeObjectURL(url);
+      renderAll();
+    };
+    img.src = url;
+  }
+
+  function resetAll(){
+    elText.value = "https://example.com";
+    elSize.value = "256";
+    elEC.value = "H";
+    elDark.value = "#e7eef7";
+    elLight.value = "#0b0f14";
+    elAccent.value = "#58a6ff";
+    elLink.value = "off";
+
+    elLogoSize.value = "25";
+    elLogoFile.value = "";
+    elLogoBgMode.value = "auto";
+    elLogoBg.value = "#ffffff";
+    elLogoBgShape.value = "rounded";
+    elLogoBgRound.value = "18";
+
+    loadDefaultLogoAuto();
+    renderAll();
+    statusEl.textContent = "Réinitialisé.";
+  }
+
+  // Events
+  btnGenerate.addEventListener("click", renderAll);
+  btnDownload.addEventListener("click", downloadPNG);
+  btnReset.addEventListener("click", resetAll);
+
+  btnCopy.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigator.clipboard?.writeText(elText.value || "").then(() => {
+      statusEl.textContent = "Texte copié.";
+    }).catch(() => {
+      statusEl.textContent = "Copie impossible (permissions).";
+    });
+  });
+
+  elLogoFile.addEventListener("change", () => {
+    const file = elLogoFile.files && elLogoFile.files[0];
+    if (file) loadLogoFromFile(file);
+  });
+
+  const live = [elText, elSize, elEC, elDark, elLight, elAccent, elLink, elLogoSize, elLogoBgMode, elLogoBg, elLogoBgShape, elLogoBgRound];
+  live.forEach(el => {
+    el.addEventListener("input", renderAll);
+    el.addEventListener("change", renderAll);
+  });
+
+  elText.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") renderAll();
+  });
+
+  // Init
+  setAccent(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#58a6ff");
+  hintEl.textContent = "Chargement du logo par défaut…";
+  loadDefaultLogoAuto();
+  renderAll();
+</script>
+
+</body>
+</html>
