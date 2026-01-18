@@ -644,7 +644,7 @@
   const IMG_MAX_WIDTH = 1200;                 // px
   const IMG_TARGET_BYTES_ADMIN = 250000;      // ~250 KB
   const IMG_TARGET_BYTES_VISITOR = 50 * 1024; // 50 Ko max
-  const IMG_MIME = "image/jpeg";              // JPEG = beaucoup plus léger
+  const IMG_MIME = "image/jpeg";
 
   /* =========================
      ✅ Admin / Visiteur
@@ -683,7 +683,7 @@
 
   let toastTimer = null;
   function showToast(html, ms = 2600){
-    if (isAdminBrowser()) return; // ✅ seulement visiteur
+    if (isAdminBrowser()) return; // seulement visiteur
     const old = document.querySelector(".toast");
     if (old) old.remove();
 
@@ -698,14 +698,11 @@
 
   /* =========================
      ✉️ Formspree (SANS PJ)
-     -> JSON inclus dans le mail
      ========================= */
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xgoowark";
 
-  // anti-doublons (évite spam si clic multiple)
   const LAST_SENT_KEY = "journal_last_validation_signature_v3_mailjson";
   function pendingSignature(pendingNotes){
-    // signature légère (sans images)
     return JSON.stringify(pendingNotes.map(n => ({
       id: n.id,
       zone: n.zone,
@@ -751,19 +748,13 @@ Résumé :
 ${lines}`;
   }
 
-  /* =========================
-     ✅ Envoi Formspree robuste (beacon + FormData)
-     ========================= */
   async function sendValidationEmailEmbeddedJSON(pendingNotes, payloadObj){
-    // mail uniquement visiteurs
     if (isAdminBrowser()) return { ok:false, skipped:true, reason:"admin" };
 
     const sig = pendingSignature(pendingNotes);
     if (alreadySent(sig)) return { ok:false, skipped:true, reason:"duplicate" };
 
     const jsonStr = JSON.stringify(payloadObj, null, 2);
-
-    // évite un mail gigantesque si beaucoup d'images
     const MAX_CHARS = 120000;
     const jsonForMail = (jsonStr.length <= MAX_CHARS)
       ? jsonStr
@@ -784,7 +775,6 @@ ${jsonForMail}
     fd.append("count", String(pendingNotes.length));
     fd.append("page", location.href);
 
-    // 1) sendBeacon (très fiable sur mobile)
     try{
       if (navigator.sendBeacon) {
         const ok = navigator.sendBeacon(FORMSPREE_ENDPOINT, fd);
@@ -793,32 +783,20 @@ ${jsonForMail}
           return { ok:true, via:"beacon" };
         }
       }
-    } catch(e){
-      // fallback fetch
-    }
+    } catch(e){}
 
-    // 2) fetch fallback
     try{
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        body: fd
-      });
-
-      if (!res.ok) {
-        console.warn("Formspree non OK:", await res.text());
-        return { ok:false, skipped:false, reason:"http" };
-      }
-
+      const res = await fetch(FORMSPREE_ENDPOINT, { method:"POST", body: fd });
+      if (!res.ok) return { ok:false, skipped:false, reason:"http" };
       markSent(sig);
       return { ok:true, via:"fetch" };
     } catch(err){
-      console.warn("Formspree erreur:", err);
       return { ok:false, skipped:false, reason:"network" };
     }
   }
 
   /* =========================
-     ✅ HELPERS IMAGES (resize + limite)
+     ✅ HELPERS IMAGES
      ========================= */
   function readAsDataURL(file) {
     return new Promise((resolve, reject) => {
@@ -854,13 +832,12 @@ ${jsonForMail}
 
   async function processImageFile(file, {
     maxWidth = IMG_MAX_WIDTH,
-    maxBytes = currentImageTargetBytes(), // ✅ dépend admin/visiteur
+    maxBytes = currentImageTargetBytes(),
     mime = IMG_MIME,
     initialQuality = 0.82,
-    minQuality = 0.40,        // plus bas pour réussir le 50 Ko
+    minQuality = 0.40,
     downscaleStep = 0.85
   } = {}) {
-    // hard cap brut (évite freeze sur énormes fichiers)
     const hardCap = 10 * 1024 * 1024; // 10MB
     if (file.size > hardCap) {
       return { ok:false, message:`Fichier trop volumineux (${Math.round(file.size/1024/1024)} Mo). Limite: 10 Mo.` };
@@ -868,11 +845,7 @@ ${jsonForMail}
 
     const dataUrl = await readAsDataURL(file);
     const img = await loadImage(dataUrl).catch(() => null);
-
-    if (!img) {
-      // Souvent HEIC non décodable
-      return { ok:false, message:`Format non supporté par le navigateur (souvent HEIC). Convertis en JPG/PNG avant import.` };
-    }
+    if (!img) return { ok:false, message:`Format non supporté (souvent HEIC). Convertis en JPG avant import.` };
 
     let targetW = img.naturalWidth;
     let targetH = img.naturalHeight;
@@ -906,7 +879,6 @@ ${jsonForMail}
 
       targetW = Math.round(targetW * downscaleStep);
       targetH = Math.round(targetH * downscaleStep);
-
       if (targetW < minDim || targetH < minDim) break;
     }
 
@@ -914,7 +886,7 @@ ${jsonForMail}
 
     if (best.bytes > maxBytes) {
       const modeLabel = isAdminBrowser() ? "admin" : "visiteur";
-      return { ok:false, message:`(${modeLabel}) Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko). Choisis une image plus petite.` };
+      return { ok:false, message:`(${modeLabel}) Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko).` };
     }
 
     return { ok:true, ...best };
@@ -926,13 +898,10 @@ ${jsonForMail}
 
     for (const file of list) {
       const res = await processImageFile(file, { maxBytes: currentImageTargetBytes() });
-      if (!res.ok) {
-        throw new Error(res.message);
-      }
+      if (!res.ok) throw new Error(res.message);
 
       out.push(res.dataUrl);
 
-      // ✅ Feedback (visiteur uniquement)
       if (!isAdminBrowser()) {
         showToast(
           `<strong>✅ Image compressée</strong> : ${bytesToKo(res.bytes)} Ko<br>
@@ -941,7 +910,6 @@ ${jsonForMail}
         );
       }
     }
-
     return out;
   }
 
@@ -1051,9 +1019,6 @@ ${jsonForMail}
     setTimeout(() => URL.revokeObjectURL(url), 500);
   }
 
-  /* =========================
-     ✅ iOS-like + export mail d'abord
-     ========================= */
   function isIOSLike(){
     return /iPad|iPhone|iPod/.test(navigator.userAgent)
       || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -1062,18 +1027,11 @@ ${jsonForMail}
   async function exportPendingNow() {
     const notes = loadNotes().map(normalizeLocalNote);
     const pendingNotes = notes.filter(n => n.status === "pending");
-
-    if (pendingNotes.length === 0) {
-      alert("Aucune note en attente à exporter.");
-      return;
-    }
+    if (pendingNotes.length === 0) { alert("Aucune note en attente à exporter."); return; }
 
     const payload = buildPendingPayload(pendingNotes);
-
-    // 1) Email en premier
     const mailRes = await sendValidationEmailEmbeddedJSON(pendingNotes, payload);
 
-    // 2) Ensuite: téléchargement (sur iPhone on demande)
     const doDownload = () => downloadJSON("journal.pending.json", payload);
 
     if (isAdminBrowser()) {
@@ -1089,21 +1047,14 @@ ${jsonForMail}
       }
     }
 
-    // 3) repasser pending -> draft après export
     const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
     saveNotes(updated);
     renderAll();
 
-    // 4) message final
-    if (mailRes.ok) {
-      alert("Envoyé pour validation ✅");
-    } else if (mailRes.skipped && mailRes.reason === "admin") {
-      alert("Mode admin : email non envoyé.");
-    } else if (mailRes.skipped && mailRes.reason === "duplicate") {
-      alert("Déjà envoyé (anti-doublon) ✅");
-    } else {
-      alert("L’email n’a pas pu être envoyé (réseau / blocage).");
-    }
+    if (mailRes.ok) alert("Envoyé pour validation ✅");
+    else if (mailRes.skipped && mailRes.reason === "admin") alert("Mode admin : email non envoyé.");
+    else if (mailRes.skipped && mailRes.reason === "duplicate") alert("Déjà envoyé (anti-doublon) ✅");
+    else alert("L’email n’a pas pu être envoyé (réseau / blocage).");
   }
 
   function noteCardHTML(note, kind) {
@@ -1150,10 +1101,7 @@ ${jsonForMail}
     const publicBoard = document.getElementById(`public_${zone}`);
     const localBoard = document.getElementById(`local_${zone}`);
 
-    const pub = publicNotes
-      .filter(n => n.zone === zone)
-      .sort((a,b) => b.createdAt - a.createdAt);
-
+    const pub = publicNotes.filter(n => n.zone === zone).sort((a,b) => b.createdAt - a.createdAt);
     publicBoard.innerHTML = pub.length
       ? pub.map(n => noteCardHTML(n, "public")).join("")
       : `
@@ -1167,10 +1115,7 @@ ${jsonForMail}
         </article>
       `;
 
-    const loc = localNotes
-      .filter(n => n.zone === zone)
-      .sort((a,b) => b.createdAt - a.createdAt);
-
+    const loc = localNotes.filter(n => n.zone === zone).sort((a,b) => b.createdAt - a.createdAt);
     localBoard.innerHTML = loc.length
       ? loc.map(n => noteCardHTML(n, "local")).join("")
       : `
@@ -1205,22 +1150,9 @@ ${jsonForMail}
     zoneEl.value = "banc";
   }
 
-  // UI events
-  const noteFormOverlay = document.getElementById("noteForm");
-  const openBtn = document.getElementById("openNoteForm");
-  const closeBtn = document.getElementById("closeNoteForm");
-  const cancelBtn = document.getElementById("cancelNote");
-
-  const exportPendingBtn = document.getElementById("exportPending");
-  const clearAllBtn = document.getElementById("clearAllNotes");
-
-  const form = document.getElementById("addNoteForm");
-  const zoneEl = document.getElementById("noteZone");
-  const titleEl = document.getElementById("noteTitle");
-  const textEl = document.getElementById("noteText");
-  const imagesEl = document.getElementById("noteImages");
-  const modalTitle = document.getElementById("modalTitle");
-
+  /* =========================
+     Events
+     ========================= */
   openBtn.addEventListener("click", () => openForm("banc"));
   closeBtn.addEventListener("click", closeForm);
   cancelBtn.addEventListener("click", closeForm);
@@ -1238,14 +1170,58 @@ ${jsonForMail}
     renderAll();
   });
 
-  // Zone buttons (+ Nouveau post-it)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest('[data-action="new"][data-zone]');
-    if (!btn) return;
-    openForm(btn.getAttribute("data-zone"));
+    if (btn) {
+      openForm(btn.getAttribute("data-zone"));
+      return;
+    }
+
+    const actionBtn = e.target.closest("[data-action]");
+    if (!actionBtn) return;
+
+    const action = actionBtn.getAttribute("data-action");
+    const noteEl = actionBtn.closest(".note");
+    if (!noteEl) return;
+
+    const kind = noteEl.getAttribute("data-kind");
+    if (kind !== "local") return;
+
+    const id = noteEl.getAttribute("data-id");
+    let notes = loadNotes().map(normalizeLocalNote);
+    const idx = notes.findIndex(n => n.id === id);
+    if (idx < 0) return;
+
+    if (action === "delete") {
+      if (!confirm("Supprimer ce post-it local ?")) return;
+      notes.splice(idx, 1);
+      saveNotes(notes);
+      renderAll();
+      return;
+    }
+
+    if (action === "move") {
+      const current = notes[idx].zone;
+      const next = prompt("Déplacer vers : banc / etabli / tas", current);
+      if (!next) return;
+      const nz = next.trim().toLowerCase();
+      if (!ZONES.includes(nz)) { alert("Zone invalide."); return; }
+      notes[idx] = { ...notes[idx], zone: nz };
+      saveNotes(notes);
+      renderAll();
+      return;
+    }
+
+    if (action === "send") {
+      if (notes[idx].status !== "draft") return;
+      notes[idx] = { ...notes[idx], status:"pending", sentAt: Date.now() };
+      saveNotes(notes);
+      renderAll();
+      exportPendingNow();
+      return;
+    }
   });
 
-  // Add note (draft)
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1255,7 +1231,7 @@ ${jsonForMail}
 
     let images = [];
     try {
-      images = await filesToDataUrls(imagesEl.files); // ✅ admin/visiteur + toast
+      images = await filesToDataUrls(imagesEl.files);
     } catch (err) {
       alert(String(err?.message || "Impossible de lire/compresser une ou plusieurs images."));
       return;
@@ -1279,59 +1255,9 @@ ${jsonForMail}
     renderAll();
   });
 
-  // Note actions (local)
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-action]");
-    if (!btn) return;
-
-    const action = btn.getAttribute("data-action");
-    const noteEl = btn.closest(".note");
-    if (!noteEl) return;
-
-    const kind = noteEl.getAttribute("data-kind");
-    if (kind !== "local") return;
-
-    const id = noteEl.getAttribute("data-id");
-    let notes = loadNotes().map(normalizeLocalNote);
-    const idx = notes.findIndex(n => n.id === id);
-    if (idx < 0) return;
-
-    if (action === "delete") {
-      const ok = confirm("Supprimer ce post-it local ?");
-      if (!ok) return;
-      notes.splice(idx, 1);
-      saveNotes(notes);
-      renderAll();
-      return;
-    }
-
-    if (action === "move") {
-      const current = notes[idx].zone;
-      const next = prompt("Déplacer vers : banc / etabli / tas", current);
-      if (!next) return;
-      const nz = next.trim().toLowerCase();
-      if (!ZONES.includes(nz)) { alert("Zone invalide."); return; }
-      notes[idx] = { ...notes[idx], zone: nz };
-      saveNotes(notes);
-      renderAll();
-      return;
-    }
-
-    if (action === "send") {
-      if (notes[idx].status !== "draft") return;
-
-      // passe en attente
-      notes[idx] = { ...notes[idx], status:"pending", sentAt: Date.now() };
-      saveNotes(notes);
-      renderAll();
-
-      // export + mail
-      exportPendingNow();
-      return;
-    }
-  });
-
-  // Init
+  /* =========================
+     Init
+     ========================= */
   (async function init() {
     await loadPublic();
     renderAll();
