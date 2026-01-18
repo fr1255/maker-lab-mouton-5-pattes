@@ -15,27 +15,32 @@
 
   <url>
     <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/dome-geodesique/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/application-lenticulaire/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/socle-acier/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/tracker-solaire/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/qr-code/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
-  
-
 </urlset>
-
-
-
