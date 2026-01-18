@@ -408,6 +408,26 @@
       margin-top:1rem;
       flex-wrap:wrap;
     }
+
+    /* ✅ Toast (info compression visiteur) */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      background: rgba(15,22,36,.95);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.55);
+      font-size: 13px;
+      z-index: 9999;
+      max-width: min(560px, 92vw);
+      line-height: 1.35;
+    }
+    .toast strong{ color:#cde1ff; }
+    .toast small{ color: var(--muted); display:block; margin-top:3px; }
   </style>
 
   <!-- GoatCounter -->
@@ -578,7 +598,9 @@
           Photos (optionnel)
           <input type="file" id="noteImages" accept="image/*" multiple />
           <small>
-            Les images sont compressées automatiquement (max 1200px, cible ~250 Ko/image).
+            Compression automatique :<br>
+            • <b>visiteur</b> : max <b>50 Ko</b>/image (pour éviter les mails trop lourds)<br>
+            • <b>admin</b> : cible ~<b>250 Ko</b>/image<br>
             Si une photo est en HEIC, convertis-la en JPG avant import.
           </small>
         </label>
@@ -615,11 +637,14 @@
   const PUBLIC_JSON_URL = "journal.public.json";
 
   /* =========================
-     ✅ RÉGLAGES COMPRESSION IMAGES (chez le créateur)
+     ✅ RÉGLAGES COMPRESSION IMAGES
+     - admin : ~250 Ko
+     - visiteur : 50 Ko max
      ========================= */
-  const IMG_MAX_WIDTH = 1200;        // px
-  const IMG_TARGET_BYTES = 250000;   // ~250 KB par image
-  const IMG_MIME = "image/jpeg";     // JPEG = beaucoup plus léger
+  const IMG_MAX_WIDTH = 1200;                 // px
+  const IMG_TARGET_BYTES_ADMIN = 250000;      // ~250 KB
+  const IMG_TARGET_BYTES_VISITOR = 50 * 1024; // 50 Ko max
+  const IMG_MIME = "image/jpeg";              // JPEG = beaucoup plus léger
 
   /* =========================
      ✅ Admin / Visiteur
@@ -630,6 +655,10 @@
 
   function isAdminBrowser(){
     return localStorage.getItem(ADMIN_KEY) === "true";
+  }
+
+  function currentImageTargetBytes(){
+    return isAdminBrowser() ? IMG_TARGET_BYTES_ADMIN : IMG_TARGET_BYTES_VISITOR;
   }
 
   function updateRoleBadge(){
@@ -646,6 +675,26 @@
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) updateRoleBadge();
   });
+
+  /* =========================
+     ✅ Toast (feedback compression) — visiteur uniquement
+     ========================= */
+  function bytesToKo(bytes){ return Math.round(bytes / 1024); }
+
+  let toastTimer = null;
+  function showToast(html, ms = 2600){
+    if (isAdminBrowser()) return; // ✅ seulement visiteur
+    const old = document.querySelector(".toast");
+    if (old) old.remove();
+
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.innerHTML = html;
+    document.body.appendChild(el);
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.remove(); }, ms);
+  }
 
   /* =========================
      ✉️ Formspree (SANS PJ)
@@ -703,7 +752,7 @@ ${lines}`;
   }
 
   /* =========================
-     ✅ Nouveau: envoi Formspree robuste (beacon + FormData)
+     ✅ Envoi Formspree robuste (beacon + FormData)
      ========================= */
   async function sendValidationEmailEmbeddedJSON(pendingNotes, payloadObj){
     // mail uniquement visiteurs
@@ -805,10 +854,10 @@ ${jsonForMail}
 
   async function processImageFile(file, {
     maxWidth = IMG_MAX_WIDTH,
-    maxBytes = IMG_TARGET_BYTES,
+    maxBytes = currentImageTargetBytes(), // ✅ dépend admin/visiteur
     mime = IMG_MIME,
     initialQuality = 0.82,
-    minQuality = 0.45,
+    minQuality = 0.40,        // plus bas pour réussir le 50 Ko
     downscaleStep = 0.85
   } = {}) {
     // hard cap brut (évite freeze sur énormes fichiers)
@@ -838,7 +887,11 @@ ${jsonForMail}
     let attempts = 0;
     let best = null;
 
-    while (attempts < 12) {
+    const visitor = !isAdminBrowser();
+    const maxAttempts = visitor ? 18 : 12;
+    const minDim = visitor ? 320 : 420;
+
+    while (attempts < maxAttempts) {
       attempts++;
       const out = drawToDataURL(img, targetW, targetH, mime, quality);
       const bytes = estimateDataURLBytes(out);
@@ -847,20 +900,21 @@ ${jsonForMail}
       if (bytes <= maxBytes) break;
 
       if (quality > minQuality) {
-        quality = Math.max(minQuality, quality - 0.08);
+        quality = Math.max(minQuality, quality - (visitor ? 0.09 : 0.08));
         continue;
       }
 
       targetW = Math.round(targetW * downscaleStep);
       targetH = Math.round(targetH * downscaleStep);
 
-      if (targetW < 420 || targetH < 420) break;
+      if (targetW < minDim || targetH < minDim) break;
     }
 
     if (!best) return { ok:false, message:"Impossible de traiter l’image." };
 
     if (best.bytes > maxBytes) {
-      return { ok:false, message:`Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko). Choisis une image plus petite.` };
+      const modeLabel = isAdminBrowser() ? "admin" : "visiteur";
+      return { ok:false, message:`(${modeLabel}) Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko). Choisis une image plus petite.` };
     }
 
     return { ok:true, ...best };
@@ -871,13 +925,23 @@ ${jsonForMail}
     const out = [];
 
     for (const file of list) {
-      const res = await processImageFile(file);
+      const res = await processImageFile(file, { maxBytes: currentImageTargetBytes() });
       if (!res.ok) {
-        // Stop net: sinon l’utilisateur croit que ça a marché
         throw new Error(res.message);
       }
+
       out.push(res.dataUrl);
+
+      // ✅ Feedback (visiteur uniquement)
+      if (!isAdminBrowser()) {
+        showToast(
+          `<strong>✅ Image compressée</strong> : ${bytesToKo(res.bytes)} Ko<br>
+           <small>${res.width}×${res.height} • ${Math.round(res.quality * 100)}% • ${res.mime.replace("image/","")}</small>`,
+          2600
+        );
+      }
     }
+
     return out;
   }
 
@@ -988,7 +1052,7 @@ ${jsonForMail}
   }
 
   /* =========================
-     ✅ Nouveau: détection iOS + export mail d'abord
+     ✅ iOS-like + export mail d'abord
      ========================= */
   function isIOSLike(){
     return /iPad|iPhone|iPod/.test(navigator.userAgent)
@@ -1006,14 +1070,13 @@ ${jsonForMail}
 
     const payload = buildPendingPayload(pendingNotes);
 
-    // 1) Email en premier (sinon Safari iPhone coupe souvent le fetch après download)
+    // 1) Email en premier
     const mailRes = await sendValidationEmailEmbeddedJSON(pendingNotes, payload);
 
     // 2) Ensuite: téléchargement (sur iPhone on demande)
     const doDownload = () => downloadJSON("journal.pending.json", payload);
 
     if (isAdminBrowser()) {
-      // admin: pas d'email, on télécharge direct
       doDownload();
     } else {
       if (isIOSLike()) {
@@ -1022,12 +1085,11 @@ ${jsonForMail}
           : "Email non envoyé.\n\nTélécharger le fichier 'journal.pending.json' pour l'import admin ?";
         if (confirm(msg)) doDownload();
       } else {
-        // desktop: OK auto
         doDownload();
       }
     }
 
-    // 3) Eviter ré-envoi involontaire: repasser pending -> draft après export
+    // 3) repasser pending -> draft après export
     const updated = notes.map(n => (n.status === "pending" ? { ...n, status: "draft" } : n));
     saveNotes(updated);
     renderAll();
@@ -1144,6 +1206,21 @@ ${jsonForMail}
   }
 
   // UI events
+  const noteFormOverlay = document.getElementById("noteForm");
+  const openBtn = document.getElementById("openNoteForm");
+  const closeBtn = document.getElementById("closeNoteForm");
+  const cancelBtn = document.getElementById("cancelNote");
+
+  const exportPendingBtn = document.getElementById("exportPending");
+  const clearAllBtn = document.getElementById("clearAllNotes");
+
+  const form = document.getElementById("addNoteForm");
+  const zoneEl = document.getElementById("noteZone");
+  const titleEl = document.getElementById("noteTitle");
+  const textEl = document.getElementById("noteText");
+  const imagesEl = document.getElementById("noteImages");
+  const modalTitle = document.getElementById("modalTitle");
+
   openBtn.addEventListener("click", () => openForm("banc"));
   closeBtn.addEventListener("click", closeForm);
   cancelBtn.addEventListener("click", closeForm);
@@ -1178,7 +1255,7 @@ ${jsonForMail}
 
     let images = [];
     try {
-      images = await filesToDataUrls(imagesEl.files); // ✅ compressées
+      images = await filesToDataUrls(imagesEl.files); // ✅ admin/visiteur + toast
     } catch (err) {
       alert(String(err?.message || "Impossible de lire/compresser une ou plusieurs images."));
       return;
