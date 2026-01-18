@@ -830,68 +830,87 @@ ${jsonForMail}
     return Math.floor(base64.length * 3 / 4);
   }
 
-  async function processImageFile(file, {
-    maxWidth = IMG_MAX_WIDTH,
-    maxBytes = currentImageTargetBytes(),
-    mime = IMG_MIME,
-    initialQuality = 0.82,
-    minQuality = 0.40,
-    downscaleStep = 0.85
-  } = {}) {
-    const hardCap = 10 * 1024 * 1024; // 10MB
-    if (file.size > hardCap) {
-      return { ok:false, message:`Fichier trop volumineux (${Math.round(file.size/1024/1024)} Mo). Limite: 10 Mo.` };
-    }
+ async function processImageFile(file, {
+  maxWidth = IMG_MAX_WIDTH,
+  maxBytes = currentImageTargetBytes(),
+  mime = IMG_MIME,
+  initialQuality = 0.82,
+  minQuality = 0.40,
+  downscaleStep = 0.85
+} = {}) {
 
-    const dataUrl = await readAsDataURL(file);
-    const img = await loadImage(dataUrl).catch(() => null);
-    if (!img) return { ok:false, message:`Format non supporté (souvent HEIC). Convertis en JPG avant import.` };
+  const visitor = !isAdminBrowser();
 
-    let targetW = img.naturalWidth;
-    let targetH = img.naturalHeight;
+  // ✅ Réglages plus agressifs pour visiteur
+  const effectiveMaxWidth = visitor ? Math.min(900, maxWidth) : maxWidth;
+  const qStart = visitor ? 0.78 : initialQuality;
+  const qMin   = visitor ? 0.22 : minQuality;
+  const step   = visitor ? 0.80 : downscaleStep;
 
-    if (targetW > maxWidth) {
-      const ratio = maxWidth / targetW;
-      targetW = Math.round(targetW * ratio);
-      targetH = Math.round(targetH * ratio);
-    }
-
-    let quality = initialQuality;
-    let attempts = 0;
-    let best = null;
-
-    const visitor = !isAdminBrowser();
-    const maxAttempts = visitor ? 18 : 12;
-    const minDim = visitor ? 320 : 420;
-
-    while (attempts < maxAttempts) {
-      attempts++;
-      const out = drawToDataURL(img, targetW, targetH, mime, quality);
-      const bytes = estimateDataURLBytes(out);
-
-      best = { dataUrl: out, bytes, width: targetW, height: targetH, mime, quality };
-      if (bytes <= maxBytes) break;
-
-      if (quality > minQuality) {
-        quality = Math.max(minQuality, quality - (visitor ? 0.09 : 0.08));
-        continue;
-      }
-
-      targetW = Math.round(targetW * downscaleStep);
-      targetH = Math.round(targetH * downscaleStep);
-      if (targetW < minDim || targetH < minDim) break;
-    }
-
-    if (!best) return { ok:false, message:"Impossible de traiter l’image." };
-
-    if (best.bytes > maxBytes) {
-      const modeLabel = isAdminBrowser() ? "admin" : "visiteur";
-      return { ok:false, message:`(${modeLabel}) Impossible de descendre sous ${Math.round(maxBytes/1024)} Ko (actuel: ${Math.round(best.bytes/1024)} Ko).` };
-    }
-
-    return { ok:true, ...best };
+  const hardCap = 10 * 1024 * 1024; // 10MB
+  if (file.size > hardCap) {
+    return { ok:false, message:`Fichier trop volumineux (${Math.round(file.size/1024/1024)} Mo). Limite: 10 Mo.` };
   }
 
+  const dataUrl = await readAsDataURL(file);
+  const img = await loadImage(dataUrl).catch(() => null);
+  if (!img) {
+    return { ok:false, message:`Format non supporté (souvent HEIC). Convertis en JPG avant import.` };
+  }
+
+  let targetW = img.naturalWidth;
+  let targetH = img.naturalHeight;
+
+  if (targetW > effectiveMaxWidth) {
+    const ratio = effectiveMaxWidth / targetW;
+    targetW = Math.round(targetW * ratio);
+    targetH = Math.round(targetH * ratio);
+  }
+
+  let quality = qStart;
+  let attempts = 0;
+  let best = null;
+
+  const maxAttempts = visitor ? 28 : 12;
+  const minDim = visitor ? 220 : 420;
+
+  while (attempts < maxAttempts) {
+    attempts++;
+
+    const out = drawToDataURL(img, targetW, targetH, mime, quality);
+    const bytes = estimateDataURLBytes(out);
+
+    best = { dataUrl: out, bytes, width: targetW, height: targetH, mime, quality };
+
+    if (bytes <= maxBytes) break;
+
+    // 1) baisse qualité
+    if (quality > qMin) {
+      quality = Math.max(qMin, quality - (visitor ? 0.07 : 0.08));
+      continue;
+    }
+
+    // 2) réduit dimensions
+    targetW = Math.round(targetW * step);
+    targetH = Math.round(targetH * step);
+
+    if (targetW < minDim || targetH < minDim) break;
+  }
+
+  if (!best) return { ok:false, message:"Impossible de traiter l’image." };
+
+  // ✅ HARD CAP REEL : si ça dépasse, on REFUSE (donc plus de 100 Ko qui “passe”)
+  if (best.bytes > maxBytes) {
+    const modeLabel = isAdminBrowser() ? "admin" : "visiteur";
+    return {
+      ok:false,
+      message:`(${modeLabel}) Image trop lourde après compression : ${Math.round(best.bytes/1024)} Ko. Limite: ${Math.round(maxBytes/1024)} Ko.`
+    };
+  }
+
+  return { ok:true, ...best };
+}
+ 
   async function filesToDataUrls(files) {
     const list = Array.from(files || []);
     const out = [];
