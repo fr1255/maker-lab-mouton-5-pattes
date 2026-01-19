@@ -1,15 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Générateur de QR Code | Maker Lab du Mouton à 5 Pattes</title>
+  <title>QR Code SVG natif (yeux + modules arrondis) + PNG | Maker Lab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- SEO -->
-  <meta name="robots" content="index, follow">
-  <meta name="description" content="Générateur de QR Code en ligne avec aperçu et export PNG : personnalisation des couleurs, intégration d’un logo centré et réglage du niveau de correction d’erreur.">
-
 
   <style>
     :root{
@@ -25,36 +19,18 @@
     }
     *{ box-sizing:border-box; }
     body{
-      margin:0;
-      font-family:system-ui, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.55;
+      margin:0; font-family:system-ui, sans-serif;
+      background:var(--bg); color:var(--text); line-height:1.55;
     }
-
-    header{
-      position:fixed;
-      top:0; right:0;
-      padding:16px 24px;
-      z-index:10;
-    }
+    header{ position:fixed; top:0; right:0; padding:16px 24px; z-index:10; }
     nav a{
-      margin-left:8px;
-      padding:6px 12px;
-      border-radius:999px;
+      margin-left:8px; padding:6px 12px; border-radius:999px;
       border:1px solid rgba(255,255,255,.25);
-      text-decoration:none;
-      color:var(--text);
-      font-size:14px;
+      text-decoration:none; color:var(--text); font-size:14px;
     }
     nav a:hover{ border-color:var(--accent); }
 
-    .wrap{
-      max-width:var(--max);
-      margin:auto;
-      padding:96px 16px 72px;
-    }
-
+    .wrap{ max-width:var(--max); margin:auto; padding:96px 16px 72px; }
     a{ color:var(--accent); text-decoration:none; }
     a:hover{ text-decoration:underline; }
 
@@ -66,13 +42,12 @@
     }
     .kicker{ color:var(--muted); font-size:14px; margin:0 0 6px; }
     h1{ margin:0 0 10px; font-size:28px; }
-    .lead{ margin:0; color:var(--muted); max-width:80ch; }
+    .lead{ margin:0; color:var(--muted); max-width:90ch; }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap:16px;
-      margin-top:16px;
+      gap:16px; margin-top:16px;
     }
     .card{
       background:var(--card);
@@ -83,22 +58,12 @@
     .card h2{ margin:0 0 8px; font-size:18px; }
     .card p{ margin:0; color:var(--muted); font-size:14px; }
 
-    .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:14px;
-      align-items:center;
-    }
+    .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; }
     .btn{
-      display:inline-block;
-      padding:10px 14px;
-      border-radius:999px;
+      display:inline-block; padding:10px 14px; border-radius:999px;
       border:1px solid rgba(255,255,255,.25);
-      color:var(--text);
-      font-size:14px;
-      background:transparent;
-      cursor:pointer;
+      color:var(--text); font-size:14px;
+      background:transparent; cursor:pointer;
     }
     .btn:hover{ border-color:var(--accent); }
     .btn.primary{
@@ -106,91 +71,61 @@
       background:rgba(var(--accent-rgb), .10);
     }
 
-    .pdfWrap{
-      margin-top:20px;
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      overflow:hidden;
-    }
-    .pdfHeader{
-      padding:12px 14px;
-      border-bottom:1px solid var(--line);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      font-size:13px;
-      color:var(--muted);
-      flex-wrap:wrap;
-    }
-    .pdfFrame{
-      width:100%;
-      min-height:420px;
-      border:0;
-      background:#000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-    }
-
     label{ display:block; color:var(--muted); font-size:13px; margin:10px 0 6px; }
     input[type="text"], select, input[type="color"], input[type="file"]{
-      width:100%;
-      padding:10px 12px;
-      border-radius:12px;
+      width:100%; padding:10px 12px; border-radius:12px;
       border:1px solid rgba(255,255,255,.18);
-      background:#0e1520;
-      color:var(--text);
-      font-size:15px;
-      outline:none;
+      background:#0e1520; color:var(--text);
+      font-size:15px; outline:none;
     }
     input[type="text"]:focus, select:focus, input[type="color"]:focus, input[type="file"]:focus{
       border-color:rgba(var(--accent-rgb), .55);
       box-shadow:0 0 0 3px rgba(var(--accent-rgb), .12);
     }
-    .row2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 720px){
-      .row2{ grid-template-columns: 1fr; }
-    }
+
+    .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width: 720px){ .row2{ grid-template-columns:1fr; } }
 
     .qrBox{
       background:rgba(255,255,255,.03);
       border:1px dashed rgba(255,255,255,.18);
       border-radius:14px;
       padding:16px;
-      display:inline-flex;
+      display:flex;
       align-items:center;
       justify-content:center;
       min-width:260px;
       min-height:260px;
+      overflow:hidden;
     }
-    .qrBox canvas{
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      display:block;
-      max-width:100%;
-      height:auto;
-    }
+    .qrBox svg{ width:100%; height:auto; display:block; }
 
-    .qrHint{ margin-top:10px; color:var(--muted); font-size:13px; max-width:70ch; }
+    .qrHint{ margin-top:10px; color:var(--muted); font-size:13px; max-width:80ch; }
     .tiny{ font-size:12px; color:var(--muted); margin-top:6px; }
 
+    .pdfWrap{
+      margin-top:20px; background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .pdfHeader{
+      padding:12px 14px; border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; gap:10px;
+      font-size:13px; color:var(--muted); flex-wrap:wrap;
+    }
+    .pdfFrame{
+      width:100%; min-height:420px; border:0;
+      background:#000; display:flex; align-items:center; justify-content:center;
+      padding:18px;
+    }
     footer{
-      margin-top:26px;
-      color:var(--muted);
-      font-size:13px;
-      border-top:1px solid var(--line);
-      padding-top:16px;
+      margin-top:26px; color:var(--muted); font-size:13px;
+      border-top:1px solid var(--line); padding-top:16px;
     }
   </style>
 
-  <!-- QRCode.js (celle qui marchait au début) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -206,10 +141,9 @@
 <div class="wrap">
   <div class="hero">
     <p class="kicker">🧾📷 Outil • Générateur</p>
-    <h1>Générateur de QR Code (aperçu + sortie OK)</h1>
+    <h1>QR Code SVG natif — yeux + modules arrondis + export PNG</h1>
     <p class="lead">
-      Logo centré (PNG/SVG) + fond carré/arrondi/cercle. Détection auto : logo.svg puis logo.png.
-      (Aperçu et sortie utilisent un canvas même si QRCode.js rend en image.)
+      SVG vectoriel (impression parfaite) + export PNG haute définition (rasterisation du SVG).
     </p>
 
     <div class="grid">
@@ -221,17 +155,19 @@
 
         <div class="row2">
           <div>
-            <label for="size">Taille</label>
+            <label for="size">Taille (px) — calage grille</label>
             <select id="size">
-              <option value="256" selected>256 px</option>
-              <option value="384">384 px</option>
-              <option value="512">512 px</option>
-              <option value="768">768 px</option>
+              <option value="256">256</option>
+              <option value="384">384</option>
+              <option value="512" selected>512</option>
+              <option value="768">768</option>
+              <option value="1024">1024</option>
             </select>
           </div>
           <div>
-            <label for="eclevel">Correction (logo → H conseillé)</label>
+            <label for="eclevel">Correction</label>
             <select id="eclevel">
+              <option value="L">L (≈7%)</option>
               <option value="M">M (≈15%)</option>
               <option value="Q">Q (≈25%)</option>
               <option value="H" selected>H (≈30%)</option>
@@ -252,27 +188,55 @@
 
         <div class="row2">
           <div>
-            <label for="accent">Couleur d’accent (UI)</label>
-            <input id="accent" type="color" value="#58a6ff" />
+            <label for="quietZone">Quiet zone (modules)</label>
+            <select id="quietZone">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4" selected>4 (standard)</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
           </div>
           <div>
-            <label for="linkAccent">Lier l’accent à la couleur du QR</label>
-            <select id="linkAccent">
-              <option value="off" selected>Non</option>
-              <option value="on">Oui (accent = couleur du QR)</option>
+            <label for="eyeRound">Arrondi des yeux</label>
+            <select id="eyeRound">
+              <option value="0.30">Normal</option>
+              <option value="0.38" selected>Doux</option>
+              <option value="0.48">Très doux</option>
             </select>
           </div>
         </div>
 
         <div class="row2">
           <div>
-            <label for="logoFile">Logo (PNG/SVG, optionnel)</label>
+            <label for="roundModules">Modules arrondis ?</label>
+            <select id="roundModules">
+              <option value="off" selected>Non (max fiabilité)</option>
+              <option value="on">Oui</option>
+            </select>
+            <div class="tiny">Conseil : “Non” si QR dense / imprimé petit.</div>
+          </div>
+          <div>
+            <label for="moduleRoundness">Intensité arrondi modules</label>
+            <select id="moduleRoundness">
+              <option value="0.10">Très léger</option>
+              <option value="0.18" selected>Léger</option>
+              <option value="0.28">Moyen</option>
+              <option value="0.38">Fort</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="logoFile">Logo (optionnel)</label>
             <input id="logoFile" type="file" accept="image/png,image/svg+xml,image/jpeg,image/webp" />
-            <div class="tiny">Par défaut : <code>logo.svg</code> si présent, sinon <code>logo.png</code>.</div>
+            <div class="tiny">Logo SVG = reste vectoriel dans l’export SVG.</div>
           </div>
           <div>
             <label for="logoSize">Taille du logo (%)</label>
             <select id="logoSize">
+              <option value="18">18 %</option>
               <option value="20">20 %</option>
               <option value="22">22 %</option>
               <option value="25" selected>25 %</option>
@@ -317,9 +281,26 @@
           </div>
         </div>
 
+        <div class="row2">
+          <div>
+            <label for="pngScale">Export PNG — échelle</label>
+            <select id="pngScale">
+              <option value="1">x1</option>
+              <option value="2" selected>x2 (recommandé)</option>
+              <option value="4">x4 (très HD)</option>
+            </select>
+            <div class="tiny">PNG = rasterisation du SVG (plus l’échelle est grande, plus c’est net).</div>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <div class="tiny">Astuce : pour impression pro → export SVG.</div>
+          </div>
+        </div>
+
         <div class="actions" style="margin-top:14px;">
           <button class="btn primary" id="btnGenerate">Générer</button>
-          <button class="btn" id="btnDownload">Télécharger PNG</button>
+          <button class="btn" id="btnDownloadSvg">Télécharger SVG</button>
+          <button class="btn" id="btnDownloadPng">Télécharger PNG</button>
           <button class="btn" id="btnReset">Réinitialiser</button>
         </div>
 
@@ -327,8 +308,8 @@
       </div>
 
       <div class="card">
-        <h2>Aperçu</h2>
-        <p>Le logo doit apparaître ici.</p>
+        <h2>Aperçu (SVG)</h2>
+        <p>Vectoriel (zoom infini).</p>
         <div style="margin-top:14px;">
           <div class="qrBox"><div id="qrcodeSmall"></div></div>
         </div>
@@ -350,23 +331,25 @@
     <div class="pdfFrame">
       <div style="text-align:center;">
         <div class="qrBox"><div id="qrcodeBig"></div></div>
-        <div class="qrHint">Le téléchargement exporte le canvas “grand format”.</div>
+        <div class="qrHint">Export : SVG autonome + PNG HD.</div>
       </div>
     </div>
   </div>
 
-  <footer>Maker Lab du Mouton à 5 Pattes — Outil « Générateur de QR Code »</footer>
+  <footer>Maker Lab du Mouton à 5 Pattes — Outil « QR SVG natif »</footer>
 </div>
 
 <script>
-  // UI
-  const elText   = document.getElementById("text");
-  const elSize   = document.getElementById("size");
-  const elEC     = document.getElementById("eclevel");
-  const elDark   = document.getElementById("colorDark");
-  const elLight  = document.getElementById("colorLight");
-  const elAccent = document.getElementById("accent");
-  const elLink   = document.getElementById("linkAccent");
+  const elText = document.getElementById("text");
+  const elSize = document.getElementById("size");
+  const elEC   = document.getElementById("eclevel");
+  const elDark = document.getElementById("colorDark");
+  const elLight= document.getElementById("colorLight");
+  const elQuiet= document.getElementById("quietZone");
+  const elEyeRound = document.getElementById("eyeRound");
+
+  const elRoundModules = document.getElementById("roundModules");
+  const elModuleRound  = document.getElementById("moduleRoundness");
 
   const elLogoFile    = document.getElementById("logoFile");
   const elLogoSize    = document.getElementById("logoSize");
@@ -375,10 +358,13 @@
   const elLogoBgShape = document.getElementById("logoBgShape");
   const elLogoBgRound = document.getElementById("logoBgRound");
 
-  const btnGenerate = document.getElementById("btnGenerate");
-  const btnDownload = document.getElementById("btnDownload");
-  const btnReset    = document.getElementById("btnReset");
-  const btnCopy     = document.getElementById("btnCopy");
+  const elPngScale = document.getElementById("pngScale");
+
+  const btnGenerate    = document.getElementById("btnGenerate");
+  const btnDownloadSvg = document.getElementById("btnDownloadSvg");
+  const btnDownloadPng = document.getElementById("btnDownloadPng");
+  const btnReset       = document.getElementById("btnReset");
+  const btnCopy        = document.getElementById("btnCopy");
 
   const statusEl = document.getElementById("status");
   const hintEl   = document.getElementById("hint");
@@ -386,293 +372,322 @@
   const boxSmall = document.getElementById("qrcodeSmall");
   const boxBig   = document.getElementById("qrcodeBig");
 
-  // Logo auto
-  const DEFAULT_LOGO_SVG = "logo.svg";
-  const DEFAULT_LOGO_PNG = "logo.png";
+  function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
 
-  let logoImg = new Image();
-  let logoReady = false;
-  let logoEnabled = true;
-  let logoType = "none";
+  // Logo as DataURL
+  let logoDataUrl = "";
+  let logoEnabled = false;
 
-  function hexToRgbTuple(hex){
-    const h = (hex || "").replace("#", "").trim();
-    if (h.length !== 6) return "88,166,255";
-    const r = parseInt(h.slice(0,2), 16);
-    const g = parseInt(h.slice(2,4), 16);
-    const b = parseInt(h.slice(4,6), 16);
-    if ([r,g,b].some(n => Number.isNaN(n))) return "88,166,255";
-    return `${r},${g},${b}`;
+  function escAttr(s){
+    return String(s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
   }
-  function setAccent(hex){
-    document.documentElement.style.setProperty("--accent", hex);
-    document.documentElement.style.setProperty("--accent-rgb", hexToRgbTuple(hex));
+
+  function svgRoundRectPath(x,y,w,h,r){
+    const rr = Math.max(0, Math.min(r, Math.min(w,h)/2));
+    return [
+      `M ${x+rr} ${y}`,
+      `H ${x+w-rr}`,
+      `A ${rr} ${rr} 0 0 1 ${x+w} ${y+rr}`,
+      `V ${y+h-rr}`,
+      `A ${rr} ${rr} 0 0 1 ${x+w-rr} ${y+h}`,
+      `H ${x+rr}`,
+      `A ${rr} ${rr} 0 0 1 ${x} ${y+h-rr}`,
+      `V ${y+rr}`,
+      `A ${rr} ${rr} 0 0 1 ${x+rr} ${y}`,
+      `Z`
+    ].join(" ");
   }
-  function applyAccentRules(){
-    if (elLink.value === "on"){
-      elAccent.value = elDark.value;
-      setAccent(elDark.value);
-    } else {
-      setAccent(elAccent.value);
+  function svgRect(x,y,w,h,fill){
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${escAttr(fill)}"/>`;
+  }
+  function svgPath(d, fill){
+    return `<path d="${escAttr(d)}" fill="${escAttr(fill)}"/>`;
+  }
+
+  // Finder + separator area (8x8) excluded
+  function inFinderOrSeparatorArea(r,c,n){
+    const inTL = (r <= 7 && c <= 7);
+    const inTR = (r <= 7 && c >= n-8);
+    const inBL = (r >= n-8 && c <= 7);
+    return inTL || inTR || inBL;
+  }
+
+  function countDarkNeighbors(qr, r, c, n){
+    let cnt = 0;
+    const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+    for (const [dr,dc] of dirs){
+      const rr = r+dr, cc=c+dc;
+      if (rr<0 || cc<0 || rr>=n || cc>=n) continue;
+      if (qr.isDark(rr,cc)) cnt++;
+    }
+    return cnt;
+  }
+
+  function drawEyes(parts, startX, startY, m, n, dark, light){
+    const eye = 7*m;
+    const eyeRoundRatio = parseFloat(elEyeRound.value || "0.38");
+    const outerR = Math.round(eyeRoundRatio * eye);
+    const innerR = Math.round(0.22 * eye);
+
+    const pos = [
+      {x:startX, y:startY},
+      {x:startX + (n-7)*m, y:startY},
+      {x:startX, y:startY + (n-7)*m}
+    ];
+
+    for (const p of pos){
+      parts.push(svgRect(p.x, p.y, eye, eye, light));
+      parts.push(svgPath(svgRoundRectPath(p.x, p.y, eye, eye, outerR), dark));
+      parts.push(svgPath(svgRoundRectPath(p.x + m, p.y + m, 5*m, 5*m, Math.max(0, outerR - m)), light));
+      parts.push(svgPath(svgRoundRectPath(p.x + 2*m, p.y + 2*m, 3*m, 3*m, innerR), dark));
     }
   }
 
-  function ecLevelFromValue(v){
-    switch(v){
-      case "M": return QRCode.CorrectLevel.M;
-      case "Q": return QRCode.CorrectLevel.Q;
-      case "H": return QRCode.CorrectLevel.H;
-      default:  return QRCode.CorrectLevel.H;
-    }
-  }
+  function drawLogo(parts, qrPx){
+    if (!logoEnabled || !logoDataUrl) return;
 
-  function clearNode(node){
-    while(node.firstChild) node.removeChild(node.firstChild);
-  }
+    const percent = parseInt(elLogoSize.value, 10) || 25;
+    const s = Math.round(qrPx * (percent/100));
+    const x = Math.round((qrPx - s)/2);
+    const y = Math.round((qrPx - s)/2);
 
-  // --- Fond logo (carré/arrondi/cercle)
-  function roundedRectPath(ctx, x, y, w, h, r){
-    const rr = Math.max(0, Math.min(r, Math.min(w, h) / 2));
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x, y + h, rr);
-    ctx.arcTo(x, y + h, x, y, rr);
-    ctx.arcTo(x, y, x + w, y, rr);
-    ctx.closePath();
-  }
+    const pad = Math.round(s * 0.18);
+    const bx = x - pad, by = y - pad, bw = s + 2*pad, bh = s + 2*pad;
 
-  function drawLogoBg(ctx, x, y, w, h){
     let drawBg = true;
     let bgColor = "#ffffff";
     if (elLogoBgMode.value === "transparent") drawBg = false;
     else if (elLogoBgMode.value === "custom") bgColor = elLogoBg.value;
-    if (!drawBg) return;
 
-    ctx.save();
-    ctx.fillStyle = bgColor;
-
-    const shape = elLogoBgShape.value;
-    if (shape === "circle"){
-      const cx = x + w/2, cy = y + h/2;
-      const r = Math.min(w, h)/2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.fill();
-    } else if (shape === "rounded"){
-      const pct = parseInt(elLogoBgRound.value, 10) / 100;
-      const r = Math.round(Math.min(w, h) * pct);
-      roundedRectPath(ctx, x, y, w, h, r);
-      ctx.fill();
-    } else {
-      ctx.fillRect(x, y, w, h);
+    if (drawBg){
+      const shape = elLogoBgShape.value;
+      if (shape === "circle"){
+        const cx = bx + bw/2, cy = by + bh/2, r = Math.min(bw,bh)/2;
+        parts.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${escAttr(bgColor)}"/>`);
+      } else if (shape === "rounded"){
+        const pct = (parseInt(elLogoBgRound.value, 10) || 18)/100;
+        const rr = Math.round(Math.min(bw,bh) * pct);
+        parts.push(svgPath(svgRoundRectPath(bx, by, bw, bh, rr), bgColor));
+      } else {
+        parts.push(svgRect(bx, by, bw, bh, bgColor));
+      }
     }
 
-    ctx.restore();
+    parts.push(`<image x="${x}" y="${y}" width="${s}" height="${s}" href="${escAttr(logoDataUrl)}" preserveAspectRatio="xMidYMid meet"/>`);
   }
 
-  // --- IMPORTANT: si QRCode.js rend un <img>, on le convertit en canvas
-  function ensureCanvasFromBox(box, expectedSize){
-    const canvas = box.querySelector("canvas");
-    if (canvas) return canvas;
+  function buildQrSvg(text, sizePx, ecLevel, dark, light, quietZone){
+    const qr = qrcode(0, ecLevel);
+    qr.addData(text);
+    qr.make();
 
-    const img = box.querySelector("img");
-    if (img && img.complete && img.naturalWidth > 0){
-      const c = document.createElement("canvas");
-      c.width = expectedSize;
-      c.height = expectedSize;
+    const n = qr.getModuleCount();
+    const qz = Math.max(0, parseInt(quietZone, 10) || 4);
 
-      const ctx = c.getContext("2d");
-      // dessiner l'image du QR dans le canvas
-      ctx.drawImage(img, 0, 0, expectedSize, expectedSize);
+    const totalModules = n + 2*qz;
+    const m = Math.floor(sizePx / totalModules) || 1;
+    const qrPx = totalModules * m;
 
-      // remplacer l'image par le canvas
-      box.innerHTML = "";
-      box.appendChild(c);
-      return c;
+    const startX = qz * m;
+    const startY = qz * m;
+
+    const parts = [];
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${qrPx}" height="${qrPx}" viewBox="0 0 ${qrPx} ${qrPx}" shape-rendering="crispEdges">`);
+    parts.push(svgRect(0,0,qrPx,qrPx,light));
+
+    const doRound = (elRoundModules.value === "on");
+    const rr = Math.round((parseFloat(elModuleRound.value || "0.18")) * m);
+
+    for (let r=0; r<n; r++){
+      for (let c=0; c<n; c++){
+        if (!qr.isDark(r,c)) continue;
+        if (inFinderOrSeparatorArea(r,c,n)) continue;
+
+        const x = startX + c*m;
+        const y = startY + r*m;
+
+        if (!doRound){
+          parts.push(svgRect(x,y,m,m,dark));
+          continue;
+        }
+
+        const neighbors = countDarkNeighbors(qr, r, c, n);
+        if (neighbors >= 2 && rr > 0){
+          parts.push(svgPath(svgRoundRectPath(x,y,m,m,rr), dark));
+        } else {
+          parts.push(svgRect(x,y,m,m,dark));
+        }
+      }
     }
-    return null;
+
+    drawEyes(parts, startX, startY, m, n, dark, light);
+    drawLogo(parts, qrPx);
+
+    parts.push(`</svg>`);
+    return { svg: parts.join(""), pixelSize: qrPx, moduleSize: m, moduleCount: n, quietZone: qz };
   }
 
-  function drawLogoOnCanvas(canvas){
-    if (!logoEnabled || !logoReady) return;
-
-    const ctx = canvas.getContext("2d");
-    // netteté logo
-    ctx.imageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-
-    const sizePercent = parseInt(elLogoSize.value, 10);
-
-    const s = Math.round(canvas.width * (sizePercent / 100));
-    const x = Math.round((canvas.width  - s) / 2);
-    const y = Math.round((canvas.height - s) / 2);
-
-    const pad = Math.round(s * 0.18);
-
-    drawLogoBg(ctx, x - pad, y - pad, s + pad*2, s + pad*2);
-    ctx.drawImage(logoImg, x, y, s, s);
-  }
-
-  function renderBox(box, sizePx){
+  function renderInto(box, svgString){
     clearNode(box);
+    box.insertAdjacentHTML("beforeend", svgString);
+  }
 
-    const value = elText.value.trim() || " ";
-    const dark  = elDark.value;
-    const light = elLight.value;
+  // Last exports
+  let lastBigSvg = "";
+  let lastBigPx = 0;
 
-    new QRCode(box, {
-      text: value,
-      width: sizePx,
-      height: sizePx,
-      colorDark: dark,
-      colorLight: light,
-      correctLevel: ecLevelFromValue(elEC.value)
+  function renderAll(){
+    const value = (elText.value || "").trim() || " ";
+    const size = parseInt(elSize.value, 10) || 512;
+    const smallSize = Math.min(320, size);
+
+    const dark = elDark.value || "#000000";
+    const light= elLight.value || "#ffffff";
+    const ec = elEC.value || "H";
+    const qz = elQuiet.value || "4";
+
+    const small = buildQrSvg(value, smallSize, ec, dark, light, qz);
+    const big   = buildQrSvg(value, size, ec, dark, light, qz);
+
+    renderInto(boxSmall, small.svg);
+    renderInto(boxBig, big.svg);
+
+    lastBigSvg = big.svg;
+    lastBigPx = big.pixelSize;
+
+    hintEl.textContent = logoEnabled ? "Logo chargé (DataURL)." : "Aucun logo (optionnel).";
+    statusEl.textContent = `OK — ${big.moduleCount} modules • module=${big.moduleSize}px • quiet=${big.quietZone} • sortie=${big.pixelSize}px`;
+  }
+
+  function downloadSVG(){
+    if (!lastBigSvg){
+      statusEl.textContent = "SVG non prêt. Clique sur Générer.";
+      return;
+    }
+    const blob = new Blob([lastBigSvg], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qrcode.svg";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 400);
+    statusEl.textContent = "SVG téléchargé.";
+  }
+
+  // ✅ Export PNG from SVG (rasterize)
+  async function downloadPNG(){
+    if (!lastBigSvg || !lastBigPx){
+      statusEl.textContent = "PNG non prêt. Clique sur Générer.";
+      return;
+    }
+
+    const scale = parseInt(elPngScale.value, 10) || 2;
+    const w = lastBigPx * scale;
+    const h = lastBigPx * scale;
+
+    // SVG -> Blob URL
+    const svgBlob = new Blob([lastBigSvg], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    // Draw into canvas
+    const img = new Image();
+    // IMPORTANT: keep same-origin by using blob URL; no crossOrigin needed
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+
+      const ctx = canvas.getContext("2d");
+      // no smoothing for crisp modules
+      ctx.imageSmoothingEnabled = false;
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.mozImageSmoothingEnabled = false;
+
+      ctx.drawImage(img, 0, 0, w, h);
+
+      URL.revokeObjectURL(svgUrl);
+
+      const a = document.createElement("a");
+      a.download = `qrcode_${w}x${h}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+
+      statusEl.textContent = `PNG téléchargé (${w}×${h}).`;
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(svgUrl);
+      statusEl.textContent = "Erreur : impossible de rasteriser le SVG en PNG.";
+    };
+
+    img.src = svgUrl;
+  }
+
+  function readFileAsDataURL(file){
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result || ""));
+      r.onerror = reject;
+      r.readAsDataURL(file);
     });
   }
 
-  // Attendre que QRCode.js ait mis le canvas/img dans le DOM, puis overlay logo
-  function postProcessBox(box, sizePx){
-    let tries = 0;
-    const maxTries = 20;
-
-    function tick(){
-      tries += 1;
-
-      const c = ensureCanvasFromBox(box, sizePx);
-      if (c){
-        drawLogoOnCanvas(c);
-        return;
-      }
-
-      if (tries < maxTries) requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
-  }
-
-  function renderAll(){
-    applyAccentRules();
-
-    const size = parseInt(elSize.value, 10);
-    const small = Math.min(size, 256);
-
-    // 1) générer les QR
-    renderBox(boxSmall, small);
-    renderBox(boxBig, size);
-
-    // 2) convertir en canvas si besoin + dessiner logo
-    postProcessBox(boxSmall, small);
-    postProcessBox(boxBig, size);
-
-    // 3) status
-    statusEl.textContent = (logoEnabled && logoReady)
-      ? `OK — QR + logo (${logoType})`
-      : "OK — QR sans logo (aucun logo trouvé/chargé)";
-  }
-
-  function downloadPNG(){
-    const size = parseInt(elSize.value, 10);
-    const canvas = ensureCanvasFromBox(boxBig, size) || boxBig.querySelector("canvas");
-    if (!canvas){
-      statusEl.textContent = "Impossible : canvas non prêt. Clique sur Générer puis réessaye.";
+  async function loadLogoFromFile(file){
+    if (!file){
+      logoEnabled = false;
+      logoDataUrl = "";
+      renderAll();
       return;
     }
-    const link = document.createElement("a");
-    link.download = "qrcode.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    statusEl.textContent = "PNG téléchargé.";
-  }
-
-  function loadDefaultLogoAuto(){
-    logoReady = false;
-    logoEnabled = true;
-    logoType = "none";
-
-    const trySvg = new Image();
-    trySvg.onload = () => {
-      logoImg = trySvg;
-      logoReady = true;
-      logoType = "svg";
-      hintEl.textContent = "Logo détecté : logo.svg";
+    try{
+      logoDataUrl = await readFileAsDataURL(file);
+      logoEnabled = true;
+      statusEl.textContent = "Logo chargé.";
       renderAll();
-    };
-    trySvg.onerror = () => {
-      const tryPng = new Image();
-      tryPng.onload = () => {
-        logoImg = tryPng;
-        logoReady = true;
-        logoType = "png";
-        hintEl.textContent = "Logo détecté : logo.png";
-        renderAll();
-      };
-      tryPng.onerror = () => {
-        logoEnabled = false;
-        logoReady = false;
-        logoType = "none";
-        hintEl.textContent = "Aucun logo trouvé (logo.svg / logo.png).";
-        renderAll();
-      };
-      tryPng.src = DEFAULT_LOGO_PNG;
-    };
-    trySvg.src = DEFAULT_LOGO_SVG;
-  }
-
-  function loadLogoFromFile(file){
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    const isSvg = (file.type === "image/svg+xml") || file.name.toLowerCase().endsWith(".svg");
-
-    logoReady = false;
-    logoEnabled = true;
-    logoType = isSvg ? "svg" : "raster";
-
-    const img = new Image();
-    img.onload = () => {
-      logoImg = img;
-      logoReady = true;
-      hintEl.textContent = `Logo chargé (${logoType}).`;
-      URL.revokeObjectURL(url);
-      renderAll();
-    };
-    img.onerror = () => {
+    } catch(e){
       logoEnabled = false;
-      logoReady = false;
-      logoType = "none";
-      hintEl.textContent = "Impossible de charger ce logo.";
-      URL.revokeObjectURL(url);
+      logoDataUrl = "";
+      statusEl.textContent = "Impossible de charger le logo.";
       renderAll();
-    };
-    img.src = url;
+    }
   }
 
   function resetAll(){
     elText.value = "https://example.com";
-    elSize.value = "256";
+    elSize.value = "512";
     elEC.value = "H";
     elDark.value = "#e7eef7";
     elLight.value = "#0b0f14";
-    elAccent.value = "#58a6ff";
-    elLink.value = "off";
+    elQuiet.value = "4";
+    elEyeRound.value = "0.38";
 
-    elLogoSize.value = "25";
+    elRoundModules.value = "off";
+    elModuleRound.value = "0.18";
+
     elLogoFile.value = "";
+    elLogoSize.value = "25";
     elLogoBgMode.value = "auto";
     elLogoBg.value = "#ffffff";
     elLogoBgShape.value = "rounded";
     elLogoBgRound.value = "18";
 
-    loadDefaultLogoAuto();
-    renderAll();
+    elPngScale.value = "2";
+
+    logoEnabled = false;
+    logoDataUrl = "";
+
     statusEl.textContent = "Réinitialisé.";
+    hintEl.textContent = "—";
+    renderAll();
   }
 
   // Events
   btnGenerate.addEventListener("click", renderAll);
-  btnDownload.addEventListener("click", downloadPNG);
+  btnDownloadSvg.addEventListener("click", downloadSVG);
+  btnDownloadPng.addEventListener("click", downloadPNG);
   btnReset.addEventListener("click", resetAll);
 
   btnCopy.addEventListener("click", (e) => {
@@ -686,25 +701,23 @@
 
   elLogoFile.addEventListener("change", () => {
     const file = elLogoFile.files && elLogoFile.files[0];
-    if (file) loadLogoFromFile(file);
+    loadLogoFromFile(file);
   });
 
-  const live = [elText, elSize, elEC, elDark, elLight, elAccent, elLink, elLogoSize, elLogoBgMode, elLogoBg, elLogoBgShape, elLogoBgRound];
+  const live = [
+    elText, elSize, elEC, elDark, elLight, elQuiet, elEyeRound,
+    elRoundModules, elModuleRound,
+    elLogoSize, elLogoBgMode, elLogoBg, elLogoBgShape, elLogoBgRound,
+    elPngScale
+  ];
   live.forEach(el => {
     el.addEventListener("input", renderAll);
     el.addEventListener("change", renderAll);
   });
-
-  elText.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") renderAll();
-  });
+  elText.addEventListener("keydown", (e) => { if (e.key === "Enter") renderAll(); });
 
   // Init
-  setAccent(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#58a6ff");
-  hintEl.textContent = "Chargement du logo par défaut…";
-  loadDefaultLogoAuto();
   renderAll();
 </script>
-
 </body>
 </html>
