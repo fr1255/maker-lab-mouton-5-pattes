@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
- <title>⚡ Étude de la chaîne d’énergie d’un tracker solaire | Maker Lab</title>
+  <title>⚡ Étude de la chaîne d’énergie d’un tracker solaire | Maker Lab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- SEO -->
   <meta name="robots" content="index, follow">
-  <meta name="description" content="Étude de la chaîne d’énergie d’un tracker solaire : intégration de capteurs et d’actionneurs, pilotage automatique et gestion des tensions DC et AC.">
-
+  <meta name="description"
+        content="Étude complète de la chaîne d’énergie d’un tracker solaire : capteurs, actionneurs, pilotage automatique, gestion DC/AC et dimensionnement précis de la liaison AC photovoltaïque.">
 
   <!-- Canonical -->
   <link rel="canonical"
@@ -114,9 +114,11 @@
       border-bottom:1px solid var(--line);
       display:flex;
       justify-content:space-between;
+      gap:12px;
       font-size:13px;
       color:var(--muted);
     }
+    .pdfHeader span:last-child{ text-align:right; }
 
     .pdfFrame{
       width:100%;
@@ -161,6 +163,7 @@
 
 <div class="wrap">
 
+  <!-- ===== HERO PROJET ===== -->
   <section class="hero">
     <h1>⚡Étude de la chaîne d’énergie d’un tracker solaire</h1>
 
@@ -187,6 +190,7 @@
     </div>
   </section>
 
+  <!-- ===== PDF 1 ===== -->
   <section class="pdfWrap">
     <div class="pdfHeader">
       <span>📄 Aperçu du document PDF</span>
@@ -200,8 +204,46 @@
     </iframe>
   </section>
 
+  <!-- ===== VIGNETTE + PDF 2 ===== -->
+  <section class="hero" style="margin-top:32px">
+    <h2 style="margin:0 0 10px;font-size:22px">🌍 Un calcul pour la planète</h2>
+
+    <p class="objective">
+      <strong>La sobriété commence par le calcul.</strong><br>
+      L’abaque rassure, le calcul engage.<br>
+      L’un empile du cuivre, l’autre construit une installation cohérente et responsable.
+    </p>
+
+    <div class="actions">
+      <a class="btn primary"
+         href="/maker-lab-mouton-5-pattes/pdf/Dimensionnement_liaison_AC_photovoltaïque.pdf"
+         target="_blank" rel="noopener">
+        Ouvrir le PDF
+      </a>
+
+      <a class="btn"
+         href="/maker-lab-mouton-5-pattes/pdf/Dimensionnement_liaison_AC_photovoltaïque.pdf"
+         download>
+        Télécharger le PDF
+      </a>
+    </div>
+  </section>
+
+  <section class="pdfWrap">
+    <div class="pdfHeader">
+      <span>📄 Dimensionnement liaison AC photovoltaïque</span>
+      <span>Calcul technique & justification</span>
+    </div>
+
+    <iframe
+      class="pdfFrame"
+      src="/maker-lab-mouton-5-pattes/pdf/Dimensionnement_liaison_AC_photovoltaïque.pdf#view=FitH"
+      title="Dimensionnement liaison AC photovoltaïque">
+    </iframe>
+  </section>
+
   <footer>
-    Maker Lab du Mouton à 5 Pattes — Étude de la chaîne d’énergie d’un tracker solaire
+    Maker Lab du Mouton à 5 Pattes — Tracker solaire, chaîne d’énergie et dimensionnement AC photovoltaïque
   </footer>
 
 </div>
