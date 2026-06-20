@@ -5,7 +5,6 @@
   <title>Projets – Maker Lab du Mouton à 5 Pattes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Canonical (optionnel mais propre) -->
   <link rel="canonical" href="https://fr1255.github.io/maker-lab-mouton-5-pattes/projets/">
 
   <style>
@@ -29,7 +28,6 @@
       color: var(--text);
     }
 
-    /* NAVIGATION GLOBALE */
     header {
       position: fixed;
       top: 0;
@@ -55,13 +53,21 @@
     .wrap {
       max-width: var(--max);
       margin: auto;
-      padding: 96px 16px 60px; /* décalage pour le menu fixe */
+      padding: 96px 16px 60px;
     }
 
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
 
-    h1 { margin: 16px 0 8px; }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin: 16px 0 8px;
+    }
 
     .grid {
       display: grid;
@@ -98,24 +104,28 @@
       margin-top: 12px;
       font-weight: 600;
     }
-  </style>
 
-  <!-- GoatCounter : normalisation des URLs pour éviter /index.html, slash final, etc. -->
-  <script>
-    window.goatcounter = {
-      path: function (p) {
-        p = p.split('?')[0];
-        p = p.replace(/\/index\.html$/, '/');
-        if (p.length > 1) p = p.replace(/\/$/, '');
-        return p;
+    @media (max-width: 700px) {
+      header {
+        position: static;
+        padding: 16px;
       }
-    };
-  </script>
 
-  <script
-    data-goatcounter="https://fr1255.goatcounter.com/count"
-    async
-    src="//gc.zgo.at/count.js"></script>
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      nav a {
+        margin-left: 0;
+      }
+
+      .wrap {
+        padding-top: 24px;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -136,9 +146,6 @@
 
   <div class="grid">
 
-    
-
-    <!-- PROJET 1 -->
     <div class="card">
       <h2>🌐 Dôme géodésique</h2>
       <p>
@@ -150,53 +157,49 @@
       </div>
     </div>
 
-    <!-- PROJET 2 -->
     <div class="card">
       <h2>👁️ Application lenticulaire</h2>
       <p>
-        Application exploitant l’effet lenticulaire pour afficher
-        plusieurs visuels selon l’angle de vue.
+        Application exploitant l’effet lenticulaire pour afficher plusieurs visuels
+        selon l’angle de vue.
       </p>
       <div class="cta">
         → <a href="application-lenticulaire/">Voir le projet</a>
       </div>
     </div>
-    
-    <!-- PROJET 3 -->
-<div class="card">
-  <h2>📐🔩 Socle acier – étude de stabilité</h2>
-  <p>
-    Étude d’un socle en acier : stabilité, centre de gravité et risque de basculement.
-  </p>
-  <div class="cta">
-    → <a href="socle-acier/">Voir le projet</a>
-  </div>
-</div>
 
-    <!-- PROJET 4 -->
-<div class="card">
-  <h2>⚡ Tracker solaire – chaîne d’énergie</h2>
-  <p>
-    Pilotage automatique d’un tracker solaire par capteurs et actionneurs, avec adaptation DC/AC
-  </p>
-  <div class="cta">
-    → <a href="tracker-solaire-chaine-energie/">Voir le projet</a>
-  </div>
-</div>
+    <div class="card">
+      <h2>📐🔩 Socle acier – étude de stabilité</h2>
+      <p>
+        Étude d’un socle en acier : stabilité, centre de gravité et risque de basculement.
+      </p>
+      <div class="cta">
+        → <a href="socle-acier/">Voir le projet</a>
+      </div>
+    </div>
 
-    <!-- PROJET 5 -->
-<div class="card">
-  <h2>🧾📷 QR Code statique</h2>
-  <p>
-    Générateur de QR codes personnalisables (couleurs, correction d’erreur)
-    avec logo centré (PNG/SVG) et fond arrondi/cercle, export en PNG.
-  </p>
-  <div class="cta">
-    → <a href="qrcode-mp5/">Voir le projet</a>
-  </div>
-</div>
+    <div class="card">
+      <h2>⚡ Tracker solaire – chaîne d’énergie</h2>
+      <p>
+        Pilotage automatique d’un tracker solaire par capteurs et actionneurs,
+        avec adaptation DC/AC.
+      </p>
+      <div class="cta">
+        → <a href="tracker-solaire-chaine-energie/">Voir le projet</a>
+      </div>
+    </div>
 
-    <!-- PROJET 6 -->
+    <div class="card">
+      <h2>🧾📷 QR Code statique</h2>
+      <p>
+        Générateur de QR codes personnalisables avec logo centré,
+        correction d’erreur, couleurs et export PNG.
+      </p>
+      <div class="cta">
+        → <a href="qrcode-mp5/">Voir le projet</a>
+      </div>
+    </div>
+
     <div class="card">
       <h2>🔔 Système d’alarme</h2>
       <p>
@@ -204,6 +207,17 @@
       </p>
       <div class="cta">
         → <a href="alarme-portes-secours/">Voir le projet</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🐑 Mouton Vigilant</h2>
+      <p>
+        Application PWA permettant de gérer la prise quotidienne des médicaments,
+        avec guide utilisateur, rappels, historique et fonctionnement hors connexion.
+      </p>
+      <div class="cta">
+        → <a href="mouton-vigilant/">Voir le projet</a>
       </div>
     </div>
 
