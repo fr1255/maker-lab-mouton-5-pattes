@@ -1,57 +1,82 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Mouton Vigilant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouton Vigilant</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B1F3A">
+    <link rel="apple-touch-icon" href="icône-touch-apple.png">
 </head>
 
 <body>
 
-  <main class="page">
+<div class="page">
 
-    <section class="hero">
-      <img src="logo.png" alt="Logo Mouton Vigilant" class="logo">
+    <header class="hero">
 
-      <h1>🐑 Mouton Vigilant</h1>
-      <p class="intro">
-        Une application simple pour ne plus oublier vos traitements.
-      </p>
+        <img src="logo.png" alt="Logo Mouton Vigilant" class="logo">
 
-      <a class="btn" href="Logo%20Mouton_Vigilant_notice_v1.pdf" target="_blank">
-        📄 Ouvrir le guide utilisateur
-      </a>
+        <h1>🐑 Mouton Vigilant</h1>
+
+        <p class="intro">
+            Une application simple pour ne plus oublier vos traitements.
+        </p>
+
+        <a class="btn"
+           href="./Logo%20Mouton_Vigilant_notice_v1.pdf"
+           target="_blank">
+            📄 Ouvrir le guide utilisateur
+        </a>
+
+    </header>
+
+    <section class="card">
+
+        <h2>💊 Aujourd'hui</h2>
+
+        <div class="medicament">
+            <strong>07h30</strong>
+            <span>Levothyrox</span>
+            <button>Pris</button>
+        </div>
+
+        <div class="medicament">
+            <strong>08h30</strong>
+            <span>Candésartan cilexétil</span>
+            <button>Pris</button>
+        </div>
+
+        <div class="medicament">
+            <strong>22h00</strong>
+            <span>Ézétimibe + Rosuvastatine</span>
+            <button>Pris</button>
+        </div>
+
     </section>
 
     <section class="card">
-      <h2>Aujourd’hui</h2>
 
-      <div class="medicament">
-        <strong>07h30</strong>
-        <span>Levothyrox</span>
-        <button>Pris</button>
-      </div>
+        <h2>☀️ Vitamine D</h2>
 
-      <div class="medicament">
-        <strong>08h30</strong>
-        <span>Candésartan cilexétil</span>
-        <button>Pris</button>
-      </div>
+        <p>
+            Prochaine prise :
+            <strong>21 septembre 2026</strong>
+        </p>
 
-      <div class="medicament">
-        <strong>22h00</strong>
-        <span>Ézétimibe + Rosuvastatine</span>
-        <button>Pris</button>
-      </div>
     </section>
 
-    <section class="card">
-      <h2>Vitamine D</h2>
-      <p>Prochaine prise : 21 septembre 2026</p>
-    </section>
+</div>
 
-  </main>
+<script src="app.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+}
+</script>
 
 </body>
 </html>
