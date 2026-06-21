@@ -164,3 +164,14 @@ input {
     width: 100%;
   }
 }
+.actions-med {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.supprimer {
+  background: #2a3342;
+  color: white;
+  padding: 8px 10px;
+}
