@@ -108,7 +108,16 @@ button {
   .medicament {
     grid-template-columns: 1fr;
   }
-
+.btn-alerte {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #16385f;
+  color: white;
+  font-weight: 800;
+  border: 1px solid #2f6fad;
+}
   button {
     width: 100%;
   }
