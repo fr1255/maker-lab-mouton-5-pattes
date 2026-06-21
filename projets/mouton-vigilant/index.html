@@ -1,64 +1,154 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Mouton Vigilant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0B1F3A">
-  <link rel="apple-touch-icon" href="icône-touch-apple.png">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Mouton Vigilant</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0B1F3A">
+
+<link rel="apple-touch-icon" href="icône-touch-apple.png">
+
 </head>
 
 <body>
 
-  <main class="page">
+<main class="page">
+
+    <!-- Logo -->
 
     <section class="hero">
-      <img src="logo.png" alt="Logo Mouton Vigilant" class="logo">
 
-      <h1>🐑 Mouton Vigilant</h1>
+        <img src="logo.png" class="logo" alt="Mouton Vigilant">
 
-      <p class="intro">
-        Une application simple pour ne plus oublier vos traitements.
-      </p>
+        <h1>🐑 Mouton Vigilant</h1>
 
-      <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
-        📄 Ouvrir le guide utilisateur
-      </a>
+        <p id="bonjour" class="intro">
+            Bonjour
+        </p>
+
+        <p class="intro">
+            Une application simple pour ne plus oublier vos traitements.
+        </p>
+
+        <a class="btn"
+           href="./Mouton_Vigilant_notice_logo_v1.pdf"
+           target="_blank">
+
+            📄 Ouvrir le guide utilisateur
+
+        </a>
+
     </section>
+
+
+
+    <!-- Médicaments -->
 
     <section class="card">
-      <h2>💊 Aujourd’hui</h2>
-      <div id="listeMedicaments"></div>
-      <button id="activerAlarmes" class="btn-alerte">
-       🔔 Activer les alarmes
-     </button>
+
+        <h2>💊 Aujourd'hui</h2>
+
+        <div id="listeMedicaments"></div>
+
+        <button
+            id="activerAlarmes"
+            class="btn-alerte">
+
+            🔔 Activer les alarmes
+
+        </button>
+
     </section>
+
+
+
+    <!-- Vitamine D -->
 
     <section class="card">
-      <h2>☀️ Vitamine D</h2>
-      <p>
-        Prochaine prise :
-        <strong>21 septembre 2026</strong>
-      </p>
+
+        <h2>☀️ Vitamine D</h2>
+
+        <p>
+
+            Prochaine prise :
+
+            <strong>
+
+                21 septembre 2026
+
+            </strong>
+
+        </p>
+
     </section>
+
+
+
+    <!-- Historique -->
 
     <section class="card">
-      <h2>📅 Historique</h2>
-      <div id="historique"></div>
+
+        <h2>📅 Historique</h2>
+
+        <div id="historique">
+
+        </div>
+
     </section>
 
-  </main>
 
-  <script src="app.js"></script>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js');
-    }
-  </script>
+    <!-- Paramètres -->
+
+    <section class="card">
+
+        <h2>⚙️ Paramètres</h2>
+
+        <label>
+
+            Prénom
+
+        </label>
+
+        <input
+            id="prenom"
+            type="text"
+            placeholder="Entrez votre prénom">
+
+        <button
+            id="sauverPrenom"
+            class="btn-alerte">
+
+            💾 Enregistrer
+
+        </button>
+
+    </section>
+
+</main>
+
+
+
+<script src="app.js"></script>
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    navigator.serviceWorker.register("./service-worker.js");
+
+}
+
+</script>
 
 </body>
+
 </html>
