@@ -46,16 +46,20 @@ h1 {
   line-height: 1.5;
 }
 
-.btn {
+.btn,
+.btn-alerte {
   display: inline-block;
+  width: 100%;
   margin-top: 14px;
-  padding: 12px 18px;
-  border-radius: 14px;
+  padding: 14px 18px;
+  border-radius: 16px;
   background: #16385f;
   color: white;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 800;
   border: 1px solid #2f6fad;
+  text-align: center;
+  cursor: pointer;
 }
 
 .card {
@@ -91,6 +95,15 @@ h1 {
   font-weight: 600;
 }
 
+.medicament small,
+.medicament em {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+  font-style: normal;
+}
+
 button {
   border: none;
   border-radius: 999px;
@@ -98,6 +111,44 @@ button {
   background: var(--green);
   color: #06130c;
   font-weight: 800;
+  cursor: pointer;
+}
+
+button.pris {
+  background: #2ecc71;
+}
+
+.historique-item {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+
+.historique-item span {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #0b0f14;
+  color: var(--text);
+  font-size: 16px;
+  margin-bottom: 12px;
 }
 
 @media (max-width: 380px) {
@@ -108,16 +159,7 @@ button {
   .medicament {
     grid-template-columns: 1fr;
   }
-.btn-alerte {
-  width: 100%;
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 16px;
-  background: #16385f;
-  color: white;
-  font-weight: 800;
-  border: 1px solid #2f6fad;
-}
+
   button {
     width: 100%;
   }
