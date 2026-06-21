@@ -1,154 +1,97 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
+  <meta charset="UTF-8">
+  <title>Mouton Vigilant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Mouton Vigilant</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link rel="manifest" href="manifest.json">
-
-<meta name="theme-color" content="#0B1F3A">
-
-<link rel="apple-touch-icon" href="icône-touch-apple.png">
-
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B1F3A">
+  <link rel="apple-touch-icon" href="icône-touch-apple.png">
 </head>
 
 <body>
 
 <main class="page">
 
-    <!-- Logo -->
+  <section class="hero">
+    <img src="logo.png" class="logo" alt="Mouton Vigilant">
 
-    <section class="hero">
+    <h1>🐑 Mouton Vigilant</h1>
+    <p id="bonjour" class="intro">Bonjour</p>
 
-        <img src="logo.png" class="logo" alt="Mouton Vigilant">
+    <p class="intro">
+      Une application simple pour ne plus oublier vos traitements.
+    </p>
 
-        <h1>🐑 Mouton Vigilant</h1>
+    <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
+      📄 Ouvrir le guide utilisateur
+    </a>
+  </section>
 
-        <p id="bonjour" class="intro">
-            Bonjour
-        </p>
+  <section class="card">
+    <h2>💊 Aujourd'hui</h2>
+    <div id="listeMedicaments"></div>
 
-        <p class="intro">
-            Une application simple pour ne plus oublier vos traitements.
-        </p>
+    <button id="activerAlarmes" class="btn-alerte">
+      🔔 Activer les alarmes
+    </button>
+  </section>
 
-        <a class="btn"
-           href="./Mouton_Vigilant_notice_logo_v1.pdf"
-           target="_blank">
+  <section class="card">
+    <h2>➕ Paramétrer un médicament</h2>
 
-            📄 Ouvrir le guide utilisateur
+    <label>Nom du médicament</label>
+    <input id="medNom" type="text" placeholder="Ex : Levothyrox">
 
-        </a>
+    <label>Heure de prise</label>
+    <input id="medHeure" type="time">
 
-    </section>
+    <label>Nombre / quantité</label>
+    <input id="medNombre" type="text" placeholder="Ex : 1 comprimé">
 
+    <label>Date de début</label>
+    <input id="medDate" type="date">
 
+    <button id="ajouterMedicament" class="btn-alerte">
+      💊 Ajouter le médicament
+    </button>
+  </section>
 
-    <!-- Médicaments -->
+  <section class="card">
+    <h2>☀️ Vitamine D</h2>
+    <p>
+      Prochaine prise :
+      <strong>21 septembre 2026</strong>
+    </p>
+  </section>
 
-    <section class="card">
+  <section class="card">
+    <h2>📅 Historique</h2>
+    <div id="historique"></div>
+  </section>
 
-        <h2>💊 Aujourd'hui</h2>
+  <section class="card">
+    <h2>⚙️ Paramètres</h2>
 
-        <div id="listeMedicaments"></div>
+    <label>Prénom</label>
+    <input id="prenom" type="text" placeholder="Entrez votre prénom">
 
-        <button
-            id="activerAlarmes"
-            class="btn-alerte">
-
-            🔔 Activer les alarmes
-
-        </button>
-
-    </section>
-
-
-
-    <!-- Vitamine D -->
-
-    <section class="card">
-
-        <h2>☀️ Vitamine D</h2>
-
-        <p>
-
-            Prochaine prise :
-
-            <strong>
-
-                21 septembre 2026
-
-            </strong>
-
-        </p>
-
-    </section>
-
-
-
-    <!-- Historique -->
-
-    <section class="card">
-
-        <h2>📅 Historique</h2>
-
-        <div id="historique">
-
-        </div>
-
-    </section>
-
-
-
-    <!-- Paramètres -->
-
-    <section class="card">
-
-        <h2>⚙️ Paramètres</h2>
-
-        <label>
-
-            Prénom
-
-        </label>
-
-        <input
-            id="prenom"
-            type="text"
-            placeholder="Entrez votre prénom">
-
-        <button
-            id="sauverPrenom"
-            class="btn-alerte">
-
-            💾 Enregistrer
-
-        </button>
-
-    </section>
+    <button id="sauverPrenom" class="btn-alerte">
+      💾 Enregistrer
+    </button>
+  </section>
 
 </main>
-
-
 
 <script src="app.js"></script>
 
 <script>
-
-if ("serviceWorker" in navigator) {
-
+  if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js");
-
-}
-
+  }
 </script>
 
 </body>
-
 </html>
