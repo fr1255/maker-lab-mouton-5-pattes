@@ -1,7 +1,7 @@
 const medicamentsParDefaut = [
   {
     id: "levo",
-    heure: "07h30",
+    heure: "07:30",
     nom: "Levothyrox",
     nombre: "1 comprimé",
     date: "",
@@ -9,7 +9,7 @@ const medicamentsParDefaut = [
   },
   {
     id: "candesartan",
-    heure: "08h30",
+    heure: "08:30",
     nom: "Candésartan cilexétil",
     nombre: "1 comprimé",
     date: "",
@@ -17,7 +17,7 @@ const medicamentsParDefaut = [
   },
   {
     id: "statine",
-    heure: "22h00",
+    heure: "22:00",
     nom: "Ézétimibe + Rosuvastatine",
     nombre: "1 comprimé",
     date: "",
@@ -60,16 +60,15 @@ function heureActuelle() {
   });
 }
 
-function heureCouranteFormat() {
-  return new Date()
-    .toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    })
-    .replace(":", "h");
+function heurePourComparaison() {
+  return new Date().toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
 }
 
-function normaliserHeure(heure) {
+function afficherHeure(heure) {
   return heure.replace(":", "h");
 }
 
@@ -103,7 +102,7 @@ function afficherMedicaments() {
     ligne.className = "medicament";
 
     ligne.innerHTML = `
-      <strong>${med.heure}</strong>
+      <strong>${afficherHeure(med.heure)}</strong>
 
       <span>
         ${med.nom}
@@ -152,6 +151,7 @@ function afficherMedicaments() {
       if (confirm("Supprimer ce médicament ?")) {
         medicaments = medicaments.filter((m) => m.id !== med.id);
         delete prises[med.id];
+        delete alarmesEnvoyees[med.id];
         sauvegarder();
         afficherMedicaments();
       }
@@ -182,30 +182,58 @@ function afficherHistorique() {
     .join("");
 }
 
-function envoyerNotification(med) {
+async function activerNotifications() {
   if (!("Notification" in window)) {
     alert("Les notifications ne sont pas disponibles sur cet appareil.");
-    return;
+    return false;
   }
 
   if (Notification.permission === "granted") {
-    new Notification("🐑 Mouton Vigilant", {
-      body: "Il est l'heure de prendre : " + med.nom,
-      icon: "icône-192.png"
-    });
+    return true;
+  }
 
-    if ("vibrate" in navigator) {
-      navigator.vibrate([500, 200, 500]);
-    }
+  const permission = await Notification.requestPermission();
+  return permission === "granted";
+}
+
+function envoyerNotification(med) {
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  const titre = "🐑 Mouton Vigilant";
+  const message =
+    "Il est l'heure de prendre : " +
+    med.nom +
+    (med.nombre ? " — " + med.nombre : "");
+
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.showNotification(titre, {
+        body: message,
+        icon: "icon-192.png",
+        badge: "icon-192.png",
+        vibrate: [500, 200, 500],
+        requireInteraction: true
+      });
+    });
+  } else {
+    new Notification(titre, {
+      body: message,
+      icon: "icon-192.png"
+    });
+  }
+
+  if ("vibrate" in navigator) {
+    navigator.vibrate([500, 200, 500]);
   }
 }
 
 function verifierAlarmes() {
-  const maintenant = heureCouranteFormat();
+  const maintenant = heurePourComparaison();
 
   medicaments.forEach((med) => {
     if (
-      normaliserHeure(med.heure) === maintenant &&
+      med.heure === maintenant &&
       !prises[med.id] &&
       !alarmesEnvoyees[med.id]
     ) {
@@ -218,17 +246,16 @@ function verifierAlarmes() {
 
 if (boutonAlarmes) {
   boutonAlarmes.addEventListener("click", async () => {
-    if (!("Notification" in window)) {
-      alert("Notifications non compatibles sur cet appareil.");
-      return;
-    }
+    const ok = await activerNotifications();
 
-    const permission = await Notification.requestPermission();
-
-    if (permission === "granted") {
-      alert("Alarmes activées.");
+    if (ok) {
+      alert("Alarmes activées. Test de notification envoyé.");
+      envoyerNotification({
+        nom: "Test de notification",
+        nombre: "Mouton Vigilant fonctionne"
+      });
     } else {
-      alert("Notifications refusées.");
+      alert("Notifications refusées. Il faut les autoriser dans le navigateur.");
     }
   });
 }
@@ -255,7 +282,7 @@ if (boutonAjouterMedicament) {
 
     const nouveauMedicament = {
       id: "med-" + Date.now(),
-      heure: normaliserHeure(heure),
+      heure: heure,
       nom: nom,
       nombre: nombre || "1 prise",
       date: date,
@@ -279,4 +306,4 @@ afficherMedicaments();
 afficherHistorique();
 verifierAlarmes();
 
-setInterval(verifierAlarmes, 30000);
+setInterval(verifierAlarmes, 15000);
