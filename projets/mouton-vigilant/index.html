@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0B1F3A">
-  <link rel="apple-touch-icon" href="icône-touch-apple.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 
 <body>
@@ -42,16 +42,16 @@
   <section class="card">
     <h2>➕ Paramétrer un médicament</h2>
 
-    <label>Nom du médicament</label>
+    <label for="medNom">Nom du médicament</label>
     <input id="medNom" type="text" placeholder="Ex : Levothyrox">
 
-    <label>Heure de prise</label>
+    <label for="medHeure">Heure de prise</label>
     <input id="medHeure" type="time">
 
-    <label>Nombre / quantité</label>
+    <label for="medNombre">Nombre / quantité</label>
     <input id="medNombre" type="text" placeholder="Ex : 1 comprimé">
 
-    <label>Date de début</label>
+    <label for="medDate">Date de début</label>
     <input id="medDate" type="date">
 
     <button id="ajouterMedicament" class="btn-alerte">
@@ -75,7 +75,7 @@
   <section class="card">
     <h2>⚙️ Paramètres</h2>
 
-    <label>Prénom</label>
+    <label for="prenom">Prénom</label>
     <input id="prenom" type="text" placeholder="Entrez votre prénom">
 
     <button id="sauverPrenom" class="btn-alerte">
