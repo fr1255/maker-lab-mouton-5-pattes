@@ -1,97 +1,22 @@
-const STORAGE_KEY = 'moutonVigilant.v1';
-const defaultState = {
-  meds: [
-    { id: 'levo', name: 'Levothyrox', time: '07:30', note: 'À jeun' },
-    { id: 'candesartan', name: 'Candésartan cilexétil', time: '08:30', note: 'Pas en même temps que le Levothyrox' },
-    { id: 'soir', name: 'Ézétimibe + Rosuvastatine', time: '22:00', note: 'Le soir' }
-  ],
-  vitamin: { id: 'vitd', name: 'Colécalciférol', nextDate: '2026-06-21' },
-  history: {}
-};
-let state = loadState();
-function loadState(){
-  try { return { ...structuredClone(defaultState), ...(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}) }; }
-  catch(e){ return structuredClone(defaultState); }
+{
+  "name": "Mouton Vigilant",
+  "short_name": "Mouton",
+  "description": "Application de rappel de médicaments",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0B1F3A",
+  "theme_color": "#0B1F3A",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function formatDateFR(key){ const [y,m,d]=key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('fr-FR',{weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
-function nowTime(){ return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit', minute:'2-digit'}).replace(':','h'); }
-function todayEntries(){ const k=todayKey(); state.history[k] ||= {}; return state.history[k]; }
-function addMonths(dateString, months){ const [y,m,d]=dateString.split('-').map(Number); const dt=new Date(y,m-1,d); dt.setMonth(dt.getMonth()+months); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; }
-function isTodayOrPast(dateString){ const a=new Date(dateString+'T00:00:00'); const b=new Date(todayKey()+'T00:00:00'); return a <= b; }
-function render(){
-  document.getElementById('todayLabel').textContent = formatDateFR(todayKey());
-  renderMeds(); renderVitamin(); renderHistory(); renderSettings();
-}
-function renderMeds(){
-  const list=document.getElementById('medList'); const entries=todayEntries();
-  list.innerHTML='';
-  state.meds.forEach(med=>{
-    const taken=entries[med.id];
-    const card=document.createElement('article'); card.className='med-card';
-    card.innerHTML=`<div><p class="time">${med.time.replace(':','h')}</p><p class="med-name">${med.name}</p><p class="note">${med.note}</p>${taken?`<p class="done-line">Pris à ${taken.time}</p>`:''}</div><button class="check-btn ${taken?'done':''}" data-id="${med.id}">${taken?'✓ Pris':'J’ai pris'}</button>`;
-    list.appendChild(card);
-  });
-  document.querySelectorAll('.check-btn').forEach(btn=>btn.addEventListener('click',()=>toggleMed(btn.dataset.id)));
-}
-function toggleMed(id){
-  const entries=todayEntries();
-  if(entries[id]) delete entries[id]; else entries[id]={time:nowTime(), timestamp:Date.now()};
-  saveState(); render();
-}
-function renderVitamin(){
-  const label=document.getElementById('vitaminLabel'); const btn=document.getElementById('takeVitamin');
-  const next=state.vitamin.nextDate;
-  if(isTodayOrPast(next)){ label.innerHTML=`À prendre : <strong>${formatDateShort(next)}</strong>`; btn.disabled=false; btn.textContent='Pris'; }
-  else { label.innerHTML=`Prochaine prise : <strong>${formatDateShort(next)}</strong>`; btn.disabled=false; btn.textContent='Pris aujourd’hui'; }
-}
-function formatDateShort(key){ const [y,m,d]=key.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('fr-FR',{day:'2-digit', month:'2-digit', year:'numeric'}); }
-document.getElementById('takeVitamin').addEventListener('click',()=>{
-  const entries=todayEntries(); entries[state.vitamin.id]={time:nowTime(), timestamp:Date.now(), name:state.vitamin.name};
-  state.vitamin.nextDate = addMonths(todayKey(),3);
-  saveState(); render();
-});
-function renderHistory(){
-  const box=document.getElementById('historyList'); box.innerHTML='';
-  const days=Object.keys(state.history).sort().reverse();
-  if(days.length===0){ box.innerHTML='<article class="card"><p class="muted">Aucune prise enregistrée pour le moment.</p></article>'; return; }
-  days.slice(0,30).forEach(day=>{
-    const data=state.history[day]; const card=document.createElement('article'); card.className='history-day';
-    let html=`<h3>${formatDateFR(day)}</h3>`;
-    state.meds.forEach(m=>{ if(data[m.id]) html+=`<div class="history-row"><span>${m.name}</span><strong>${data[m.id].time}</strong></div>`; });
-    if(data[state.vitamin.id]) html+=`<div class="history-row"><span>${state.vitamin.name}</span><strong>${data[state.vitamin.id].time}</strong></div>`;
-    card.innerHTML=html; box.appendChild(card);
-  });
-}
-function renderSettings(){
-  const form=document.getElementById('settingsForm'); form.innerHTML='';
-  state.meds.forEach(m=>{
-    const wrap=document.createElement('div'); wrap.className='field';
-    wrap.innerHTML=`<label for="time-${m.id}">${m.name}</label><input id="time-${m.id}" type="time" value="${m.time}" data-id="${m.id}">`;
-    form.appendChild(wrap);
-  });
-}
-document.getElementById('saveSettings').addEventListener('click',()=>{
-  document.querySelectorAll('#settingsForm input').forEach(input=>{
-    const med=state.meds.find(m=>m.id===input.dataset.id); if(med) med.time=input.value;
-  });
-  saveState(); render(); alert('Réglages enregistrés.');
-});
-document.getElementById('resetToday').addEventListener('click',()=>{
-  if(confirm('Réinitialiser les prises du jour ?')){ delete state.history[todayKey()]; saveState(); render(); }
-});
-document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  btn.classList.add('active'); document.getElementById(`screen-${btn.dataset.screen}`).classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-}));
-document.getElementById('askNotification').addEventListener('click', async()=>{
-  if(!('Notification' in window)){ alert('Notifications non disponibles sur ce navigateur.'); return; }
-  const permission=await Notification.requestPermission();
-  if(permission==='granted') new Notification('Mouton Vigilant', { body:'Notification de test.', icon:'images/icon-192.png' });
-  else alert('Notification refusée ou non disponible.');
-});
-if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js')); }
-render();
