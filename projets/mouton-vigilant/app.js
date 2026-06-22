@@ -47,6 +47,8 @@ const champPrenom = document.getElementById("prenom");
 const boutonPrenom = document.getElementById("sauverPrenom");
 
 const boutonAlarmes = document.getElementById("activerAlarmes");
+const boutonCalendrier = document.getElementById("creerCalendrier");
+
 const champMedNom = document.getElementById("medNom");
 const champMedHeure = document.getElementById("medHeure");
 const champMedNombre = document.getElementById("medNombre");
@@ -244,6 +246,62 @@ function verifierAlarmes() {
   });
 }
 
+function dateICS(date) {
+  return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+}
+
+function nettoyerTexteICS(texte) {
+  return String(texte || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function creerRappelsCalendrier() {
+  let contenu = "BEGIN:VCALENDAR\r\n";
+  contenu += "VERSION:2.0\r\n";
+  contenu += "CALSCALE:GREGORIAN\r\n";
+  contenu += "PRODID:-//Mouton Vigilant//FR\r\n";
+
+  medicaments.forEach((med) => {
+    const [h, m] = med.heure.split(":");
+    const debut = new Date();
+    debut.setHours(Number(h), Number(m), 0, 0);
+
+    const fin = new Date(debut);
+    fin.setMinutes(fin.getMinutes() + 5);
+
+    contenu += "BEGIN:VEVENT\r\n";
+    contenu += "UID:" + med.id + "-" + Date.now() + "@mouton-vigilant\r\n";
+    contenu += "SUMMARY:" + nettoyerTexteICS("Prendre " + med.nom) + "\r\n";
+    contenu += "DESCRIPTION:" + nettoyerTexteICS((med.nombre || "") + " " + (med.note || "")) + "\r\n";
+    contenu += "DTSTART:" + dateICS(debut) + "\r\n";
+    contenu += "DTEND:" + dateICS(fin) + "\r\n";
+    contenu += "RRULE:FREQ=DAILY\r\n";
+    contenu += "BEGIN:VALARM\r\n";
+    contenu += "TRIGGER:-PT0M\r\n";
+    contenu += "ACTION:DISPLAY\r\n";
+    contenu += "DESCRIPTION:" + nettoyerTexteICS("🐑 Mouton Vigilant - " + med.nom) + "\r\n";
+    contenu += "END:VALARM\r\n";
+    contenu += "END:VEVENT\r\n";
+  });
+
+  contenu += "END:VCALENDAR\r\n";
+
+  const blob = new Blob([contenu], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const lien = document.createElement("a");
+  lien.href = url;
+  lien.download = "mouton-vigilant-rappels.ics";
+  document.body.appendChild(lien);
+  lien.click();
+  document.body.removeChild(lien);
+
+  URL.revokeObjectURL(url);
+}
+
 if (boutonAlarmes) {
   boutonAlarmes.addEventListener("click", async () => {
     const ok = await activerNotifications();
@@ -258,6 +316,10 @@ if (boutonAlarmes) {
       alert("Notifications refusées. Il faut les autoriser dans le navigateur.");
     }
   });
+}
+
+if (boutonCalendrier) {
+  boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
 }
 
 if (boutonPrenom) {
