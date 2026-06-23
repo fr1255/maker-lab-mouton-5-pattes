@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mouton Vigilant</string>
+    <string name="title_activity_main">Mouton Vigilant</string>
+    <string name="package_name">fr.fr1255.moutonvigilant</string>
+    <string name="custom_url_scheme">fr.fr1255.moutonvigilant</string>
+</resources>

@@ -1,0 +1,19 @@
+{
+  "name": "mouton-vigilant",
+  "version": "1.0.0",
+  "description": "<!doctype html>\r <html lang=\"fr\">\r <head>\r   <meta charset=\"utf-8\">\r   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\r   <meta name=\"theme-color\" content=\"#0b1220\">\r   <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\r   <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\r   <meta name=\"apple-mobile-web-app-title\" content=\"Mouton Vigilant\">\r   <title>Mouton Vigilant</title>\r   <link rel=\"manifest\" href=\"manifest.json\">\r   <link rel=\"apple-touch-icon\" href=\"images/apple-touch-icon.png\">\r   <link rel=\"icon\" type=\"image/png\" href=\"images/favicon.png\">\r   <link rel=\"stylesheet\" href=\"style.css\">\r </head>\r <body>\r   <div class=\"app-shell\">\r     <header class=\"hero\">\r       <img src=\"images/logo.png\" alt=\"Logo Mouton Vigilant\" class=\"app-logo\">\r       <div>\r         <p class=\"badge\">Application santé • PWA hors-ligne</p>\r         <h1>Mouton Vigilant</h1>\r         <p class=\"subtitle\">N’oubliez plus jamais votre traitement.</p>\r       </div>\r     </header>",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1"
+  }
+}

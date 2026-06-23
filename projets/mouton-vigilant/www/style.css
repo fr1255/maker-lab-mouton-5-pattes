@@ -1,0 +1,235 @@
+:root {
+  --bg: #0b0f14;
+  --card: #111824;
+  --text: #e7eef7;
+  --muted: #a9b4c4;
+  --accent: #58a6ff;
+  --green: #35d07f;
+  --line: rgba(255,255,255,.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app,
+.page {
+  max-width: 430px;
+  margin: auto;
+  padding: 18px;
+}
+
+.app-header,
+.hero {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.logo {
+  width: 120px;
+  border-radius: 28px;
+  margin-bottom: 8px;
+}
+
+h1 {
+  margin: 6px 0;
+  font-size: 28px;
+}
+
+.subtitle,
+.intro {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.menu-principal {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 18px 0;
+}
+
+.page-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 6px;
+  border: 1px solid #2f6fad;
+  border-radius: 14px;
+  background: #111824;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: #16385f;
+  color: white;
+}
+
+.page-section {
+  display: none;
+}
+
+.page-section.active {
+  display: block;
+}
+
+.btn,
+.btn-alerte {
+  display: inline-block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: #16385f;
+  color: white;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid #2f6fad;
+  text-align: center;
+  cursor: pointer;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.medicament {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.medicament:last-child {
+  border-bottom: none;
+}
+
+.medicament strong {
+  font-size: 17px;
+}
+
+.medicament span {
+  font-weight: 600;
+  min-width: 0;
+}
+
+.medicament small,
+.medicament em {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+  font-style: normal;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--green);
+  color: #06130c;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button.pris {
+  background: #2ecc71;
+}
+
+.actions-med {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.supprimer {
+  background: #2a3342;
+  color: white;
+  padding: 8px 10px;
+}
+
+.historique-item {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+
+.historique-item span {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #0b0f14;
+  color: var(--text);
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 380px) {
+  .app,
+  .page {
+    padding: 12px;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .menu-principal {
+    gap: 6px;
+  }
+
+  .page-btn {
+    font-size: 12px;
+    padding: 9px 4px;
+  }
+
+  .medicament {
+    grid-template-columns: 58px 1fr;
+  }
+
+  .actions-med {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
