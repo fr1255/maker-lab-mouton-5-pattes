@@ -388,13 +388,22 @@ function nettoyerTexteICS(texte) {
     .replace(/;/g, "\\;");
 }
 
+
 function lienPris(med) {
-  const base = window.location.origin + window.location.pathname;
+  const base = window.location.href
+    .split("?")[0]
+    .replace("https://", "webapp://")
+    .replace("http://", "webapp://");
+
   return base + "?pris=" + encodeURIComponent(med.id);
 }
 
 function lienReporter(med, minutes) {
-  const base = window.location.origin + window.location.pathname;
+  const base = window.location.href
+    .split("?")[0]
+    .replace("https://", "webapp://")
+    .replace("http://", "webapp://");
+
   return base + "?reporter=" + minutes + "&med=" + encodeURIComponent(med.id);
 }
 
