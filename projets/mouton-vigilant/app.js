@@ -5,7 +5,6 @@ const medicamentsParDefaut = [
 ];
 
 const aujourdHui = new Date().toISOString().slice(0, 10);
-
 const cleMedicaments = "mouton-vigilant-medicaments";
 const cleJour = "mouton-vigilant-prises-" + aujourdHui;
 const cleHistorique = "mouton-vigilant-historique";
@@ -24,7 +23,6 @@ const zoneResumeJour = document.getElementById("resumeJour");
 
 const champPrenom = document.getElementById("prenom");
 const boutonPrenom = document.getElementById("sauverPrenom");
-
 const boutonCalendrier = document.getElementById("creerCalendrier");
 
 const champMedNom = document.getElementById("medNom");
@@ -34,10 +32,7 @@ const champMedDate = document.getElementById("medDate");
 const boutonAjouterMedicament = document.getElementById("ajouterMedicament");
 
 function heureActuelle() {
-  return new Date().toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+  return new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 }
 
 function afficherHeure(heure) {
@@ -52,7 +47,7 @@ function sauvegarder() {
 }
 
 function afficherPrenom() {
-  zoneBonjour.textContent = prenom ? "Bonjour " + prenom : "Bonjour";
+  if (zoneBonjour) zoneBonjour.textContent = prenom ? "Bonjour " + prenom : "Bonjour";
   if (champPrenom) champPrenom.value = prenom;
 }
 
@@ -61,13 +56,13 @@ function afficherResumeJour() {
   const pris = Object.keys(prises).length;
   const reste = total - pris;
 
-  zoneResumeJour.textContent =
-    total + " médicament(s) aujourd'hui — " +
-    pris + " pris, " +
-    reste + " à prendre";
+  if (zoneResumeJour) {
+    zoneResumeJour.textContent = `${total} médicament(s) aujourd'hui — ${pris} pris, ${reste} à prendre`;
+  }
 }
 
 function afficherMedicaments() {
+  if (!zoneMedicaments) return;
   zoneMedicaments.innerHTML = "";
 
   medicaments.forEach((med) => {
@@ -78,14 +73,12 @@ function afficherMedicaments() {
 
     ligne.innerHTML = `
       <strong>${afficherHeure(med.heure)}</strong>
-
       <span>
         ${med.nom}
         <small>${med.nombre || ""}</small>
         ${med.note ? `<small>${med.note}</small>` : ""}
         ${dejaPris ? `<em>✅ Pris à ${dejaPris}</em>` : `<em>○ À prendre</em>`}
       </span>
-
       <div class="actions-med">
         <button class="${dejaPris ? "pris" : ""}">
           ${dejaPris ? "✓ Pris" : "○ Pris"}
@@ -93,10 +86,7 @@ function afficherMedicaments() {
       </div>
     `;
 
-    ligne.querySelector("button").addEventListener("click", () => {
-      basculerPrise(med.id);
-    });
-
+    ligne.querySelector("button").addEventListener("click", () => basculerPrise(med.id));
     zoneMedicaments.appendChild(ligne);
   });
 
@@ -109,19 +99,11 @@ function basculerPrise(id) {
 
   if (prises[id]) {
     delete prises[id];
-    historique = historique.filter(
-      (item) => !(item.date === aujourdHui && item.id === id)
-    );
+    historique = historique.filter((item) => !(item.date === aujourdHui && item.id === id));
   } else {
     const h = heureActuelle();
     prises[id] = h;
-
-    historique.unshift({
-      date: aujourdHui,
-      heure: h,
-      id: med.id,
-      nom: med.nom
-    });
+    historique.unshift({ date: aujourdHui, heure: h, id: med.id, nom: med.nom });
   }
 
   sauvegarder();
@@ -130,6 +112,7 @@ function basculerPrise(id) {
 }
 
 function afficherParametresMedicaments() {
+  if (!zoneParametresMedicaments) return;
   zoneParametresMedicaments.innerHTML = "";
 
   medicaments.forEach((med) => {
@@ -138,18 +121,14 @@ function afficherParametresMedicaments() {
 
     ligne.innerHTML = `
       <strong>${afficherHeure(med.heure)}</strong>
-
       <span>
         ${med.nom}
         <small>${med.nombre || ""}</small>
         ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
         ${med.note ? `<small>${med.note}</small>` : ""}
       </span>
-
       <div class="actions-med">
-        <button class="supprimer">
-          🗑️ Supprimer
-        </button>
+        <button class="supprimer">🗑️ Supprimer</button>
       </div>
     `;
 
@@ -171,6 +150,8 @@ function afficherParametresMedicaments() {
 }
 
 function afficherHistorique() {
+  if (!zoneHistorique) return;
+
   if (historique.length === 0) {
     zoneHistorique.innerHTML = `<p class="muted">Aucune prise enregistrée.</p>`;
     return;
@@ -178,14 +159,12 @@ function afficherHistorique() {
 
   zoneHistorique.innerHTML = historique
     .slice(0, 20)
-    .map(
-      (item) => `
+    .map((item) => `
       <div class="historique-item">
         <strong>${item.date}</strong>
         <span>✅ ${item.heure} — ${item.nom}</span>
       </div>
-    `
-    )
+    `)
     .join("");
 }
 
@@ -226,11 +205,11 @@ function creerRappelsCalendrier() {
     contenu += "UID:" + med.id + "-" + Date.now() + "@mouton-vigilant\r\n";
     contenu += "SUMMARY:" + nettoyerTexteICS("Prendre " + med.nom) + "\r\n";
     contenu += "DESCRIPTION:" + nettoyerTexteICS(
-      "🐑 Mouton Vigilant\\n\\n" +
-      med.nom + "\\n" +
-      (med.nombre || "") + "\\n" +
-      (med.note || "") + "\\n\\n" +
-      "✅ Marquer comme pris :\\n" +
+      "🐑 Mouton Vigilant\n\n" +
+      med.nom + "\n" +
+      (med.nombre || "") + "\n" +
+      (med.note || "") + "\n\n" +
+      "✅ Marquer comme pris :\n" +
       lien
     ) + "\r\n";
     contenu += "URL:" + lien + "\r\n";
@@ -272,14 +251,7 @@ function verifierLienPris() {
   if (!prises[id]) {
     const h = heureActuelle();
     prises[id] = h;
-
-    historique.unshift({
-      date: aujourdHui,
-      heure: h,
-      id: med.id,
-      nom: med.nom
-    });
-
+    historique.unshift({ date: aujourdHui, heure: h, id: med.id, nom: med.nom });
     sauvegarder();
     alert("✅ " + med.nom + " enregistré comme pris à " + h);
   }
@@ -287,30 +259,29 @@ function verifierLienPris() {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
-function changerOnglet(nom) {
-  document.querySelectorAll(".screen").forEach((screen) => {
-    screen.classList.remove("active");
+function changerPage(page) {
+  document.querySelectorAll(".page-section").forEach((section) => {
+    section.classList.remove("active");
   });
 
-  document.querySelectorAll(".nav-btn").forEach((btn) => {
+  document.querySelectorAll(".page-btn").forEach((btn) => {
     btn.classList.remove("active");
   });
 
-  document.getElementById("screen-" + nom).classList.add("active");
-  document.querySelector(`[data-screen="${nom}"]`).classList.add("active");
+  const section = document.getElementById("page-" + page);
+  const bouton = document.querySelector(`[data-page="${page}"]`);
+
+  if (section) section.classList.add("active");
+  if (bouton) bouton.classList.add("active");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-document.querySelectorAll(".nav-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    changerOnglet(btn.dataset.screen);
-  });
+document.querySelectorAll(".page-btn").forEach((btn) => {
+  btn.addEventListener("click", () => changerPage(btn.dataset.page));
 });
 
-if (boutonCalendrier) {
-  boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
-}
+if (boutonCalendrier) boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
 
 if (boutonPrenom) {
   boutonPrenom.addEventListener("click", () => {
@@ -335,10 +306,10 @@ if (boutonAjouterMedicament) {
 
     medicaments.push({
       id: "med-" + Date.now(),
-      heure: heure,
-      nom: nom,
+      heure,
+      nom,
       nombre: nombre || "1 prise",
-      date: date,
+      date,
       note: ""
     });
 
@@ -350,7 +321,6 @@ if (boutonAjouterMedicament) {
     sauvegarder();
     afficherMedicaments();
     afficherParametresMedicaments();
-
     alert("Médicament ajouté.");
   });
 }
