@@ -13,95 +13,103 @@
 
 <body>
 
-<main class="page">
+<main class="app">
 
-  <section class="hero">
+  <header class="app-header">
     <img src="logo.png" class="logo" alt="Mouton Vigilant">
 
     <h1>🐑 Mouton Vigilant</h1>
     <p id="bonjour" class="intro">Bonjour</p>
+    <p class="subtitle">Votre compagnon de traitement</p>
+  </header>
 
-    <p class="intro">
-      Une application simple pour ne plus oublier vos traitements.
-    </p>
-
-    <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
-      📄 Ouvrir le guide utilisateur
-    </a>
+  <section id="screen-accueil" class="screen active">
+    <div class="card">
+      <h2>💊 Aujourd'hui</h2>
+      <p id="resumeJour" class="intro">Chargement...</p>
+      <div id="listeMedicaments"></div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>💊 Aujourd'hui</h2>
+  <section id="screen-medicaments" class="screen">
+    <div class="card">
+      <h2>💊 Médicaments</h2>
 
-    <p class="intro">
-      Vos prises du jour. Ici, vous cochez seulement quand le médicament est pris.
-    </p>
+      <label for="medNom">Nom du médicament</label>
+      <input id="medNom" type="text" placeholder="Ex : Levothyrox">
 
-    <div id="listeMedicaments"></div>
+      <label for="medHeure">Heure de prise</label>
+      <input id="medHeure" type="time">
 
-    <button id="activerAlarmes" class="btn-alerte">
-      🔔 Activer les alarmes
-    </button>
+      <label for="medNombre">Nombre / quantité</label>
+      <input id="medNombre" type="text" placeholder="Ex : 1 comprimé">
 
-    <button id="creerCalendrier" class="btn-alerte">
-      📅 Créer les rappels iPhone
-    </button>
+      <label for="medDate">Date de début</label>
+      <input id="medDate" type="date">
+
+      <button id="ajouterMedicament" class="btn-alerte">
+        ➕ Ajouter le médicament
+      </button>
+
+      <h3>📋 Médicaments enregistrés</h3>
+      <div id="listeParametresMedicaments"></div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>➕ Paramétrage des médicaments</h2>
+  <section id="screen-rappels" class="screen">
+    <div class="card">
+      <h2>🔔 Rappels iPhone</h2>
+      <p class="intro">
+        Les rappels sont créés dans le calendrier de votre iPhone.
+      </p>
 
-    <label for="medNom">Nom du médicament</label>
-    <input id="medNom" type="text" placeholder="Ex : Levothyrox">
+      <button id="creerCalendrier" class="btn-alerte">
+        📅 Générer les rappels iPhone
+      </button>
 
-    <label for="medHeure">Heure de prise</label>
-    <input id="medHeure" type="time">
-
-    <label for="medNombre">Nombre / quantité</label>
-    <input id="medNombre" type="text" placeholder="Ex : 1 comprimé">
-
-    <label for="medDate">Date de début</label>
-    <input id="medDate" type="date">
-
-    <button id="ajouterMedicament" class="btn-alerte">
-      💊 Ajouter le médicament
-    </button>
-
-    <h3>📋 Médicaments enregistrés</h3>
-    <p class="intro">
-      Ici, vous pouvez vérifier les médicaments enregistrés et les supprimer si besoin.
-    </p>
-
-    <div id="listeParametresMedicaments"></div>
+      <p class="intro">
+        À utiliser après avoir ajouté, modifié ou supprimé un médicament.
+      </p>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>☀️ Vitamine D</h2>
-    <p>
-      Prochaine prise :
-      <strong>21 septembre 2026</strong>
-    </p>
+  <section id="screen-historique" class="screen">
+    <div class="card">
+      <h2>📅 Historique</h2>
+      <div id="historique"></div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>📅 Historique</h2>
-    <div id="historique"></div>
-  </section>
+  <section id="screen-parametres" class="screen">
+    <div class="card">
+      <h2>⚙️ Paramètres</h2>
 
-  <section class="card">
-    <h2>⚙️ Paramètres</h2>
+      <label for="prenom">Prénom</label>
+      <input id="prenom" type="text" placeholder="Entrez votre prénom">
 
-    <label for="prenom">Prénom</label>
-    <input id="prenom" type="text" placeholder="Entrez votre prénom">
+      <button id="sauverPrenom" class="btn-alerte">
+        💾 Enregistrer
+      </button>
 
-    <button id="sauverPrenom" class="btn-alerte">
-      💾 Enregistrer
-    </button>
+      <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
+        📄 Ouvrir le guide utilisateur
+      </a>
+
+      <p class="intro">Version 2.0</p>
+    </div>
   </section>
 
 </main>
 
-<script src="app.js?v=3"></script>
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-screen="accueil">🏠<span>Aujourd'hui</span></button>
+  <button class="nav-btn" data-screen="medicaments">💊<span>Médicaments</span></button>
+  <button class="nav-btn" data-screen="rappels">🔔<span>Rappels</span></button>
+  <button class="nav-btn" data-screen="historique">📅<span>Historique</span></button>
+  <button class="nav-btn" data-screen="parametres">⚙️<span>Réglages</span></button>
+</nav>
+
+<script src="app.js?v=4"></script>
 
 <script>
   if ("serviceWorker" in navigator) {
