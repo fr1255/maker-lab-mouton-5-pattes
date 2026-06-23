@@ -1,3 +1,8 @@
+// =====================
+// MOUTON VIGILANT V3
+// =====================
+
+// ===== Données par défaut =====
 const medicamentsParDefaut = [
   { id: "levo", heure: "07:30", nom: "Levothyrox", nombre: "1 comprimé", date: "", note: "À jeun" },
   { id: "candesartan", heure: "08:30", nom: "Candésartan cilexétil", nombre: "1 comprimé", date: "", note: "Pas en même temps que le Levothyrox" },
@@ -5,6 +10,7 @@ const medicamentsParDefaut = [
 ];
 
 const aujourdHui = new Date().toISOString().slice(0, 10);
+
 const cleMedicaments = "mouton-vigilant-medicaments";
 const cleJour = "mouton-vigilant-prises-" + aujourdHui;
 const cleHistorique = "mouton-vigilant-historique";
@@ -15,14 +21,18 @@ let prises = JSON.parse(localStorage.getItem(cleJour)) || {};
 let historique = JSON.parse(localStorage.getItem(cleHistorique)) || [];
 let prenom = localStorage.getItem(clePrenom) || "";
 
+// ===== Éléments HTML =====
 const zoneMedicaments = document.getElementById("listeMedicaments");
 const zoneParametresMedicaments = document.getElementById("listeParametresMedicaments");
-const zoneHistorique = document.getElementById("historique");
 const zoneBonjour = document.getElementById("bonjour");
 const zoneResumeJour = document.getElementById("resumeJour");
 
+const boutonAfficherSuivi = document.getElementById("afficherSuivi");
+const zoneSuivi = document.getElementById("suiviTraitements");
+
 const champPrenom = document.getElementById("prenom");
 const boutonPrenom = document.getElementById("sauverPrenom");
+
 const boutonCalendrier = document.getElementById("creerCalendrier");
 
 const champMedNom = document.getElementById("medNom");
@@ -31,8 +41,12 @@ const champMedNombre = document.getElementById("medNombre");
 const champMedDate = document.getElementById("medDate");
 const boutonAjouterMedicament = document.getElementById("ajouterMedicament");
 
+// ===== Outils =====
 function heureActuelle() {
-  return new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 
 function afficherHeure(heure) {
@@ -46,23 +60,58 @@ function sauvegarder() {
   localStorage.setItem(clePrenom, prenom);
 }
 
+function dateLocale(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function texteDateFR(dateTexte) {
+  const d = new Date(dateTexte + "T12:00:00");
+  return d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long"
+  });
+}
+
+function dateDebutMois() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+function heureDepassee(heure) {
+  const maintenant = new Date();
+  const [h, m] = heure.split(":").map(Number);
+  const cible = new Date();
+  cible.setHours(h, m, 0, 0);
+  return maintenant >= cible;
+}
+
+// ===== Affichage accueil =====
 function afficherPrenom() {
-  if (zoneBonjour) zoneBonjour.textContent = prenom ? "Bonjour " + prenom : "Bonjour";
-  if (champPrenom) champPrenom.value = prenom;
+  if (zoneBonjour) {
+    zoneBonjour.textContent = prenom ? "Bonjour " + prenom : "Bonjour";
+  }
+
+  if (champPrenom) {
+    champPrenom.value = prenom;
+  }
 }
 
 function afficherResumeJour() {
+  if (!zoneResumeJour) return;
+
   const total = medicaments.length;
   const pris = Object.keys(prises).length;
   const reste = total - pris;
 
-  if (zoneResumeJour) {
-    zoneResumeJour.textContent = `${total} médicament(s) aujourd'hui — ${pris} pris, ${reste} à prendre`;
-  }
+  zoneResumeJour.textContent =
+    total + " médicament(s) aujourd'hui — " +
+    pris + " pris, " +
+    reste + " à prendre";
 }
 
 function afficherMedicaments() {
   if (!zoneMedicaments) return;
+
   zoneMedicaments.innerHTML = "";
 
   medicaments.forEach((med) => {
@@ -73,12 +122,14 @@ function afficherMedicaments() {
 
     ligne.innerHTML = `
       <strong>${afficherHeure(med.heure)}</strong>
+
       <span>
         ${med.nom}
         <small>${med.nombre || ""}</small>
         ${med.note ? `<small>${med.note}</small>` : ""}
         ${dejaPris ? `<em>✅ Pris à ${dejaPris}</em>` : `<em>○ À prendre</em>`}
       </span>
+
       <div class="actions-med">
         <button class="${dejaPris ? "pris" : ""}">
           ${dejaPris ? "✓ Pris" : "○ Pris"}
@@ -86,33 +137,49 @@ function afficherMedicaments() {
       </div>
     `;
 
-    ligne.querySelector("button").addEventListener("click", () => basculerPrise(med.id));
+    ligne.querySelector("button").addEventListener("click", () => {
+      basculerPrise(med.id);
+    });
+
     zoneMedicaments.appendChild(ligne);
   });
 
   afficherResumeJour();
 }
 
+// ===== Prise médicament =====
 function basculerPrise(id) {
   const med = medicaments.find((m) => m.id === id);
   if (!med) return;
 
   if (prises[id]) {
     delete prises[id];
-    historique = historique.filter((item) => !(item.date === aujourdHui && item.id === id));
+
+    historique = historique.filter(
+      (item) => !(item.date === aujourdHui && item.id === id)
+    );
   } else {
     const h = heureActuelle();
     prises[id] = h;
-    historique.unshift({ date: aujourdHui, heure: h, id: med.id, nom: med.nom });
+
+    historique.unshift({
+      date: aujourdHui,
+      heure: h,
+      id: med.id,
+      nom: med.nom,
+      etat: "pris"
+    });
   }
 
   sauvegarder();
   afficherMedicaments();
-  afficherHistorique();
+  afficherSuiviSiOuvert();
 }
 
+// ===== Médicaments =====
 function afficherParametresMedicaments() {
   if (!zoneParametresMedicaments) return;
+
   zoneParametresMedicaments.innerHTML = "";
 
   medicaments.forEach((med) => {
@@ -121,12 +188,14 @@ function afficherParametresMedicaments() {
 
     ligne.innerHTML = `
       <strong>${afficherHeure(med.heure)}</strong>
+
       <span>
         ${med.nom}
         <small>${med.nombre || ""}</small>
         ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
         ${med.note ? `<small>${med.note}</small>` : ""}
       </span>
+
       <div class="actions-med">
         <button class="supprimer">🗑️ Supprimer</button>
       </div>
@@ -141,7 +210,7 @@ function afficherParametresMedicaments() {
         sauvegarder();
         afficherMedicaments();
         afficherParametresMedicaments();
-        afficherHistorique();
+        afficherSuiviSiOuvert();
       }
     });
 
@@ -149,25 +218,167 @@ function afficherParametresMedicaments() {
   });
 }
 
-function afficherHistorique() {
-  if (!zoneHistorique) return;
+if (boutonAjouterMedicament) {
+  boutonAjouterMedicament.addEventListener("click", () => {
+    const nom = champMedNom.value.trim();
+    const heure = champMedHeure.value;
+    const nombre = champMedNombre.value.trim();
+    const date = champMedDate.value;
 
-  if (historique.length === 0) {
-    zoneHistorique.innerHTML = `<p class="muted">Aucune prise enregistrée.</p>`;
-    return;
-  }
+    if (!nom || !heure) {
+      alert("Il faut au minimum le nom du médicament et l'heure.");
+      return;
+    }
 
-  zoneHistorique.innerHTML = historique
-    .slice(0, 20)
-    .map((item) => `
-      <div class="historique-item">
-        <strong>${item.date}</strong>
-        <span>✅ ${item.heure} — ${item.nom}</span>
-      </div>
-    `)
-    .join("");
+    medicaments.push({
+      id: "med-" + Date.now(),
+      heure,
+      nom,
+      nombre: nombre || "1 prise",
+      date,
+      note: ""
+    });
+
+    champMedNom.value = "";
+    champMedHeure.value = "";
+    champMedNombre.value = "";
+    champMedDate.value = "";
+
+    sauvegarder();
+    afficherMedicaments();
+    afficherParametresMedicaments();
+    afficherSuiviSiOuvert();
+
+    alert("Médicament ajouté.");
+  });
 }
 
+// ===== Suivi =====
+function calculerSuiviMedicament(med) {
+  const debut = med.date
+    ? new Date(med.date + "T12:00:00")
+    : dateDebutMois();
+
+  const aujourd = new Date();
+  const datesPrevues = [];
+
+  let d = new Date(debut);
+
+  while (d <= aujourd) {
+    const dateTexte = dateLocale(d);
+
+    if (dateTexte !== aujourdHui || heureDepassee(med.heure)) {
+      datesPrevues.push(dateTexte);
+    }
+
+    d.setDate(d.getDate() + 1);
+  }
+
+  const prisesMed = historique.filter((item) => item.id === med.id);
+  const datesPrises = prisesMed.map((item) => item.date);
+
+  const oublisDates = datesPrevues.filter((date) => !datesPrises.includes(date));
+
+  const prevues = datesPrevues.length;
+  const realisees = datesPrevues.filter((date) => datesPrises.includes(date)).length;
+  const oublis = oublisDates.length;
+  const pourcentage = prevues > 0 ? Math.round((realisees / prevues) * 100) : 100;
+
+  const dernierOubli = oublisDates.length > 0
+    ? oublisDates[oublisDates.length - 1]
+    : null;
+
+  return {
+    prevues,
+    realisees,
+    oublis,
+    pourcentage,
+    dernierOubli
+  };
+}
+
+function niveauSuivi(pourcentage) {
+  if (pourcentage >= 95) return { icone: "🟢", texte: "Excellent" };
+  if (pourcentage >= 90) return { icone: "🟢", texte: "Très bon" };
+  if (pourcentage >= 80) return { icone: "🟡", texte: "Bon suivi" };
+  if (pourcentage >= 60) return { icone: "🟠", texte: "Quelques oublis" };
+  return { icone: "🔴", texte: "Suivi à renforcer" };
+}
+
+function afficherSuivi() {
+  if (!zoneSuivi) return;
+
+  let totalPrevues = 0;
+  let totalRealisees = 0;
+  let totalOublis = 0;
+
+  let html = "";
+
+  medicaments.forEach((med) => {
+    const suivi = calculerSuiviMedicament(med);
+    totalPrevues += suivi.prevues;
+    totalRealisees += suivi.realisees;
+    totalOublis += suivi.oublis;
+  });
+
+  const pourcentageGeneral =
+    totalPrevues > 0 ? Math.round((totalRealisees / totalPrevues) * 100) : 100;
+
+  const niveauGeneral = niveauSuivi(pourcentageGeneral);
+
+  html += `
+    <div class="historique-item">
+      <strong>🏆 Suivi général</strong>
+      <span>${niveauGeneral.icone} ${niveauGeneral.texte}</span>
+      <span><strong>${pourcentageGeneral} %</strong></span>
+      <span>${totalRealisees} prises réalisées / ${totalPrevues} prévues</span>
+      <span>⚠ ${totalOublis} oubli${totalOublis > 1 ? "s" : ""}</span>
+    </div>
+  `;
+
+  medicaments.forEach((med) => {
+    const suivi = calculerSuiviMedicament(med);
+    const niveau = niveauSuivi(suivi.pourcentage);
+
+    html += `
+      <div class="historique-item">
+        <strong>💊 ${med.nom}</strong>
+        <span>${niveau.icone} ${niveau.texte}</span>
+        <span><strong>${suivi.pourcentage} %</strong></span>
+        <span>${suivi.realisees} prises réalisées / ${suivi.prevues} prévues</span>
+        <span>⚠ ${suivi.oublis} oubli${suivi.oublis > 1 ? "s" : ""}</span>
+        <span>
+          ${suivi.dernierOubli
+            ? "Dernier oubli : " + texteDateFR(suivi.dernierOubli)
+            : "Aucun oubli 👍"}
+        </span>
+      </div>
+    `;
+  });
+
+  zoneSuivi.innerHTML = html;
+}
+
+function afficherSuiviSiOuvert() {
+  if (zoneSuivi && zoneSuivi.style.display === "block") {
+    afficherSuivi();
+  }
+}
+
+if (boutonAfficherSuivi) {
+  boutonAfficherSuivi.addEventListener("click", () => {
+    if (zoneSuivi.style.display === "none" || zoneSuivi.style.display === "") {
+      afficherSuivi();
+      zoneSuivi.style.display = "block";
+      boutonAfficherSuivi.textContent = "Masquer le suivi";
+    } else {
+      zoneSuivi.style.display = "none";
+      boutonAfficherSuivi.textContent = "📊 Consulter le suivi";
+    }
+  });
+}
+
+// ===== Rappels iPhone =====
 function dateICS(date) {
   return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 }
@@ -239,6 +450,11 @@ function creerRappelsCalendrier() {
   URL.revokeObjectURL(url);
 }
 
+if (boutonCalendrier) {
+  boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
+}
+
+// ===== Lien "pris" depuis calendrier =====
 function verifierLienPris() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("pris");
@@ -251,7 +467,15 @@ function verifierLienPris() {
   if (!prises[id]) {
     const h = heureActuelle();
     prises[id] = h;
-    historique.unshift({ date: aujourdHui, heure: h, id: med.id, nom: med.nom });
+
+    historique.unshift({
+      date: aujourdHui,
+      heure: h,
+      id: med.id,
+      nom: med.nom,
+      etat: "pris"
+    });
+
     sauvegarder();
     alert("✅ " + med.nom + " enregistré comme pris à " + h);
   }
@@ -259,6 +483,7 @@ function verifierLienPris() {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
+// ===== Navigation =====
 function changerPage(page) {
   document.querySelectorAll(".page-section").forEach((section) => {
     section.classList.remove("active");
@@ -278,11 +503,12 @@ function changerPage(page) {
 }
 
 document.querySelectorAll(".page-btn").forEach((btn) => {
-  btn.addEventListener("click", () => changerPage(btn.dataset.page));
+  btn.addEventListener("click", () => {
+    changerPage(btn.dataset.page);
+  });
 });
 
-if (boutonCalendrier) boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
-
+// ===== Paramètres =====
 if (boutonPrenom) {
   boutonPrenom.addEventListener("click", () => {
     prenom = champPrenom.value.trim();
@@ -292,41 +518,8 @@ if (boutonPrenom) {
   });
 }
 
-if (boutonAjouterMedicament) {
-  boutonAjouterMedicament.addEventListener("click", () => {
-    const nom = champMedNom.value.trim();
-    const heure = champMedHeure.value;
-    const nombre = champMedNombre.value.trim();
-    const date = champMedDate.value;
-
-    if (!nom || !heure) {
-      alert("Il faut au minimum le nom du médicament et l'heure.");
-      return;
-    }
-
-    medicaments.push({
-      id: "med-" + Date.now(),
-      heure,
-      nom,
-      nombre: nombre || "1 prise",
-      date,
-      note: ""
-    });
-
-    champMedNom.value = "";
-    champMedHeure.value = "";
-    champMedNombre.value = "";
-    champMedDate.value = "";
-
-    sauvegarder();
-    afficherMedicaments();
-    afficherParametresMedicaments();
-    alert("Médicament ajouté.");
-  });
-}
-
+// ===== Initialisation =====
 verifierLienPris();
 afficherPrenom();
 afficherMedicaments();
 afficherParametresMedicaments();
-afficherHistorique();
