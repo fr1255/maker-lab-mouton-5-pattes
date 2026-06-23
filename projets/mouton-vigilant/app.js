@@ -1,5 +1,5 @@
 // =====================
-// MOUTON VIGILANT V3
+// MOUTON VIGILANT V4
 // =====================
 
 // ===== Données par défaut =====
@@ -27,7 +27,6 @@ const zoneParametresMedicaments = document.getElementById("listeParametresMedica
 const zoneBonjour = document.getElementById("bonjour");
 const zoneResumeJour = document.getElementById("resumeJour");
 
-const boutonAfficherSuivi = document.getElementById("afficherSuivi");
 const zoneSuivi = document.getElementById("suiviTraitements");
 
 const champPrenom = document.getElementById("prenom");
@@ -85,7 +84,7 @@ function heureDepassee(heure) {
   return maintenant >= cible;
 }
 
-// ===== Affichage accueil =====
+// ===== Accueil =====
 function afficherPrenom() {
   if (zoneBonjour) {
     zoneBonjour.textContent = prenom ? "Bonjour " + prenom : "Bonjour";
@@ -147,7 +146,7 @@ function afficherMedicaments() {
   afficherResumeJour();
 }
 
-// ===== Prise médicament =====
+// ===== Prise =====
 function basculerPrise(id) {
   const med = medicaments.find((m) => m.id === id);
   if (!med) return;
@@ -288,13 +287,7 @@ function calculerSuiviMedicament(med) {
     ? oublisDates[oublisDates.length - 1]
     : null;
 
-  return {
-    prevues,
-    realisees,
-    oublis,
-    pourcentage,
-    dernierOubli
-  };
+  return { prevues, realisees, oublis, pourcentage, dernierOubli };
 }
 
 function niveauSuivi(pourcentage) {
@@ -311,7 +304,6 @@ function afficherSuivi() {
   let totalPrevues = 0;
   let totalRealisees = 0;
   let totalOublis = 0;
-
   let html = "";
 
   medicaments.forEach((med) => {
@@ -365,18 +357,23 @@ function afficherSuiviSiOuvert() {
   }
 }
 
-if (boutonAfficherSuivi) {
-  boutonAfficherSuivi.addEventListener("click", () => {
-    if (zoneSuivi.style.display === "none" || zoneSuivi.style.display === "") {
+document.addEventListener("click", (event) => {
+  if (event.target && event.target.id === "afficherSuivi") {
+    const zone = document.getElementById("suiviTraitements");
+    const bouton = document.getElementById("afficherSuivi");
+
+    if (!zone || !bouton) return;
+
+    if (zone.style.display === "none" || zone.style.display === "") {
       afficherSuivi();
-      zoneSuivi.style.display = "block";
-      boutonAfficherSuivi.textContent = "Masquer le suivi";
+      zone.style.display = "block";
+      bouton.textContent = "Masquer le suivi";
     } else {
-      zoneSuivi.style.display = "none";
-      boutonAfficherSuivi.textContent = "📊 Consulter le suivi";
+      zone.style.display = "none";
+      bouton.textContent = "📊 Consulter le suivi";
     }
-  });
-}
+  }
+});
 
 // ===== Rappels iPhone =====
 function dateICS(date) {
@@ -396,6 +393,45 @@ function lienPris(med) {
   return base + "?pris=" + encodeURIComponent(med.id);
 }
 
+function lienReporter(med, minutes) {
+  const base = window.location.origin + window.location.pathname;
+  return base + "?reporter=" + minutes + "&med=" + encodeURIComponent(med.id);
+}
+
+function creerRappelUnique(med, minutes) {
+  const debut = new Date();
+  debut.setMinutes(debut.getMinutes() + Number(minutes));
+
+  const fin = new Date(debut);
+  fin.setMinutes(fin.getMinutes() + 5);
+
+  let contenu = "BEGIN:VCALENDAR\r\n";
+  contenu += "VERSION:2.0\r\n";
+  contenu += "CALSCALE:GREGORIAN\r\n";
+  contenu += "PRODID:-//Mouton Vigilant//FR\r\n";
+  contenu += "BEGIN:VEVENT\r\n";
+  contenu += "UID:report-" + med.id + "-" + Date.now() + "@mouton-vigilant\r\n";
+  contenu += "SUMMARY:" + nettoyerTexteICS("Rappel : " + med.nom) + "\r\n";
+  contenu += "DESCRIPTION:" + nettoyerTexteICS(
+    "🐑 Mouton Vigilant\n\n" +
+    med.nom + "\n\n" +
+    "✅ J’ai pris :\n" +
+    lienPris(med)
+  ) + "\r\n";
+  contenu += "URL:" + lienPris(med) + "\r\n";
+  contenu += "DTSTART:" + dateICS(debut) + "\r\n";
+  contenu += "DTEND:" + dateICS(fin) + "\r\n";
+  contenu += "BEGIN:VALARM\r\n";
+  contenu += "TRIGGER:-PT0M\r\n";
+  contenu += "ACTION:DISPLAY\r\n";
+  contenu += "DESCRIPTION:" + nettoyerTexteICS("🐑 Rappel - " + med.nom) + "\r\n";
+  contenu += "END:VALARM\r\n";
+  contenu += "END:VEVENT\r\n";
+  contenu += "END:VCALENDAR\r\n";
+
+  telechargerICS(contenu, "mouton-vigilant-report.ics");
+}
+
 function creerRappelsCalendrier() {
   let contenu = "BEGIN:VCALENDAR\r\n";
   contenu += "VERSION:2.0\r\n";
@@ -410,8 +446,6 @@ function creerRappelsCalendrier() {
     const fin = new Date(debut);
     fin.setMinutes(fin.getMinutes() + 5);
 
-    const lien = lienPris(med);
-
     contenu += "BEGIN:VEVENT\r\n";
     contenu += "UID:" + med.id + "-" + Date.now() + "@mouton-vigilant\r\n";
     contenu += "SUMMARY:" + nettoyerTexteICS("Prendre " + med.nom) + "\r\n";
@@ -420,10 +454,14 @@ function creerRappelsCalendrier() {
       med.nom + "\n" +
       (med.nombre || "") + "\n" +
       (med.note || "") + "\n\n" +
-      "✅ Marquer comme pris :\n" +
-      lien
+      "✅ J’ai pris :\n" +
+      lienPris(med) + "\n\n" +
+      "⏰ Reporter de 10 min :\n" +
+      lienReporter(med, 10) + "\n\n" +
+      "⏰ Reporter de 30 min :\n" +
+      lienReporter(med, 30)
     ) + "\r\n";
-    contenu += "URL:" + lien + "\r\n";
+    contenu += "URL:" + lienPris(med) + "\r\n";
     contenu += "DTSTART:" + dateICS(debut) + "\r\n";
     contenu += "DTEND:" + dateICS(fin) + "\r\n";
     contenu += "RRULE:FREQ=DAILY\r\n";
@@ -437,12 +475,16 @@ function creerRappelsCalendrier() {
 
   contenu += "END:VCALENDAR\r\n";
 
+  telechargerICS(contenu, "mouton-vigilant-rappels.ics");
+}
+
+function telechargerICS(contenu, nomFichier) {
   const blob = new Blob([contenu], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
   const lien = document.createElement("a");
   lien.href = url;
-  lien.download = "mouton-vigilant-rappels.ics";
+  lien.download = nomFichier;
   document.body.appendChild(lien);
   lien.click();
   document.body.removeChild(lien);
@@ -454,33 +496,48 @@ if (boutonCalendrier) {
   boutonCalendrier.addEventListener("click", creerRappelsCalendrier);
 }
 
-// ===== Lien "pris" depuis calendrier =====
-function verifierLienPris() {
+// ===== Liens calendrier : pris / reporter =====
+function verifierLiensCalendrier() {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("pris");
 
-  if (!id) return;
+  const idPris = params.get("pris");
+  const reporter = params.get("reporter");
+  const medReporter = params.get("med");
 
-  const med = medicaments.find((m) => m.id === id);
-  if (!med) return;
+  if (reporter && medReporter) {
+    const med = medicaments.find((m) => m.id === medReporter);
 
-  if (!prises[id]) {
-    const h = heureActuelle();
-    prises[id] = h;
+    if (med) {
+      creerRappelUnique(med, reporter);
+      alert("⏰ Nouveau rappel créé dans " + reporter + " minutes pour " + med.nom);
+    }
 
-    historique.unshift({
-      date: aujourdHui,
-      heure: h,
-      id: med.id,
-      nom: med.nom,
-      etat: "pris"
-    });
-
-    sauvegarder();
-    alert("✅ " + med.nom + " enregistré comme pris à " + h);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return;
   }
 
-  window.history.replaceState({}, document.title, window.location.pathname);
+  if (idPris) {
+    const med = medicaments.find((m) => m.id === idPris);
+    if (!med) return;
+
+    if (!prises[idPris]) {
+      const h = heureActuelle();
+      prises[idPris] = h;
+
+      historique.unshift({
+        date: aujourdHui,
+        heure: h,
+        id: med.id,
+        nom: med.nom,
+        etat: "pris"
+      });
+
+      sauvegarder();
+      alert("✅ " + med.nom + " enregistré comme pris à " + h);
+    }
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 }
 
 // ===== Navigation =====
@@ -519,7 +576,7 @@ if (boutonPrenom) {
 }
 
 // ===== Initialisation =====
-verifierLienPris();
+verifierLiensCalendrier();
 afficherPrenom();
 afficherMedicaments();
 afficherParametresMedicaments();
