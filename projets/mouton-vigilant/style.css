@@ -19,31 +19,68 @@ body {
   color: var(--text);
 }
 
+.app,
 .page {
   max-width: 430px;
   margin: auto;
-  padding: 22px;
+  padding: 18px;
 }
 
+.app-header,
 .hero {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .logo {
-  width: 150px;
-  border-radius: 32px;
-  margin-bottom: 12px;
+  width: 120px;
+  border-radius: 28px;
+  margin-bottom: 8px;
 }
 
 h1 {
-  margin: 8px 0;
-  font-size: 32px;
+  margin: 6px 0;
+  font-size: 28px;
 }
 
+.subtitle,
 .intro {
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.45;
+}
+
+.menu-principal {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 18px 0;
+}
+
+.page-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 6px;
+  border: 1px solid #2f6fad;
+  border-radius: 14px;
+  background: #111824;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background: #16385f;
+  color: white;
+}
+
+.page-section {
+  display: none;
+}
+
+.page-section.active {
+  display: block;
 }
 
 .btn,
@@ -76,9 +113,9 @@ h1 {
 
 .medicament {
   display: grid;
-  grid-template-columns: 70px 1fr auto;
+  grid-template-columns: 62px 1fr auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 14px 0;
   border-bottom: 1px solid var(--line);
 }
@@ -88,11 +125,12 @@ h1 {
 }
 
 .medicament strong {
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .medicament span {
   font-weight: 600;
+  min-width: 0;
 }
 
 .medicament small,
@@ -107,7 +145,7 @@ h1 {
 button {
   border: none;
   border-radius: 999px;
-  padding: 8px 14px;
+  padding: 8px 12px;
   background: var(--green);
   color: #06130c;
   font-weight: 800;
@@ -116,6 +154,18 @@ button {
 
 button.pris {
   background: #2ecc71;
+}
+
+.actions-med {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.supprimer {
+  background: #2a3342;
+  color: white;
+  padding: 8px 10px;
 }
 
 .historique-item {
@@ -152,26 +202,34 @@ input {
 }
 
 @media (max-width: 380px) {
+  .app,
   .page {
-    padding: 14px;
+    padding: 12px;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .menu-principal {
+    gap: 6px;
+  }
+
+  .page-btn {
+    font-size: 12px;
+    padding: 9px 4px;
   }
 
   .medicament {
-    grid-template-columns: 1fr;
+    grid-template-columns: 58px 1fr;
   }
 
-  button {
-    width: 100%;
+  .actions-med {
+    grid-column: 2;
+    justify-content: flex-start;
   }
-}
-.actions-med {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.supprimer {
-  background: #2a3342;
-  color: white;
-  padding: 8px 10px;
 }
