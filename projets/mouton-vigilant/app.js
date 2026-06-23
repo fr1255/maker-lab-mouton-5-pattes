@@ -40,6 +40,7 @@ let alarmesEnvoyees = JSON.parse(localStorage.getItem(cleAlarmes)) || {};
 let prenom = localStorage.getItem(clePrenom) || "";
 
 const zoneMedicaments = document.getElementById("listeMedicaments");
+const zoneParametresMedicaments = document.getElementById("listeParametresMedicaments");
 const zoneHistorique = document.getElementById("historique");
 const zoneBonjour = document.getElementById("bonjour");
 
@@ -118,10 +119,6 @@ function afficherMedicaments() {
         <button class="${dejaPris ? "pris" : ""}">
           ${dejaPris ? "✓ Pris" : "Pris"}
         </button>
-
-        <button class="supprimer" title="Supprimer">
-          🗑️
-        </button>
       </div>
     `;
 
@@ -149,17 +146,52 @@ function afficherMedicaments() {
       afficherHistorique();
     });
 
+    zoneMedicaments.appendChild(ligne);
+  });
+}
+
+function afficherParametresMedicaments() {
+  if (!zoneParametresMedicaments) return;
+
+  zoneParametresMedicaments.innerHTML = "";
+
+  medicaments.forEach((med) => {
+    const ligne = document.createElement("div");
+    ligne.className = "medicament";
+
+    ligne.innerHTML = `
+      <strong>${afficherHeure(med.heure)}</strong>
+
+      <span>
+        ${med.nom}
+        <small>${med.nombre || ""}</small>
+        ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
+        ${med.note ? `<small>${med.note}</small>` : ""}
+      </span>
+
+      <div class="actions-med">
+        <button class="supprimer" title="Supprimer">
+          🗑️ Supprimer
+        </button>
+      </div>
+    `;
+
     ligne.querySelector(".supprimer").addEventListener("click", () => {
       if (confirm("Supprimer ce médicament ?")) {
         medicaments = medicaments.filter((m) => m.id !== med.id);
         delete prises[med.id];
         delete alarmesEnvoyees[med.id];
+
+        historique = historique.filter((item) => item.id !== med.id);
+
         sauvegarder();
         afficherMedicaments();
+        afficherParametresMedicaments();
+        afficherHistorique();
       }
     });
 
-    zoneMedicaments.appendChild(ligne);
+    zoneParametresMedicaments.appendChild(ligne);
   });
 }
 
@@ -360,11 +392,13 @@ if (boutonAjouterMedicament) {
 
     sauvegarder();
     afficherMedicaments();
+    afficherParametresMedicaments();
   });
 }
 
 afficherPrenom();
 afficherMedicaments();
+afficherParametresMedicaments();
 afficherHistorique();
 verifierAlarmes();
 
