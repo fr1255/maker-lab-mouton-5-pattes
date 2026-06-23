@@ -17,23 +17,33 @@
 
   <header class="app-header">
     <img src="logo.png" class="logo" alt="Mouton Vigilant">
-
     <h1>🐑 Mouton Vigilant</h1>
     <p id="bonjour" class="intro">Bonjour</p>
     <p class="subtitle">Votre compagnon de traitement</p>
   </header>
 
-  <section id="screen-accueil" class="screen active">
+  <nav class="menu-principal">
+    <button class="page-btn active" data-page="aujourdhui">💊 Aujourd'hui</button>
+    <button class="page-btn" data-page="medicaments">💊 Médicaments</button>
+    <button class="page-btn" data-page="parametrage">⚙️ Paramétrage</button>
+  </nav>
+
+  <section id="page-aujourdhui" class="page-section active">
     <div class="card">
       <h2>💊 Aujourd'hui</h2>
       <p id="resumeJour" class="intro">Chargement...</p>
       <div id="listeMedicaments"></div>
     </div>
+
+    <div class="card">
+      <h2>📅 Historique</h2>
+      <div id="historique"></div>
+    </div>
   </section>
 
-  <section id="screen-medicaments" class="screen">
+  <section id="page-medicaments" class="page-section">
     <div class="card">
-      <h2>💊 Médicaments</h2>
+      <h2>➕ Ajouter un médicament</h2>
 
       <label for="medNom">Nom du médicament</label>
       <input id="medNom" type="text" placeholder="Ex : Levothyrox">
@@ -50,39 +60,28 @@
       <button id="ajouterMedicament" class="btn-alerte">
         ➕ Ajouter le médicament
       </button>
+    </div>
 
-      <h3>📋 Médicaments enregistrés</h3>
+    <div class="card">
+      <h2>📋 Médicaments enregistrés</h2>
       <div id="listeParametresMedicaments"></div>
     </div>
-  </section>
 
-  <section id="screen-rappels" class="screen">
     <div class="card">
       <h2>🔔 Rappels iPhone</h2>
       <p class="intro">
-        Les rappels sont créés dans le calendrier de votre iPhone.
+        À utiliser après avoir ajouté, modifié ou supprimé un médicament.
       </p>
 
       <button id="creerCalendrier" class="btn-alerte">
         📅 Générer les rappels iPhone
       </button>
-
-      <p class="intro">
-        À utiliser après avoir ajouté, modifié ou supprimé un médicament.
-      </p>
     </div>
   </section>
 
-  <section id="screen-historique" class="screen">
+  <section id="page-parametrage" class="page-section">
     <div class="card">
-      <h2>📅 Historique</h2>
-      <div id="historique"></div>
-    </div>
-  </section>
-
-  <section id="screen-parametres" class="screen">
-    <div class="card">
-      <h2>⚙️ Paramètres</h2>
+      <h2>⚙️ Paramétrage</h2>
 
       <label for="prenom">Prénom</label>
       <input id="prenom" type="text" placeholder="Entrez votre prénom">
@@ -95,21 +94,13 @@
         📄 Ouvrir le guide utilisateur
       </a>
 
-      <p class="intro">Version 2.0</p>
+      <p class="intro">Version 2.1</p>
     </div>
   </section>
 
 </main>
 
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-screen="accueil">🏠<span>Aujourd'hui</span></button>
-  <button class="nav-btn" data-screen="medicaments">💊<span>Médicaments</span></button>
-  <button class="nav-btn" data-screen="rappels">🔔<span>Rappels</span></button>
-  <button class="nav-btn" data-screen="historique">📅<span>Historique</span></button>
-  <button class="nav-btn" data-screen="parametres">⚙️<span>Réglages</span></button>
-</nav>
-
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 
 <script>
   if ("serviceWorker" in navigator) {
