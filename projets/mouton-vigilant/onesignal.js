@@ -5,28 +5,33 @@ OneSignalDeferred.push(async function (OneSignal) {
   const bouton = document.getElementById("activerNotifications");
   const etat = document.getElementById("etatNotifications");
 
+  if (!bouton || !etat) return;
+
   bouton.onclick = async function () {
-
-    await OneSignal.Notifications.requestPermission();
-
-    alert("Permission : " + OneSignal.Notifications.permission);
-
     try {
+      etat.textContent = "Activation en cours...";
 
-      const id = await OneSignal.User.PushSubscription.id;
+      await OneSignal.Notifications.requestPermission();
 
-      alert("Subscription ID : " + id);
+      await OneSignal.User.PushSubscription.optIn();
 
-      const token = await OneSignal.User.PushSubscription.token;
+      setTimeout(function () {
+        const id = OneSignal.User.PushSubscription.id;
 
-      alert("Token : " + token);
+        alert("Permission : " + OneSignal.Notifications.permission + "\nID : " + id);
+
+        if (id) {
+          etat.textContent = "✅ Notifications activées";
+          bouton.textContent = "🔔 Notifications activées";
+        } else {
+          etat.textContent = "⚠️ Permission OK mais abonnement non créé";
+        }
+      }, 3000);
 
     } catch (e) {
-
       alert("Erreur : " + e);
-
+      etat.textContent = "⚠️ Erreur OneSignal";
     }
-
   };
 
 });
