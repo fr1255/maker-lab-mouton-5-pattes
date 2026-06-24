@@ -118,6 +118,7 @@ function afficherMedicaments() {
 
     const ligne = document.createElement("div");
     ligne.className = "medicament";
+    ligne.id = "med-" + med.id;
 
     ligne.innerHTML = `
       <strong>${afficherHeure(med.heure)}</strong>
