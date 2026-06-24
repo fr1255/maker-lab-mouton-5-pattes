@@ -21,35 +21,6 @@
 
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
-<script>
-
-window.OneSignalDeferred = window.OneSignalDeferred || [];
-
-OneSignalDeferred.push(async function (OneSignal) {
-
-  try {
-
-    await OneSignal.init({
-
-      appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
-
-      notifyButton: {
-        enable: false
-      }
-
-    });
-
-    console.log("OneSignal initialisé");
-
-  } catch (e) {
-
-    console.error("Erreur OneSignal :", e);
-
-  }
-
-});
-
-</script>
 
 </head>
 
