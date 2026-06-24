@@ -52,32 +52,38 @@ async function testerNotification() {
 // =========================================
 // Ouverture depuis une notification
 // =========================================
-
 function ouvrirDepuisNotification() {
 
-    const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
+  const med = params.get("med");
 
-    const med = params.get("med");
+  if (!med) return;
 
-    if (!med) return;
+  changerPage("aujourdhui");
 
-    changerPage("aujourdhui");
+  setTimeout(() => {
 
     const element = document.getElementById("med-" + med);
 
-    if (element) {
-
-        element.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-        element.style.border = "3px solid #4CAF50";
-
-        setTimeout(() => {
-            element.style.border = "";
-        }, 5000);
-
+    if (!element) {
+      console.log("Médicament non trouvé :", med);
+      return;
     }
+
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+    element.style.border = "3px solid #4CAF50";
+    element.style.borderRadius = "12px";
+    element.style.padding = "8px";
+
+    setTimeout(() => {
+      element.style.border = "";
+      element.style.padding = "";
+    }, 5000);
+
+  }, 500);
 
 }
