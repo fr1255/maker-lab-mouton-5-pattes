@@ -1,120 +1,215 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Mouton Vigilant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0B1F3A">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- SDK OneSignal -->
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<title>Mouton Vigilant</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0B1F3A">
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- ========================= -->
+<!--      ONESIGNAL SDK        -->
+<!-- ========================= -->
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+<script>
+
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+
+OneSignalDeferred.push(async function (OneSignal) {
+
+  try {
+
+    await OneSignal.init({
+
+      appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
+
+      notifyButton: {
+        enable: false
+      }
+
+    });
+
+    console.log("OneSignal initialisé");
+
+  } catch (e) {
+
+    console.error("Erreur OneSignal :", e);
+
+  }
+
+});
+
+</script>
+
 </head>
 
 <body>
 
 <main class="app">
 
-  <header class="app-header">
-    <img src="logo.png" class="logo" alt="Mouton Vigilant">
-    <h1>🐑 Mouton Vigilant</h1>
-    <p id="bonjour" class="intro">Bonjour</p>
-    <p class="subtitle">Votre compagnon de traitement</p>
-  </header>
+<header class="app-header">
 
-  <nav class="menu-principal">
-    <button class="page-btn active" data-page="aujourdhui">💊 Aujourd'hui</button>
-    <button class="page-btn" data-page="medicaments">💊 Médicaments</button>
-    <button class="page-btn" data-page="parametrage">⚙️ Paramétrage</button>
-  </nav>
+<img src="logo.png" class="logo" alt="Mouton Vigilant">
 
-  <section id="page-aujourdhui" class="page-section active">
-    <div class="card">
-      <h2>💊 Aujourd'hui</h2>
-      <p id="resumeJour" class="intro">Chargement...</p>
-      <div id="listeMedicaments"></div>
-    </div>
+<h1>🐑 Mouton Vigilant</h1>
 
-    <div class="card">
-      <h2>📊 Suivi</h2>
-      <p class="intro">🐑 Le mouton veille… et garde tout en mémoire !</p>
+<p id="bonjour" class="intro">Bonjour</p>
 
-      <button id="afficherSuivi" class="btn-alerte">
-        📊 Voir le suivi des traitements
-      </button>
+<p class="subtitle">
+Votre compagnon de traitement
+</p>
 
-      <div id="suiviTraitements" style="display:none;"></div>
-    </div>
-  </section>
+</header>
 
-  <section id="page-medicaments" class="page-section">
-    <div class="card">
-      <h2>➕ Ajouter un médicament</h2>
 
-      <label for="medNom">Nom du médicament</label>
-      <input id="medNom" type="text" placeholder="Ex : Levothyrox">
+<nav class="menu-principal">
 
-      <label for="medHeure">Heure de prise</label>
-      <input id="medHeure" type="time">
+<button class="page-btn active" data-page="aujourdhui">
+💊 Aujourd'hui
+</button>
 
-      <label for="medNombre">Nombre / quantité</label>
-      <input id="medNombre" type="text" placeholder="Ex : 1 comprimé">
+<button class="page-btn" data-page="medicaments">
+💊 Médicaments
+</button>
 
-      <label for="medDate">Date de début</label>
-      <input id="medDate" type="date">
+<button class="page-btn" data-page="parametrage">
+⚙️ Paramétrage
+</button>
 
-      <button id="ajouterMedicament" class="btn-alerte">
-        ➕ Ajouter le médicament
-      </button>
-    </div>
+</nav>
 
-    <div class="card">
-      <h2>📋 Médicaments enregistrés</h2>
-      <div id="listeParametresMedicaments"></div>
-    </div>
 
-    <div class="card">
-      <h2>🔔 Rappels iPhone</h2>
-      <p class="intro">
-        À utiliser après avoir ajouté, modifié ou supprimé un médicament.
-      </p>
+<section id="page-aujourdhui" class="page-section active">
 
-      <button id="creerCalendrier" class="btn-alerte">
-        📅 Générer les rappels iPhone
-      </button>
-    </div>
-  </section>
+<div class="card">
 
-  <section id="page-parametrage" class="page-section">
-    <div class="card">
-      <h2>⚙️ Paramétrage</h2>
+<h2>💊 Aujourd'hui</h2>
 
-      <label for="prenom">Prénom</label>
-      <input id="prenom" type="text" placeholder="Entrez votre prénom">
+<p id="resumeJour" class="intro">
+Chargement...
+</p>
 
-      <button id="sauverPrenom" class="btn-alerte">
-        💾 Enregistrer
-      </button>
-      
-       <button id="activerNotifications" class="btn-alerte">
-         🔔 Activer les notifications
-       </button>
+<div id="listeMedicaments"></div>
 
-      <p id="etatNotifications" class="intro">
-          Notifications non activées
-      </p> 
-      
+</div>
 
-      <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
-        📄 Ouvrir le guide utilisateur
-      </a>
+<div class="card">
 
-      <p class="intro">Version 2.1</p>
-    </div>
-  </section>
+<h2>📊 Suivi</h2>
+
+<p class="intro">
+🐑 Le mouton veille… et garde tout en mémoire !
+</p>
+
+<button id="afficherSuivi" class="btn-alerte">
+📊 Voir le suivi des traitements
+</button>
+
+<div id="suiviTraitements" style="display:none;"></div>
+
+</div>
+
+</section>
+
+
+<section id="page-medicaments" class="page-section">
+
+<div class="card">
+
+<h2>➕ Ajouter un médicament</h2>
+
+<label>Nom du médicament</label>
+<input id="medNom" type="text">
+
+<label>Heure de prise</label>
+<input id="medHeure" type="time">
+
+<label>Nombre / quantité</label>
+<input id="medNombre" type="text">
+
+<label>Date de début</label>
+<input id="medDate" type="date">
+
+<button id="ajouterMedicament" class="btn-alerte">
+➕ Ajouter le médicament
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📋 Médicaments enregistrés</h2>
+
+<div id="listeParametresMedicaments"></div>
+
+</div>
+
+<div class="card">
+
+<h2>🔔 Rappels iPhone</h2>
+
+<p class="intro">
+À utiliser après avoir ajouté, modifié ou supprimé un médicament.
+</p>
+
+<button id="creerCalendrier" class="btn-alerte">
+📅 Générer les rappels iPhone
+</button>
+
+</div>
+
+</section>
+
+
+<section id="page-parametrage" class="page-section">
+
+<div class="card">
+
+<h2>⚙️ Paramétrage</h2>
+
+<label>Prénom</label>
+
+<input id="prenom" type="text">
+
+<button id="sauverPrenom" class="btn-alerte">
+💾 Enregistrer
+</button>
+
+<button id="activerNotifications" class="btn-alerte">
+🔔 Activer les notifications
+</button>
+
+<p id="etatNotifications" class="intro">
+Notifications non activées
+</p>
+
+<a class="btn"
+href="./Mouton_Vigilant_notice_logo_v1.pdf"
+target="_blank">
+
+📄 Ouvrir le guide utilisateur
+
+</a>
+
+<p class="intro">
+
+Version 2.1
+
+</p>
+
+</div>
+
+</section>
 
 </main>
 
@@ -123,10 +218,15 @@
 <script src="onesignal.js?v=1"></script>
 
 <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js");
-  }
+
+if ("serviceWorker" in navigator) {
+
+navigator.serviceWorker.register("./service-worker.js");
+
+}
+
 </script>
 
 </body>
+
 </html>
