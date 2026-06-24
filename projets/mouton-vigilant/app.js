@@ -589,6 +589,7 @@ if (boutonPrenom) {
 verifierLiensCalendrier();
 afficherPrenom();
 afficherMedicaments();
+ouvrirDepuisNotification();
 afficherParametresMedicaments();
 
 // ==============================
