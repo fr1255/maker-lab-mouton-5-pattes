@@ -2,86 +2,99 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
 
-    const bouton = document.getElementById("activerNotifications");
-    const etat = document.getElementById("etatNotifications");
+    const boutonActiver = document.getElementById("activerNotifications");
+    const etatParam = document.getElementById("etatNotifications");
 
-    if (!bouton || !etat) return;
+    const etatMouton = document.getElementById("etatNotificationsMouton");
+    const boutonTest = document.getElementById("testerNotification");
 
-    // Affichage de l'état au démarrage
-    try {
+    function mettreAJourEtat() {
 
         if (OneSignal.Notifications.permission) {
 
-            etat.textContent = "✅ Notifications autorisées";
+            if (etatParam)
+                etatParam.textContent = "🟢 Notifications activées";
+
+            if (etatMouton)
+                etatMouton.textContent = "🟢 Notifications activées";
 
         } else {
 
-            etat.textContent = "Notifications non activées";
+            if (etatParam)
+                etatParam.textContent = "🔴 Notifications désactivées";
+
+            if (etatMouton)
+                etatMouton.textContent = "🔴 Notifications désactivées";
 
         }
 
-    } catch (e) {
-        console.log(e);
     }
 
-    bouton.addEventListener("click", async function () {
+    mettreAJourEtat();
 
-        try {
+    if (boutonActiver) {
 
-            etat.textContent = "Activation en cours...";
+        boutonActiver.addEventListener("click", async function () {
 
-            await OneSignal.Notifications.requestPermission();
+            try {
 
-            if (!OneSignal.Notifications.permission) {
+                if (etatParam)
+                    etatParam.textContent = "🟡 Activation en cours...";
 
-                etat.textContent = "❌ Permission refusée";
+                await OneSignal.Notifications.requestPermission();
 
-                return;
+                if (!OneSignal.Notifications.permission) {
 
-            }
-
-            await OneSignal.User.PushSubscription.optIn();
-
-            setTimeout(async () => {
-
-                const id = OneSignal.User.PushSubscription.id;
-                const token = OneSignal.User.PushSubscription.token;
-                const optedIn = OneSignal.User.PushSubscription.optedIn;
-
-                console.log("Subscription ID :", id);
-                console.log("Token :", token);
-                console.log("Opted In :", optedIn);
-
-                alert(
-                    "Permission : " + OneSignal.Notifications.permission +
-                    "\nOptIn : " + optedIn +
-                    "\nID : " + id +
-                    "\nToken : " + token
-                );
-
-                if (id) {
-
-                    etat.textContent = "✅ Notifications activées";
-                    bouton.textContent = "🔔 Notifications activées";
-
-                } else {
-
-                    etat.textContent = "⚠️ Permission accordée mais aucun abonnement créé.";
+                    mettreAJourEtat();
+                    return;
 
                 }
 
-            }, 3000);
+                await OneSignal.User.PushSubscription.optIn();
 
-        } catch (e) {
+                setTimeout(function () {
 
-            console.error(e);
+                    const id = OneSignal.User.PushSubscription.id;
 
-            alert("Erreur : " + e);
+                    if (id) {
 
-            etat.textContent = "⚠️ Erreur OneSignal";
+                        mettreAJourEtat();
 
-        }
+                        boutonActiver.textContent =
+                            "🔔 Notifications activées";
 
-    });
+                    } else {
+
+                        if (etatParam)
+                            etatParam.textContent =
+                                "⚠️ Abonnement non créé";
+
+                    }
+
+                }, 2000);
+
+            } catch (e) {
+
+                console.error(e);
+
+                alert("Erreur OneSignal : " + e);
+
+            }
+
+        });
+
+    }
+
+    if (boutonTest) {
+
+        boutonTest.addEventListener("click", function () {
+
+            alert(
+                "🎉 Les notifications sont prêtes !\n\nLa prochaine étape consiste à envoyer une vraie notification de test depuis OneSignal."
+            );
+
+        });
+
+    }
 
 });
