@@ -1,52 +1,42 @@
-// ===============================
-// MOUTON VIGILANT - ONESIGNAL V2.2
-// ===============================
-
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
-OneSignalDeferred.push(async function(OneSignal) {
-  try {
-    await OneSignal.init({
-      appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
-      serviceWorkerPath: "OneSignalSDKWorker.js",
-      serviceWorkerParam: {
-        scope: "./"
-      }
-    });
-
-    const bouton = document.getElementById("activerNotifications");
-    const etat = document.getElementById("etatNotifications");
-
-    if (!bouton || !etat) return;
-
-    function mettreAJourEtat() {
-      if (OneSignal.Notifications.permission) {
-        etat.textContent = "✅ Notifications activées";
-        bouton.textContent = "🔔 Notifications activées";
-      } else {
-        etat.textContent = "Notifications non activées";
-        bouton.textContent = "🔔 Activer les notifications";
-      }
+OneSignalDeferred.push(async function (OneSignal) {
+  await OneSignal.init({
+    appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
+    notifyButton: {
+      enable: false
+    },
+    serviceWorkerPath: "OneSignalSDKWorker.js",
+    serviceWorkerParam: {
+      scope: "./"
     }
+  });
 
-    mettreAJourEtat();
+  const bouton = document.getElementById("activerNotifications");
+  const etat = document.getElementById("etatNotifications");
 
-    bouton.addEventListener("click", async function() {
-      try {
-        await OneSignal.Notifications.requestPermission();
-        mettreAJourEtat();
-      } catch (erreur) {
-        console.error("Erreur OneSignal :", erreur);
-        etat.textContent = "⚠️ Erreur pendant l’activation";
-      }
-    });
+  if (!bouton || !etat) return;
 
-  } catch (erreur) {
-    console.error("Erreur initialisation OneSignal :", erreur);
+  bouton.addEventListener("click", async function () {
+    try {
+      etat.textContent = "Activation en cours...";
 
-    const etat = document.getElementById("etatNotifications");
-    if (etat) {
-      etat.textContent = "⚠️ OneSignal non disponible";
+      await OneSignal.Slidedown.promptPush();
+
+      setTimeout(async function () {
+        const permission = OneSignal.Notifications.permission;
+
+        if (permission) {
+          etat.textContent = "✅ Notifications activées";
+          bouton.textContent = "🔔 Notifications activées";
+        } else {
+          etat.textContent = "Notifications non activées";
+        }
+      }, 3000);
+
+    } catch (e) {
+      console.error(e);
+      etat.textContent = "⚠️ Erreur OneSignal";
     }
-  }
+  });
 });
