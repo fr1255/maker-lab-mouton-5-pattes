@@ -1,23 +1,33 @@
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
+  alert("onesignal.js OK");
 
-  alert("OneSignal démarre");
+  const bouton = document.getElementById("activerNotifications");
+  const etat = document.getElementById("etatNotifications");
 
-  try {
-
-    await OneSignal.init({
-      appId: "33afb21b-f145-4372-ae00-b7f5f656e025"
-    });
-
-    alert("OneSignal initialisé");
-
-  } catch (e) {
-
-    alert("Erreur init : " + e);
-
-    console.error(e);
-
+  if (!bouton || !etat) {
+    alert("Bouton introuvable");
+    return;
   }
 
+  bouton.onclick = async function () {
+    alert("Bouton cliqué");
+
+    try {
+      await OneSignal.Notifications.requestPermission();
+
+      alert("Permission : " + OneSignal.Notifications.permission);
+
+      if (OneSignal.Notifications.permission) {
+        etat.textContent = "✅ Notifications activées";
+        bouton.textContent = "🔔 Notifications activées";
+      } else {
+        etat.textContent = "Notifications non activées";
+      }
+
+    } catch (e) {
+      alert("Erreur permission : " + e);
+    }
+  };
 });
