@@ -1,15 +1,9 @@
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
+
   await OneSignal.init({
-    appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
-    notifyButton: {
-      enable: false
-    },
-    serviceWorkerPath: "OneSignalSDKWorker.js",
-    serviceWorkerParam: {
-      scope: "./"
-    }
+    appId: "33afb21b-f145-4372-ae00-b7f5f656e025"
   });
 
   const bouton = document.getElementById("activerNotifications");
@@ -17,26 +11,36 @@ OneSignalDeferred.push(async function (OneSignal) {
 
   if (!bouton || !etat) return;
 
-  bouton.addEventListener("click", async function () {
+  async function majEtat() {
+    if (OneSignal.Notifications.permission) {
+      etat.textContent = "✅ Notifications activées";
+      bouton.textContent = "🔔 Notifications activées";
+    } else {
+      etat.textContent = "Notifications non activées";
+      bouton.textContent = "🔔 Activer les notifications";
+    }
+  }
+
+  await majEtat();
+
+  bouton.onclick = async function () {
+
     try {
-      etat.textContent = "Activation en cours...";
 
-      await OneSignal.Slidedown.promptPush();
+      await OneSignal.Notifications.requestPermission();
 
-      setTimeout(async function () {
-        const permission = OneSignal.Notifications.permission;
+      await majEtat();
 
-        if (permission) {
-          etat.textContent = "✅ Notifications activées";
-          bouton.textContent = "🔔 Notifications activées";
-        } else {
-          etat.textContent = "Notifications non activées";
-        }
-      }, 3000);
+      console.log("Permission :", OneSignal.Notifications.permission);
 
     } catch (e) {
+
       console.error(e);
-      etat.textContent = "⚠️ Erreur OneSignal";
+
+      etat.textContent = "⚠️ Erreur";
+
     }
-  });
+
+  };
+
 });
