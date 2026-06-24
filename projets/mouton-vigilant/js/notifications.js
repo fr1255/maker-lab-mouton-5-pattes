@@ -48,3 +48,36 @@ async function testerNotification() {
   );
 
 }
+
+// =========================================
+// Ouverture depuis une notification
+// =========================================
+
+function ouvrirDepuisNotification() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const med = params.get("med");
+
+    if (!med) return;
+
+    changerPage("aujourdhui");
+
+    const element = document.getElementById("med-" + med);
+
+    if (element) {
+
+        element.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        element.style.border = "3px solid #4CAF50";
+
+        setTimeout(() => {
+            element.style.border = "";
+        }, 5000);
+
+    }
+
+}
