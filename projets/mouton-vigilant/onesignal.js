@@ -1,33 +1,32 @@
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
-  alert("onesignal.js OK");
 
   const bouton = document.getElementById("activerNotifications");
   const etat = document.getElementById("etatNotifications");
 
-  if (!bouton || !etat) {
-    alert("Bouton introuvable");
-    return;
-  }
-
   bouton.onclick = async function () {
-    alert("Bouton cliqué");
+
+    await OneSignal.Notifications.requestPermission();
+
+    alert("Permission : " + OneSignal.Notifications.permission);
 
     try {
-      await OneSignal.Notifications.requestPermission();
 
-      alert("Permission : " + OneSignal.Notifications.permission);
+      const id = await OneSignal.User.PushSubscription.id;
 
-      if (OneSignal.Notifications.permission) {
-        etat.textContent = "✅ Notifications activées";
-        bouton.textContent = "🔔 Notifications activées";
-      } else {
-        etat.textContent = "Notifications non activées";
-      }
+      alert("Subscription ID : " + id);
+
+      const token = await OneSignal.User.PushSubscription.token;
+
+      alert("Token : " + token);
 
     } catch (e) {
-      alert("Erreur permission : " + e);
+
+      alert("Erreur : " + e);
+
     }
+
   };
+
 });
