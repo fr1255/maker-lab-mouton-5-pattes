@@ -1,1 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <title>Mouton Vigilant</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <meta name="theme-color" content="#0B1F3A">
+
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+</head>
+
+<body>
+
+<main class="app">
+
+  <header class="app-header">
+    <img src="logo.png" class="logo" alt="Mouton Vigilant">
+    <h1>🐑 Mouton Vigilant</h1>
+    <p id="bonjour" class="intro">Bonjour</p>
+    <p class="subtitle">Votre compagnon de traitement</p>
+  </header>
+
+  <nav class="menu-principal">
+    <button class="page-btn active" data-page="aujourdhui">💊 Aujourd'hui</button>
+    <button class="page-btn" data-page="medicaments">💊 Médicaments</button>
+    <button class="page-btn" data-page="parametrage">⚙️ Paramétrage</button>
+  </nav>
+
+  <section id="page-aujourdhui" class="page-section active">
+    <div class="card">
+      <h2>💊 Aujourd'hui</h2>
+      <p id="resumeJour" class="intro">Chargement...</p>
+      <div id="listeMedicaments"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Suivi</h2>
+      <p class="intro">🐑 Le mouton veille… et garde tout en mémoire !</p>
+      <button id="afficherSuivi" class="btn-alerte">📊 Voir le suivi des traitements</button>
+      <div id="suiviTraitements" style="display:none;"></div>
+    </div>
+  </section>
+
+  <section id="page-medicaments" class="page-section">
+    <div class="card">
+      <h2>➕ Ajouter un médicament</h2>
+
+      <label>Nom du médicament</label>
+      <input id="medNom" type="text">
+
+      <label>Heure de prise</label>
+      <input id="medHeure" type="time">
+
+      <label>Nombre / quantité</label>
+      <input id="medNombre" type="text">
+
+      <label>Date de début</label>
+      <input id="medDate" type="date">
+
+      <button id="ajouterMedicament" class="btn-alerte">➕ Ajouter le médicament</button>
+    </div>
+
+    <div class="card">
+      <h2>📋 Médicaments enregistrés</h2>
+      <div id="listeParametresMedicaments"></div>
+    </div>
+
+    <div class="card">
+      <h2>🐑 Le mouton veille !</h2>
+      <p class="intro">Mouton Vigilant vous rappellera automatiquement chaque prise de médicament.</p>
+      <p id="etatNotificationsMouton" class="intro">Notifications non activées</p>
+      <button id="testerNotification" class="btn-alerte">🔔 Tester une notification</button>
+    </div>
+  </section>
+
+  <section id="page-parametrage" class="page-section">
+    <div class="card">
+      <h2>⚙️ Paramétrage</h2>
+
+      <label>Prénom</label>
+      <input id="prenom" type="text">
+
+      <button id="sauverPrenom" class="btn-alerte">💾 Enregistrer</button>
+      <button id="activerNotifications" class="btn-alerte">🔔 Activer les notifications</button>
+
+      <p id="etatNotifications" class="intro">Notifications non activées</p>
+
+      <a class="btn" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
+        📄 Ouvrir le guide utilisateur
+      </a>
+
+      <p class="intro">Version 5.0</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/stockage.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/medicaments.js"></script>
+<script src="js/prises.js"></script>
+<script src="js/suivi.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
+</script>
+
+</body>
+</html>
