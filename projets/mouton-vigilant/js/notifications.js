@@ -32,9 +32,41 @@ async function activerNotifications() {
 
   const OneSignal = window.OneSignal;
 
-  if (!OneSignal) return;
+  if (!OneSignal) {
+    alert("OneSignal n'est pas encore chargé.");
+    return;
+  }
 
-  await OneSignal.Notifications.requestPermission();
+  try {
+
+    await OneSignal.Notifications.requestPermission();
+
+    const autorise = OneSignal.Notifications.permission;
+
+    const etat1 = document.getElementById("etatNotifications");
+    const etat2 = document.getElementById("etatNotificationsMouton");
+
+    if (autorise) {
+
+      if (etat1) etat1.textContent = "🟢 Notifications activées";
+      if (etat2) etat2.textContent = "🟢 Notifications activées";
+
+      alert("✅ Notifications activées.");
+
+    } else {
+
+      if (etat1) etat1.textContent = "Notifications non activées";
+
+      alert("Les notifications n'ont pas été autorisées.");
+
+    }
+
+  } catch (e) {
+
+    console.error(e);
+    alert("Erreur lors de l'activation des notifications.");
+
+  }
 
 }
 
