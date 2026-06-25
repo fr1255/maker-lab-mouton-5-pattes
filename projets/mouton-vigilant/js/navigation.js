@@ -1,9 +1,8 @@
 // ==============================
-// Navigation - Mouton Vigilant
+// Navigation - Mouton Vigilant V5
 // ==============================
 
 function changerPage(page) {
-
   document.querySelectorAll(".page-section").forEach((section) => {
     section.classList.remove("active");
   });
@@ -18,21 +17,11 @@ function changerPage(page) {
   if (section) section.classList.add("active");
   if (bouton) bouton.classList.add("active");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function initialiserNavigation() {
-
   document.querySelectorAll(".page-btn").forEach((btn) => {
-
-    btn.addEventListener("click", () => {
-      changerPage(btn.dataset.page);
-    });
-
+    btn.addEventListener("click", () => changerPage(btn.dataset.page));
   });
-
 }
