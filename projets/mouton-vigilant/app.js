@@ -585,6 +585,11 @@ if (boutonPrenom) {
   });
 }
 
+const boutonActiverNotifications = document.getElementById("activerNotifications");
+
+if (boutonActiverNotifications) {
+  boutonActiverNotifications.addEventListener("click", activerNotifications);
+}
 // ===== Initialisation =====
 verifierLiensCalendrier();
 afficherPrenom();
