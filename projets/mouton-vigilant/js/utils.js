@@ -1,5 +1,5 @@
 // ==============================
-// Utils - Mouton Vigilant
+// Utils - Mouton Vigilant V5
 // ==============================
 
 function heureActuelle() {
@@ -10,7 +10,7 @@ function heureActuelle() {
 }
 
 function afficherHeure(heure) {
-  return heure.replace(":", "h");
+  return String(heure || "").replace(":", "h");
 }
 
 function dateLocale(date) {
@@ -32,10 +32,8 @@ function dateDebutMois() {
 
 function heureDepassee(heure) {
   const maintenant = new Date();
-  const [h, m] = heure.split(":").map(Number);
-
+  const [h, m] = String(heure || "00:00").split(":").map(Number);
   const cible = new Date();
   cible.setHours(h, m, 0, 0);
-
   return maintenant >= cible;
 }
