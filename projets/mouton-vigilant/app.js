@@ -231,7 +231,7 @@ if (boutonAjouterMedicament) {
     }
 
     medicaments.push({
-      id: "med-" + Date.now(),
+      id: creerIdMedicament(nom),
       heure,
       nom,
       nombre: nombre || "1 prise",
