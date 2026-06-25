@@ -1,6 +1,27 @@
 // ==============================
-// Médicaments - Mouton Vigilant
+// Médicaments - Mouton Vigilant V5
 // ==============================
+
+function creerIdMedicament(nom) {
+  let id = String(nom || "medicament")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!id) id = "medicament";
+
+  let idFinal = id;
+  let compteur = 2;
+
+  while (medicaments.some((m) => m.id === idFinal)) {
+    idFinal = id + "-" + compteur;
+    compteur++;
+  }
+
+  return idFinal;
+}
 
 function afficherResumeJour() {
   if (!zoneResumeJour) return;
@@ -52,4 +73,83 @@ function afficherMedicaments() {
   });
 
   afficherResumeJour();
+}
+
+function afficherParametresMedicaments() {
+  if (!zoneParametresMedicaments) return;
+
+  zoneParametresMedicaments.innerHTML = "";
+
+  medicaments.forEach((med) => {
+    const ligne = document.createElement("div");
+    ligne.className = "medicament";
+
+    ligne.innerHTML = `
+      <strong>${afficherHeure(med.heure)}</strong>
+
+      <span>
+        ${med.nom}
+        <small>${med.nombre || ""}</small>
+        ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
+        ${med.note ? `<small>${med.note}</small>` : ""}
+        <small>ID notification : ${med.id}</small>
+      </span>
+
+      <div class="actions-med">
+        <button class="supprimer">🗑️ Supprimer</button>
+      </div>
+    `;
+
+    ligne.querySelector(".supprimer").addEventListener("click", () => {
+      if (confirm("Supprimer ce médicament ?")) {
+        medicaments = medicaments.filter((m) => m.id !== med.id);
+        delete prises[med.id];
+        historique = historique.filter((item) => item.id !== med.id);
+
+        sauvegarder();
+        afficherMedicaments();
+        afficherParametresMedicaments();
+        afficherSuiviSiOuvert();
+      }
+    });
+
+    zoneParametresMedicaments.appendChild(ligne);
+  });
+}
+
+function initialiserMedicaments() {
+  if (!boutonAjouterMedicament) return;
+
+  boutonAjouterMedicament.addEventListener("click", () => {
+    const nom = champMedNom.value.trim();
+    const heure = champMedHeure.value;
+    const nombre = champMedNombre.value.trim();
+    const date = champMedDate.value;
+
+    if (!nom || !heure) {
+      alert("Il faut au minimum le nom du médicament et l'heure.");
+      return;
+    }
+
+    medicaments.push({
+      id: creerIdMedicament(nom),
+      heure,
+      nom,
+      nombre: nombre || "1 prise",
+      date,
+      note: ""
+    });
+
+    champMedNom.value = "";
+    champMedHeure.value = "";
+    champMedNombre.value = "";
+    champMedDate.value = "";
+
+    sauvegarder();
+    afficherMedicaments();
+    afficherParametresMedicaments();
+    afficherSuiviSiOuvert();
+
+    alert("Médicament ajouté.");
+  });
 }
