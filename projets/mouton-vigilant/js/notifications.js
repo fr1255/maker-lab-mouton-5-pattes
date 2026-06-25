@@ -1,35 +1,39 @@
 // ==============================
-// Notifications - Mouton Vigilant
+// Notifications - Mouton Vigilant V5
 // ==============================
 
-// Initialisation OneSignal
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
-
   try {
-
     await OneSignal.init({
       appId: "33afb21b-f145-4372-ae00-b7f5f656e025",
-      notifyButton: {
-        enable: false
-      }
+      notifyButton: { enable: false }
     });
 
     console.log("🐑 OneSignal initialisé");
-
+    mettreAJourEtatNotifications();
   } catch (e) {
-
     console.error("Erreur OneSignal :", e);
-
   }
-
 });
 
+function mettreAJourEtatNotifications() {
+  const etat1 = document.getElementById("etatNotifications");
+  const etat2 = document.getElementById("etatNotificationsMouton");
 
-// Demande d'autorisation
+  const permissionOk = window.OneSignal?.Notifications?.permission;
+
+  if (permissionOk) {
+    if (etat1) etat1.textContent = "🟢 Notifications activées";
+    if (etat2) etat2.textContent = "🟢 Notifications activées";
+  } else {
+    if (etat1) etat1.textContent = "Notifications non activées";
+    if (etat2) etat2.textContent = "Notifications non activées";
+  }
+}
+
 async function activerNotifications() {
-
   const OneSignal = window.OneSignal;
 
   if (!OneSignal) {
@@ -38,54 +42,28 @@ async function activerNotifications() {
   }
 
   try {
-
     await OneSignal.Notifications.requestPermission();
+    mettreAJourEtatNotifications();
 
-    const autorise = OneSignal.Notifications.permission;
-
-    const etat1 = document.getElementById("etatNotifications");
-    const etat2 = document.getElementById("etatNotificationsMouton");
-
-    if (autorise) {
-
-      if (etat1) etat1.textContent = "🟢 Notifications activées";
-      if (etat2) etat2.textContent = "🟢 Notifications activées";
-
+    if (OneSignal.Notifications.permission) {
       alert("✅ Notifications activées.");
-
     } else {
-
-      if (etat1) etat1.textContent = "Notifications non activées";
-
       alert("Les notifications n'ont pas été autorisées.");
-
     }
-
   } catch (e) {
-
     console.error(e);
     alert("Erreur lors de l'activation des notifications.");
-
   }
-
 }
 
-
-// Notification de test
 async function testerNotification() {
-
   alert(
-    "La notification de test sera envoyée depuis OneSignal.\n\n" +
-    "Cette fonction sera terminée dans la prochaine étape."
+    "Pour tester une vraie notification, utilise OneSignal avec une URL de lancement du type :\n\n" +
+    window.location.origin + window.location.pathname + "?med=levo"
   );
-
 }
 
-// =========================================
-// Ouverture depuis une notification
-// =========================================
 function ouvrirDepuisNotification() {
-
   const params = new URLSearchParams(window.location.search);
   const med = params.get("med");
 
@@ -94,7 +72,6 @@ function ouvrirDepuisNotification() {
   changerPage("aujourdhui");
 
   setTimeout(() => {
-
     const element = document.getElementById("med-" + med);
 
     if (!element) {
@@ -102,10 +79,7 @@ function ouvrirDepuisNotification() {
       return;
     }
 
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
 
     element.style.border = "3px solid #4CAF50";
     element.style.borderRadius = "12px";
@@ -115,7 +89,20 @@ function ouvrirDepuisNotification() {
       element.style.border = "";
       element.style.padding = "";
     }, 5000);
-
   }, 500);
+}
 
+function initialiserNotifications() {
+  const boutonActiverNotifications = document.getElementById("activerNotifications");
+  const boutonTesterNotification = document.getElementById("testerNotification");
+
+  if (boutonActiverNotifications) {
+    boutonActiverNotifications.addEventListener("click", activerNotifications);
+  }
+
+  if (boutonTesterNotification) {
+    boutonTesterNotification.addEventListener("click", testerNotification);
+  }
+
+  mettreAJourEtatNotifications();
 }
