@@ -79,17 +79,21 @@ function ouvrirDepuisNotification() {
       return;
     }
 
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
 
+    element.style.transition = "all 0.3s";
     element.style.border = "3px solid #4CAF50";
     element.style.borderRadius = "12px";
+    element.style.background = "#E8F5E9";
     element.style.padding = "8px";
 
-    setTimeout(() => {
-      element.style.border = "";
-      element.style.padding = "";
-    }, 5000);
-  }, 500);
+    const bouton = element.querySelector("button");
+    if (bouton) bouton.focus();
+
+  }, 400);
 }
 
 function initialiserNotifications() {
