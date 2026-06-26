@@ -4,11 +4,7 @@
 // =====================
 
 // Données par défaut
-const medicamentsParDefaut = [
-  { id: "levo", heure: "07:30", nom: "Levothyrox", nombre: "1 comprimé", date: "", note: "À jeun" },
-  { id: "candesartan", heure: "08:30", nom: "Candésartan cilexétil", nombre: "1 comprimé", date: "", note: "Pas en même temps que le Levothyrox" },
-  { id: "statine", heure: "22:00", nom: "Ézétimibe + Rosuvastatine", nombre: "1 comprimé", date: "", note: "Le soir" }
-];
+const medicamentsParDefaut = [];
 
 const aujourdHui = new Date().toISOString().slice(0, 10);
 
