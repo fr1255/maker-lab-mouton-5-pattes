@@ -1,8 +1,9 @@
 // ==============================
-// Notifications - Mouton Vigilant V5
+// Notifications - Mouton Vigilant V6
 // ==============================
 
 window.OneSignalDeferred = window.OneSignalDeferred || [];
+window.MOUTON_ONESIGNAL_ID = null;
 
 OneSignalDeferred.push(async function (OneSignal) {
   try {
@@ -12,6 +13,13 @@ OneSignalDeferred.push(async function (OneSignal) {
     });
 
     console.log("🐑 OneSignal initialisé");
+
+    setTimeout(() => {
+      const id = OneSignal.User?.PushSubscription?.id || null;
+      window.MOUTON_ONESIGNAL_ID = id;
+      console.log("🐑 OneSignal ID téléphone :", id);
+    }, 1500);
+
     mettreAJourEtatNotifications();
   } catch (e) {
     console.error("Erreur OneSignal :", e);
@@ -44,6 +52,12 @@ async function activerNotifications() {
   try {
     await OneSignal.Notifications.requestPermission();
     mettreAJourEtatNotifications();
+
+    setTimeout(() => {
+      const id = OneSignal.User?.PushSubscription?.id || null;
+      window.MOUTON_ONESIGNAL_ID = id;
+      console.log("🐑 OneSignal ID téléphone :", id);
+    }, 1500);
 
     if (OneSignal.Notifications.permission) {
       alert("✅ Notifications activées.");
