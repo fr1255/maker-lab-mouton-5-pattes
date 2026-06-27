@@ -1,6 +1,9 @@
 // ==============================
-// Médicaments - Mouton Vigilant V5
+// Médicaments - Mouton Vigilant V6
 // ==============================
+
+const URL_SERVEUR_PRIS =
+  "https://mouton-vigilant-server.fr12andco55.workers.dev/pris";
 
 function creerIdMedicament(nom) {
   let id = String(nom || "medicament")
@@ -36,6 +39,31 @@ function afficherResumeJour() {
     reste + " à prendre";
 }
 
+async function envoyerPriseAuServeur(med) {
+  try {
+    if (!med || !med.nom) return;
+
+    const userId = obtenirUserId();
+
+    const reponse = await fetch(URL_SERVEUR_PRIS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        medicament: med.nom
+      })
+    });
+
+    const resultat = await reponse.json();
+    console.log("🐑 Prise envoyée au serveur :", resultat);
+
+  } catch (e) {
+    console.error("Erreur envoi prise serveur :", e);
+  }
+}
+
 function afficherMedicaments() {
   if (!zoneMedicaments) return;
 
@@ -66,7 +94,15 @@ function afficherMedicaments() {
     `;
 
     ligne.querySelector("button").addEventListener("click", () => {
+      const etaitPris = !!prises[med.id];
+
       basculerPrise(med.id);
+
+      const estPrisMaintenant = !etaitPris;
+
+      if (estPrisMaintenant) {
+        envoyerPriseAuServeur(med);
+      }
     });
 
     zoneMedicaments.appendChild(ligne);
