@@ -78,9 +78,10 @@ async function testerNotification() {
     }
 
     const maintenant = new Date();
-    maintenant.setMinutes(maintenant.getMinutes() + 1);
+    maintenant.setMinutes(maintenant.getMinutes() + 2);
 
-    const heureTest = String(maintenant.getHours()).padStart(2, "0") +
+    const heureTest =
+      String(maintenant.getHours()).padStart(2, "0") +
       ":" +
       String(maintenant.getMinutes()).padStart(2, "0");
 
@@ -106,13 +107,7 @@ async function testerNotification() {
     setTimeout(() => {
       medicaments = medicaments.filter(med => med.id !== "test-mouton");
       sauvegarder();
-      if (typeof afficherMedicamentsParametres === "function") {
-        afficherMedicamentsParametres();
-      }
-      if (typeof afficherMedicamentsAujourdHui === "function") {
-        afficherMedicamentsAujourdHui();
-      }
-    }, 90000);
+    }, 5 * 60 * 1000);
 
   } catch (e) {
     console.error("Erreur test notification :", e);
