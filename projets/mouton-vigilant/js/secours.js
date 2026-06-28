@@ -3,28 +3,22 @@
 // Ne modifie pas OneSignal, ne modifie pas les prises, ne casse pas V6.
 
 function lireMedicamentsSecours() {
-  const clesPossibles = [
-    "medicaments",
-    "mouton_medicaments",
-    "moutonVigilant_medicaments",
-    "mouton_medicaments_v1"
-  ];
-
-  for (const cle of clesPossibles) {
-    try {
-      const donnees = JSON.parse(localStorage.getItem(cle) || "[]");
+  try {
+    if (typeof cleMedicaments !== "undefined") {
+      const donnees = JSON.parse(localStorage.getItem(cleMedicaments) || "[]");
 
       if (Array.isArray(donnees) && donnees.length > 0) {
-        console.log("Médicaments trouvés dans :", cle, donnees);
+        console.log("Médicaments trouvés avec cleMedicaments :", donnees);
         return donnees;
       }
-    } catch (e) {
-      console.warn("Clé ignorée :", cle);
     }
-  }
 
-  console.warn("Aucun médicament trouvé dans le stockage local.");
-  return [];
+    console.warn("cleMedicaments existe mais aucun médicament trouvé.");
+    return [];
+  } catch (e) {
+    console.error("Erreur lecture médicaments secours :", e);
+    return [];
+  }
 }
 
 function nettoyerTexteICS(texte) {
