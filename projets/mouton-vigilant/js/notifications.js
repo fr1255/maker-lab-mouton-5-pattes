@@ -71,49 +71,7 @@ async function activerNotifications() {
 }
 
 async function testerNotification() {
-  try {
-    if (!window.MOUTON_ONESIGNAL_ID) {
-      alert("Active d'abord les notifications, puis réessaie.");
-      return;
-    }
-
-    const maintenantUTC = new Date();
-    maintenantUTC.setUTCMinutes(maintenantUTC.getUTCMinutes() + 2);
-
-    const heureTest =
-      String(maintenantUTC.getUTCHours()).padStart(2, "0") +
-      ":" +
-      String(maintenantUTC.getUTCMinutes()).padStart(2, "0");
-
-    const medicamentTest = {
-      id: "test-mouton",
-      nom: "Test Mouton Vigilant",
-      heure: heureTest,
-      nombre: "Notification de test",
-      date: new Date().toISOString().slice(0, 10),
-      test: true
-    };
-
-    medicaments = medicaments.filter(med => med.id !== "test-mouton");
-    medicaments.push(medicamentTest);
-
-    sauvegarder();
-
-    alert(
-      "🐑 Test programmé.\n\n" +
-      "La notification doit arriver dans environ 2 minutes.\n\n" +
-      "Heure envoyée au serveur : " + heureTest
-    );
-
-    setTimeout(() => {
-      medicaments = medicaments.filter(med => med.id !== "test-mouton");
-      sauvegarder();
-    }, 10 * 60 * 1000);
-
-  } catch (e) {
-    console.error("Erreur test notification :", e);
-    alert("Erreur pendant le test de notification.");
-  }
+  alert("🐑 Test désactivé pour le moment.\n\nLes rappels normaux restent actifs.");
 }
 
 function ouvrirDepuisNotification() {
