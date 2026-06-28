@@ -71,10 +71,53 @@ async function activerNotifications() {
 }
 
 async function testerNotification() {
-  alert(
-    "Pour tester une vraie notification, utilise OneSignal avec une URL de lancement du type :\n\n" +
-    window.location.origin + window.location.pathname + "?med=levo"
-  );
+  try {
+    if (!window.MOUTON_ONESIGNAL_ID) {
+      alert("Active d'abord les notifications, puis réessaie.");
+      return;
+    }
+
+    const maintenant = new Date();
+    maintenant.setMinutes(maintenant.getMinutes() + 1);
+
+    const heureTest = String(maintenant.getHours()).padStart(2, "0") +
+      ":" +
+      String(maintenant.getMinutes()).padStart(2, "0");
+
+    const medicamentTest = {
+      id: "test-mouton",
+      nom: "Test Mouton Vigilant",
+      heure: heureTest,
+      nombre: "Notification de test",
+      date: new Date().toISOString().slice(0, 10),
+      test: true
+    };
+
+    medicaments = medicaments.filter(med => med.id !== "test-mouton");
+    medicaments.push(medicamentTest);
+
+    sauvegarder();
+
+    alert(
+      "🐑 Test programmé.\n\n" +
+      "Une notification doit arriver vers " + heureTest + "."
+    );
+
+    setTimeout(() => {
+      medicaments = medicaments.filter(med => med.id !== "test-mouton");
+      sauvegarder();
+      if (typeof afficherMedicamentsParametres === "function") {
+        afficherMedicamentsParametres();
+      }
+      if (typeof afficherMedicamentsAujourdHui === "function") {
+        afficherMedicamentsAujourdHui();
+      }
+    }, 90000);
+
+  } catch (e) {
+    console.error("Erreur test notification :", e);
+    alert("Erreur pendant le test de notification.");
+  }
 }
 
 function ouvrirDepuisNotification() {
