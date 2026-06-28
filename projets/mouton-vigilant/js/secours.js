@@ -1,13 +1,38 @@
 // secours.js — Mouton Vigilant V7
 // Couche de secours iPhone par fichier calendrier .ics
+// Ne modifie pas OneSignal, ne modifie pas les prises, ne casse pas V6.
 
 function lireMedicamentsSecours() {
-  try {
-    return JSON.parse(localStorage.getItem("medicaments") || "[]");
-  } catch (e) {
-    console.error("Erreur lecture médicaments :", e);
-    return [];
+  const clesPossibles = [
+    "medicaments",
+    "mouton_medicaments",
+    "moutonVigilant_medicaments",
+    "mouton_medicaments_v1"
+  ];
+
+  for (const cle of clesPossibles) {
+    try {
+      const donnees = JSON.parse(localStorage.getItem(cle) || "[]");
+
+      if (Array.isArray(donnees) && donnees.length > 0) {
+        console.log("Médicaments trouvés dans :", cle, donnees);
+        return donnees;
+      }
+    } catch (e) {
+      console.warn("Clé ignorée :", cle);
+    }
   }
+
+  console.warn("Aucun médicament trouvé dans le stockage local.");
+  return [];
+}
+
+function nettoyerTexteICS(texte) {
+  return String(texte || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n");
 }
 
 function formatDateICS(date) {
@@ -28,10 +53,15 @@ function genererICS() {
   ics += "CALSCALE:GREGORIAN\r\n";
   ics += "METHOD:PUBLISH\r\n";
 
-  medicaments.forEach((med) => {
-    if (!med.nom || !med.heure) return;
+  medicaments.forEach((med, index) => {
+    const nom = med.nom || med.name || med.titre || med.medicament || "";
+    const heure = med.heure || med.time || med.horaire || "";
 
-    const [h, m] = med.heure.split(":").map(Number);
+    if (!nom || !heure) return;
+
+    const [h, m] = heure.split(":").map(Number);
+
+    if (Number.isNaN(h) || Number.isNaN(m)) return;
 
     const debut = new Date();
     debut.setHours(h, m, 0, 0);
@@ -42,17 +72,20 @@ function genererICS() {
 
     const fin = new Date(debut.getTime() + 5 * 60 * 1000);
 
+    const nomPropre = nettoyerTexteICS(nom);
+    const uid = `${Date.now()}-${index}-${nomPropre}-${heure}@mouton-vigilant`;
+
     ics += "BEGIN:VEVENT\r\n";
-    ics += `UID:${Date.now()}-${med.nom}-${med.heure}@mouton-vigilant\r\n`;
+    ics += `UID:${uid}\r\n`;
     ics += `DTSTAMP:${formatDateICS(new Date())}\r\n`;
     ics += `DTSTART:${formatDateICS(debut)}\r\n`;
     ics += `DTEND:${formatDateICS(fin)}\r\n`;
-    ics += `SUMMARY:💊 ${med.nom}\r\n`;
-    ics += `DESCRIPTION:Rappel médicament Mouton Vigilant\r\n`;
+    ics += `SUMMARY:💊 ${nomPropre}\r\n`;
+    ics += `DESCRIPTION:Rappel médicament Mouton Vigilant : ${nomPropre}\r\n`;
 
     ics += "BEGIN:VALARM\r\n";
     ics += "ACTION:DISPLAY\r\n";
-    ics += `DESCRIPTION:💊 Prendre ${med.nom}\r\n`;
+    ics += `DESCRIPTION:💊 Prendre ${nomPropre}\r\n`;
     ics += "TRIGGER:PT0M\r\n";
     ics += "END:VALARM\r\n";
 
