@@ -77,13 +77,13 @@ async function testerNotification() {
       return;
     }
 
-    const maintenant = new Date();
-    maintenant.setMinutes(maintenant.getMinutes() + 2);
+    const maintenantUTC = new Date();
+    maintenantUTC.setUTCMinutes(maintenantUTC.getUTCMinutes() + 2);
 
     const heureTest =
-      String(maintenant.getHours()).padStart(2, "0") +
+      String(maintenantUTC.getUTCHours()).padStart(2, "0") +
       ":" +
-      String(maintenant.getMinutes()).padStart(2, "0");
+      String(maintenantUTC.getUTCMinutes()).padStart(2, "0");
 
     const medicamentTest = {
       id: "test-mouton",
@@ -101,13 +101,14 @@ async function testerNotification() {
 
     alert(
       "🐑 Test programmé.\n\n" +
-      "Une notification doit arriver vers " + heureTest + "."
+      "La notification doit arriver dans environ 2 minutes.\n\n" +
+      "Heure envoyée au serveur : " + heureTest
     );
 
     setTimeout(() => {
       medicaments = medicaments.filter(med => med.id !== "test-mouton");
       sauvegarder();
-    }, 5 * 60 * 1000);
+    }, 10 * 60 * 1000);
 
   } catch (e) {
     console.error("Erreur test notification :", e);
