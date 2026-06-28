@@ -71,7 +71,39 @@ async function activerNotifications() {
 }
 
 async function testerNotification() {
-  alert("🐑 Test désactivé pour le moment.\n\nLes rappels normaux restent actifs.");
+  try {
+    const onesignalId = window.MOUTON_ONESIGNAL_ID;
+
+    if (!onesignalId) {
+      alert("🐑 Notifications non prêtes.\n\nActive d'abord les notifications, puis réessaie.");
+      return;
+    }
+
+    alert("🐑 Envoi du test...\n\nLe mouton va bêler sur ton iPhone.");
+
+    const reponse = await fetch("https://mouton-vigilant-server.fr12andco55.workers.dev/test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        onesignal_id: onesignalId
+      })
+    });
+
+    const resultat = await reponse.json();
+
+    if (!resultat.ok) {
+      alert("❌ Le test n'a pas fonctionné.\n\nRéessaie dans quelques secondes.");
+      return;
+    }
+
+    console.log("🐑 Notification de test envoyée :", resultat);
+
+  } catch (e) {
+    console.error("Erreur test notification :", e);
+    alert("❌ Impossible d'envoyer le test de notification.");
+  }
 }
 
 function ouvrirDepuisNotification() {
