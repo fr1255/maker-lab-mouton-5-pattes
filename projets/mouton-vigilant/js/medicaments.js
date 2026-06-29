@@ -161,6 +161,7 @@ function initialiserMedicaments() {
     const heure = champMedHeure.value;
     const nombre = champMedNombre.value.trim();
     const date = champMedDate.value;
+    const duree = parseInt(champMedDuree.value) || null;
 
     if (!nom || !heure) {
       alert("Il faut au minimum le nom du médicament et l'heure.");
