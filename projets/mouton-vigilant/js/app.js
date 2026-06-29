@@ -32,6 +32,7 @@ const champMedNom = document.getElementById("medNom");
 const champMedHeure = document.getElementById("medHeure");
 const champMedNombre = document.getElementById("medNombre");
 const champMedDate = document.getElementById("medDate");
+const champMedDuree = document.getElementById("medDuree");   
 const boutonAjouterMedicament = document.getElementById("ajouterMedicament");
 
 function afficherPrenom() {
