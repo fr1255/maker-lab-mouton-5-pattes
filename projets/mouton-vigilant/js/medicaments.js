@@ -29,8 +29,9 @@ function creerIdMedicament(nom) {
 function afficherResumeJour() {
   if (!zoneResumeJour) return;
 
-  const total = medicaments.length;
-  const pris = Object.keys(prises).length;
+  const medicamentsActifs = medicaments.filter((med) => traitementActif(med));
+  const total = medicamentsActifs.length;
+  const pris = medicamentsActifs.filter((med) => prises[med.id]).length;
   const reste = total - pris;
 
   zoneResumeJour.textContent =
@@ -65,22 +66,23 @@ async function envoyerPriseAuServeur(med) {
 }
 
 function traitementActif(med) {
-
-  // Pas de durée = traitement permanent
   if (!med.duree || !med.date) return true;
 
-  const debut = new Date(med.date);
+  const morceaux = med.date.split("-");
+  const debut = new Date(
+    Number(morceaux[0]),
+    Number(morceaux[1]) - 1,
+    Number(morceaux[2])
+  );
+
   const aujourdHui = new Date();
 
-  // On ignore les heures
-  debut.setHours(0,0,0,0);
-  aujourdHui.setHours(0,0,0,0);
+  debut.setHours(0, 0, 0, 0);
+  aujourdHui.setHours(0, 0, 0, 0);
 
-  // Calcul de la date de fin
   const fin = new Date(debut);
-  fin.setDate(fin.getDate() + med.duree - 1);
+  fin.setDate(fin.getDate() + Number(med.duree) - 1);
 
-  // Toujours actif tant que la date de fin n'est pas dépassée
   return aujourdHui <= fin;
 }
 
@@ -91,6 +93,7 @@ function afficherMedicaments() {
 
   medicaments.forEach((med) => {
     if (!traitementActif(med)) return;
+
     const dejaPris = prises[med.id];
 
     const ligne = document.createElement("div");
@@ -149,6 +152,7 @@ function afficherParametresMedicaments() {
         <small>${med.nombre || ""}</small>
         ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
         ${med.duree ? `<small>Durée : ${med.duree} jour(s)</small>` : `<small>Durée : quotidienne</small>`}
+        ${!traitementActif(med) ? `<small>✅ Traitement terminé</small>` : ""}
         ${med.note ? `<small>${med.note}</small>` : ""}
         <small>ID notification : ${med.id}</small>
       </span>
@@ -196,6 +200,7 @@ function initialiserMedicaments() {
       nom,
       nombre: nombre || "1 prise",
       date,
+      duree,
       note: ""
     });
 
@@ -203,6 +208,7 @@ function initialiserMedicaments() {
     champMedHeure.value = "";
     champMedNombre.value = "";
     champMedDate.value = "";
+    champMedDuree.value = "";
 
     sauvegarder();
     afficherMedicaments();
