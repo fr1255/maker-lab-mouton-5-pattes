@@ -148,6 +148,7 @@ function afficherParametresMedicaments() {
         ${med.nom}
         <small>${med.nombre || ""}</small>
         ${med.date ? `<small>Depuis le ${med.date}</small>` : ""}
+        ${med.duree ? `<small>Durée : ${med.duree} jour(s)</small>` : `<small>Durée : quotidienne</small>`}
         ${med.note ? `<small>${med.note}</small>` : ""}
         <small>ID notification : ${med.id}</small>
       </span>
