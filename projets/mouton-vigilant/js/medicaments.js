@@ -64,12 +64,33 @@ async function envoyerPriseAuServeur(med) {
   }
 }
 
+function traitementActif(med) {
+
+  // Pas de durée = traitement permanent
+  if (!med.duree || !med.date) return true;
+
+  const debut = new Date(med.date);
+  const aujourdHui = new Date();
+
+  // On ignore les heures
+  debut.setHours(0,0,0,0);
+  aujourdHui.setHours(0,0,0,0);
+
+  // Calcul de la date de fin
+  const fin = new Date(debut);
+  fin.setDate(fin.getDate() + med.duree - 1);
+
+  // Toujours actif tant que la date de fin n'est pas dépassée
+  return aujourdHui <= fin;
+}
+
 function afficherMedicaments() {
   if (!zoneMedicaments) return;
 
   zoneMedicaments.innerHTML = "";
 
   medicaments.forEach((med) => {
+    if (!traitementActif(med)) return;
     const dejaPris = prises[med.id];
 
     const ligne = document.createElement("div");
