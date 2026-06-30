@@ -1,5 +1,6 @@
 // ==============================
 // Notifications - Mouton Vigilant V6
+// Diagnostic simple utilisateur
 // ==============================
 
 window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -21,6 +22,7 @@ OneSignalDeferred.push(async function (OneSignal) {
     }, 1500);
 
     mettreAJourEtatNotifications();
+
   } catch (e) {
     console.error("Erreur OneSignal :", e);
   }
@@ -34,10 +36,10 @@ function mettreAJourEtatNotifications() {
 
   if (permissionOk) {
     if (etat1) etat1.textContent = "🟢 Notifications activées";
-    if (etat2) etat2.textContent = "🟢 Notifications activées";
+    if (etat2) etat2.textContent = "🟢 Je veille sur vous";
   } else {
     if (etat1) etat1.textContent = "Notifications non activées";
-    if (etat2) etat2.textContent = "Notifications non activées";
+    if (etat2) etat2.textContent = "🔴 Une vérification est conseillée";
   }
 }
 
@@ -64,45 +66,106 @@ async function activerNotifications() {
     } else {
       alert("Les notifications n'ont pas été autorisées.");
     }
+
   } catch (e) {
     console.error(e);
     alert("Erreur lors de l'activation des notifications.");
   }
 }
 
-async function testerNotification() {
+async function verifierLeMouton() {
+  const etat = document.getElementById("etatNotificationsMouton");
+  const bouton = document.getElementById("testerNotification");
+
+  if (etat) etat.textContent = "🐑 Vérification en cours...";
+  if (bouton) bouton.disabled = true;
+
   try {
-    const onesignalId = window.MOUTON_ONESIGNAL_ID;
+    if (!navigator.onLine) {
+      if (etat) etat.textContent = "🔴 Pas de connexion Internet";
 
-    if (!onesignalId) {
-      alert("🐑 Notifications non prêtes.\n\nActive d'abord les notifications, puis réessaie.");
+      alert(
+        "🐑 Je ne peux pas joindre le service.\n\n" +
+        "Vérifiez votre connexion Internet puis réessayez."
+      );
       return;
     }
 
-    alert("🐑 Envoi du test...\n\nLe mouton va bêler sur ton iPhone.");
+    const reponse = await fetch(
+      "https://mouton-vigilant-server.fr12andco55.workers.dev/health"
+    );
 
-    const reponse = await fetch("https://mouton-vigilant-server.fr12andco55.workers.dev/test", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        onesignal_id: onesignalId
-      })
-    });
+    if (!reponse.ok) {
+      if (etat) etat.textContent = "🔴 Service indisponible";
 
-    const resultat = await reponse.json();
-
-    if (!resultat.ok) {
-      alert("❌ Le test n'a pas fonctionné.\n\nRéessaie dans quelques secondes.");
+      alert(
+        "🐑 Le service de rappel est momentanément indisponible.\n\n" +
+        "Réessayez dans quelques minutes."
+      );
       return;
     }
 
-    console.log("🐑 Notification de test envoyée :", resultat);
+    const data = await reponse.json();
+
+    if (!data.ok) {
+      if (etat) etat.textContent = "🔴 Service indisponible";
+
+      alert(
+        "🐑 Le service de rappel est momentanément indisponible.\n\n" +
+        "Réessayez dans quelques minutes."
+      );
+      return;
+    }
+
+    const permissionOk = window.OneSignal?.Notifications?.permission;
+
+    if (!permissionOk) {
+      if (etat) etat.textContent = "🔴 Notifications non activées";
+
+      alert(
+        "🐑 Je ne peux pas encore vous prévenir.\n\n" +
+        "Appuyez sur « Activer les notifications » dans les paramètres."
+      );
+      return;
+    }
+
+    let id = window.OneSignal?.User?.PushSubscription?.id || null;
+
+    if (!id) {
+      id = window.MOUTON_ONESIGNAL_ID;
+    }
+
+    if (!id) {
+      if (etat) etat.textContent = "🟠 Téléphone en cours d'enregistrement";
+
+      alert(
+        "🐑 Votre téléphone n'est pas encore prêt.\n\n" +
+        "Attendez quelques secondes puis réessayez."
+      );
+      return;
+    }
+
+    window.MOUTON_ONESIGNAL_ID = id;
+
+    if (etat) etat.textContent = "🟢 Je veille sur vous";
+
+    alert(
+      "🐑 Tout est prêt !\n\n" +
+      "Je veille bien sur vos médicaments."
+    );
 
   } catch (e) {
-    console.error("Erreur test notification :", e);
-    alert("❌ Impossible d'envoyer le test de notification.");
+    console.error("Diagnostic Mouton :", e);
+
+    if (etat) etat.textContent = "🔴 Vérification impossible";
+
+    alert(
+      "🐑 Je n'arrive pas à vérifier les notifications.\n\n" +
+      "Réessayez dans quelques minutes."
+    );
+
+  } finally {
+    if (bouton) bouton.disabled = false;
   }
 }
 
@@ -148,7 +211,10 @@ function initialiserNotifications() {
   }
 
   if (boutonTesterNotification) {
-    boutonTesterNotification.addEventListener("click", testerNotification);
+    boutonTesterNotification.textContent =
+      "🐑 Vérifier que le mouton veille bien sur moi";
+
+    boutonTesterNotification.addEventListener("click", verifierLeMouton);
   }
 
   mettreAJourEtatNotifications();
