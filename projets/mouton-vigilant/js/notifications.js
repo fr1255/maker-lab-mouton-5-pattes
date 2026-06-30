@@ -54,30 +54,39 @@ async function activerNotifications() {
   }
 
   try {
+    const etat = document.getElementById("etatNotifications");
+
+    if (etat) etat.textContent = "🟡 Activation en cours...";
+
     await OneSignal.Notifications.requestPermission();
 
-    if (OneSignal.Notifications.permission) {
-      await OneSignal.User.PushSubscription.optIn();
-
-      setTimeout(() => {
-        const id = OneSignal.User?.PushSubscription?.id || null;
-        window.MOUTON_ONESIGNAL_ID = id;
-        console.log("🐑 OneSignal ID téléphone :", id);
-      }, 1500);
-
+    if (!OneSignal.Notifications.permission) {
       mettreAJourEtatNotifications();
-      return true;
+      alert("Les notifications n'ont pas été autorisées.");
+      return false;
     }
 
+    await OneSignal.User.PushSubscription.optIn();
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const id = OneSignal.User?.PushSubscription?.id || null;
+    window.MOUTON_ONESIGNAL_ID = id;
+
+    console.log("🐑 OneSignal ID téléphone :", id);
+
     mettreAJourEtatNotifications();
-    return false;
+
+    alert("✅ Notifications activées.");
+
+    return true;
 
   } catch (e) {
     console.error("Erreur activation notifications :", e);
+    alert("Erreur lors de l'activation des notifications.");
     return false;
   }
 }
-
 async function verifierQueLeMoutonVeille() {
   const etat = document.getElementById("etatNotificationsMouton");
   const bouton = document.getElementById("testerNotification");
