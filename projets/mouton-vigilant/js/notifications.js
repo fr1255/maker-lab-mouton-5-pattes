@@ -76,13 +76,6 @@ async function activerNotifications() {
       return false;
     }
 
-    try {
-      await OneSignal.User.PushSubscription.optOut();
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (e) {
-      console.log("OptOut ignoré :", e);
-    }
-
     await OneSignal.User.PushSubscription.optIn();
 
     await new Promise(resolve => setTimeout(resolve, 3000));
@@ -100,7 +93,7 @@ async function activerNotifications() {
 
     mettreAJourEtatNotifications();
 
-    alert("✅ Notifications activées.\n\nLe mouton est bien enregistré sur cet appareil.");
+    alert("✅ Notifications activées.");
 
     return true;
 
