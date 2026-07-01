@@ -1,12 +1,22 @@
 // ==============================
-// Notifications - Mouton Vigilant V7
-// Vérification simple + vraie notification de test
+// Notifications - Mouton Vigilant V8
+// Chargement fiable OneSignal + réabonnement propre
 // ==============================
 
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 window.MOUTON_ONESIGNAL_ID = null;
 
 const SERVEUR_MOUTON = "https://mouton-vigilant-server.fr12andco55.workers.dev";
+
+async function attendreOneSignal() {
+  for (let i = 0; i < 20; i++) {
+    if (window.OneSignal) {
+      return window.OneSignal;
+    }
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  return null;
+}
 
 OneSignalDeferred.push(async function (OneSignal) {
   try {
@@ -20,7 +30,7 @@ OneSignalDeferred.push(async function (OneSignal) {
     setTimeout(() => {
       const id = OneSignal.User?.PushSubscription?.id || null;
       window.MOUTON_ONESIGNAL_ID = id;
-      console.log("🐑 OneSignal ID téléphone :", id);
+      console.log("🐑 OneSignal ID appareil :", id);
     }, 1500);
 
     mettreAJourEtatNotifications();
@@ -46,10 +56,10 @@ function mettreAJourEtatNotifications() {
 }
 
 async function activerNotifications() {
-  const OneSignal = window.OneSignal;
+  const OneSignal = await attendreOneSignal();
 
   if (!OneSignal) {
-    alert("OneSignal n'est pas encore chargé.");
+    alert("OneSignal n'est pas encore chargé.\n\nPatientez quelques secondes puis réessayez.");
     return false;
   }
 
@@ -66,7 +76,6 @@ async function activerNotifications() {
       return false;
     }
 
-    // Réabonnement propre : utile pour iPad / ancien abonnement bloqué
     try {
       await OneSignal.User.PushSubscription.optOut();
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -81,7 +90,7 @@ async function activerNotifications() {
     const id = OneSignal.User?.PushSubscription?.id || null;
     window.MOUTON_ONESIGNAL_ID = id;
 
-    console.log("🐑 OneSignal ID téléphone :", id);
+    console.log("🐑 OneSignal ID appareil :", id);
 
     if (!id) {
       if (etat) etat.textContent = "🟠 Appareil en cours d'enregistrement";
@@ -101,6 +110,7 @@ async function activerNotifications() {
     return false;
   }
 }
+
 async function verifierQueLeMoutonVeille() {
   const etat = document.getElementById("etatNotificationsMouton");
   const bouton = document.getElementById("testerNotification");
@@ -109,14 +119,12 @@ async function verifierQueLeMoutonVeille() {
   if (bouton) bouton.disabled = true;
 
   try {
-    // 1. Internet
     if (!navigator.onLine) {
       if (etat) etat.textContent = "🔴 Pas de connexion Internet";
       alert("🐑 Je ne peux pas joindre le service.\n\nVérifiez votre connexion Internet puis réessayez.");
       return;
     }
 
-    // 2. Serveur
     const health = await fetch(SERVEUR_MOUTON + "/health");
 
     if (!health.ok) {
@@ -133,8 +141,7 @@ async function verifierQueLeMoutonVeille() {
       return;
     }
 
-    // 3. OneSignal chargé
-    const OneSignal = window.OneSignal;
+    const OneSignal = await attendreOneSignal();
 
     if (!OneSignal) {
       if (etat) etat.textContent = "🟠 Service de notification en chargement";
@@ -142,7 +149,6 @@ async function verifierQueLeMoutonVeille() {
       return;
     }
 
-    // 4. Permission notifications
     if (!OneSignal.Notifications.permission) {
       const ok = await activerNotifications();
 
@@ -153,14 +159,13 @@ async function verifierQueLeMoutonVeille() {
       }
     }
 
-    // 5. Récupération ID téléphone
     let onesignalId =
       OneSignal.User?.PushSubscription?.id ||
       window.MOUTON_ONESIGNAL_ID ||
       null;
 
     if (!onesignalId) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       onesignalId =
         OneSignal.User?.PushSubscription?.id ||
@@ -169,14 +174,13 @@ async function verifierQueLeMoutonVeille() {
     }
 
     if (!onesignalId) {
-      if (etat) etat.textContent = "🟠 Téléphone en cours d'enregistrement";
-      alert("🐑 Votre téléphone n'est pas encore prêt.\n\nAttendez quelques secondes puis réessayez.");
+      if (etat) etat.textContent = "🟠 Appareil en cours d'enregistrement";
+      alert("🐑 Cet appareil n'est pas encore prêt.\n\nCliquez d'abord sur “Activer les notifications”, attendez quelques secondes, puis réessayez.");
       return;
     }
 
     window.MOUTON_ONESIGNAL_ID = onesignalId;
 
-    // 6. Vraie notification de test
     const reponse = await fetch(SERVEUR_MOUTON + "/test", {
       method: "POST",
       headers: {
@@ -198,7 +202,6 @@ async function verifierQueLeMoutonVeille() {
       return;
     }
 
-    // 7. Succès
     const maintenant = new Date().toLocaleTimeString("fr-FR", {
       hour: "2-digit",
       minute: "2-digit"
