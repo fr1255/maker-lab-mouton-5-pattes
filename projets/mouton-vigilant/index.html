@@ -62,15 +62,13 @@
 
       <label>Date de début</label>
       <input id="medDate" type="date">
-      
+
       <label>Durée du traitement (jours)</label>
       <input
-          id="medDuree"
-          type="number"
-          min="1"
-          placeholder="Laisser vide si traitement quotidien">
-
-      
+        id="medDuree"
+        type="number"
+        min="1"
+        placeholder="Laisser vide si traitement quotidien">
 
       <button id="ajouterMedicament" class="btn-alerte">➕ Ajouter le médicament</button>
     </div>
@@ -104,11 +102,55 @@
         📖 Aide et guide utilisateur
       </a>
 
+      <button id="ouvrirApropos" class="btn-alerte">
+        ℹ️ À propos
+      </button>
+
       <p class="intro">Version 5.0</p>
     </div>
   </section>
 
 </main>
+
+<div id="popupApropos" class="popup-apropos">
+  <div class="popup-contenu">
+
+    <h2>🐑 Mouton Vigilant</h2>
+
+    <p class="intro">Version 5.0</p>
+
+    <p>
+      Application développée pour faciliter le suivi quotidien
+      des traitements médicamenteux.
+    </p>
+
+    <hr>
+
+    <p>
+      <strong>Production</strong><br>
+      Maker Lab du Mouton à 5 Pattes
+    </p>
+
+    <p>
+      <strong>Conception et développement</strong><br>
+      René Hippert
+    </p>
+
+    <p>
+      © 2026 Maker Lab du Mouton à 5 Pattes<br>
+      Tous droits réservés.
+    </p>
+
+    <p class="intro">
+      Application développée en France 🇫🇷
+    </p>
+
+    <button id="fermerApropos" class="btn-alerte">
+      Fermer
+    </button>
+
+  </div>
+</div>
 
 <script src="js/utils.js"></script>
 <script src="js/stockage.js"></script>
@@ -118,13 +160,36 @@
 <script src="js/suivi.js"></script>
 
 <script src="js/notifications.js?v=2"></script>
-  
 <script src="js/app.js"></script>
 
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const bouton = document.getElementById("ouvrirApropos");
+  const popup = document.getElementById("popupApropos");
+  const fermer = document.getElementById("fermerApropos");
+
+  if (bouton && popup && fermer) {
+    bouton.addEventListener("click", () => {
+      popup.style.display = "flex";
+    });
+
+    fermer.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        popup.style.display = "none";
+      }
+    });
+  }
+});
 </script>
 
 </body>
