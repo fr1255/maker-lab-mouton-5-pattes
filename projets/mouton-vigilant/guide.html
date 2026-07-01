@@ -9,6 +9,45 @@
   <link rel="stylesheet" href="style.css">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="theme-color" content="#0B1F3A">
+
+  <style>
+    .guide-card {
+      margin-bottom: 18px;
+    }
+
+    .guide-card h2 {
+      margin-bottom: 12px;
+    }
+
+    .guide-step {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid #2f4363;
+      border-radius: 16px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+
+    .guide-step strong {
+      color: #ffffff;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1b74d1;
+      color: white;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    .retour-fixe {
+      position: sticky;
+      bottom: 12px;
+      z-index: 10;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 
 <body>
@@ -17,43 +56,180 @@
 
   <header class="app-header">
     <img src="logo.png" class="logo" alt="Mouton Vigilant">
-
     <h1>🐑 Guide utilisateur</h1>
-
-    <p class="intro">
-      Aide et notice de Mouton Vigilant
-    </p>
+    <p class="intro">Aide et notice de Mouton Vigilant</p>
   </header>
 
   <section class="page-section active">
 
-    <div class="card">
-
-      <h2>📖 Aide</h2>
-
+    <div class="card guide-card">
+      <h2>🐑 Mouton Vigilant</h2>
       <p class="intro">
-        Retrouvez ici la notice utilisateur de
-        <strong>Mouton Vigilant</strong>.
+        <strong>Plus têtu qu’un oubli !</strong>
+      </p>
+      <p>
+        Mouton Vigilant vous aide à ne plus oublier vos médicaments,
+        à recevoir des rappels fiables, à suivre vos traitements
+        et à garder vos données privées sur votre téléphone.
       </p>
 
+      <div class="guide-step">
+        🔔 <strong>Ne plus oublier</strong><br>
+        Recevez des rappels à l’heure exacte de vos prises.
+      </div>
+
+      <div class="guide-step">
+        📊 <strong>Suivre vos traitements</strong><br>
+        Consultez l’historique et le taux de réussite.
+      </div>
+
+      <div class="guide-step">
+        🔒 <strong>Données privées</strong><br>
+        Aucune donnée n’est partagée.
+      </div>
+
+      <div class="guide-step">
+        📶 <strong>Disponible même sans Internet</strong><br>
+        Vos médicaments et votre historique restent accessibles.
+      </div>
+    </div>
+
+    <div class="card guide-card">
+      <h2>📲 Installer l’application</h2>
+
+      <h3>Android</h3>
+
+      <div class="guide-step">
+        <span class="badge">1</span>
+        <strong>Ouvrir le lien</strong><br>
+        Depuis Chrome ou votre navigateur habituel.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">2</span>
+        <strong>Installer</strong><br>
+        Choisissez “Installer l’application” quand c’est proposé.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">3</span>
+        <strong>Icône créée</strong><br>
+        Mouton Vigilant apparaît sur l’écran d’accueil.
+      </div>
+
+      <h3>iPhone</h3>
+
+      <div class="guide-step">
+        <span class="badge">1</span>
+        <strong>Ouvrir Safari</strong><br>
+        Utilisez Safari pour accéder à l’application.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">2</span>
+        <strong>Partager</strong><br>
+        Touchez le bouton de partage en bas de l’écran.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">3</span>
+        <strong>Écran d’accueil</strong><br>
+        Choisissez “Sur l’écran d’accueil”, puis validez.
+      </div>
+    </div>
+
+    <div class="card guide-card">
+      <h2>💊 Utilisation quotidienne</h2>
       <p class="intro">
-        Sur iPhone, la notice s'ouvre dans une nouvelle page.
-        Fermez ensuite cette page pour revenir au guide.
+        Une logique simple : ajouter, rappeler, valider, vérifier.
       </p>
 
-      <a class="btn-alerte"
-         href="./Mouton_Vigilant_notice_logo_v1.pdf"
-         target="_blank">
+      <div class="guide-step">
+        <span class="badge">1</span>
+        <strong>Ajouter vos médicaments</strong><br>
+        Saisissez le nom du médicament, l’heure de prise et la quantité.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">2</span>
+        <strong>Autoriser les notifications</strong><br>
+        Activez les notifications pour recevoir vos rappels.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">3</span>
+        <strong>Tester vos rappels</strong><br>
+        Utilisez le bouton “Tester une notification” pour vérifier que tout fonctionne.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">4</span>
+        <strong>Confirmer chaque prise</strong><br>
+        Après avoir pris votre médicament, appuyez sur “Pris”.
+      </div>
+
+      <div class="guide-step">
+        <span class="badge">5</span>
+        <strong>Consulter votre suivi</strong><br>
+        Vérifiez l’historique et le taux de prises validées.
+      </div>
+    </div>
+
+    <div class="card guide-card">
+      <h2>🔒 Confidentialité</h2>
+
+      <div class="guide-step">
+        ✅ Aucun compte utilisateur.
+      </div>
+
+      <div class="guide-step">
+        ✅ Aucune publicité.
+      </div>
+
+      <div class="guide-step">
+        ✅ Aucune transmission de données personnelles.
+      </div>
+
+      <div class="guide-step">
+        ✅ Les informations restent enregistrées sur votre téléphone.
+      </div>
+    </div>
+
+    <div class="card guide-card">
+      <h2>✅ Bonnes pratiques</h2>
+
+      <div class="guide-step">
+        🔔 Autoriser les notifications.
+      </div>
+
+      <div class="guide-step">
+        💊 Vérifier régulièrement les horaires de traitement.
+      </div>
+
+      <div class="guide-step">
+        🐑 Utiliser le bouton “Tester une notification”.
+      </div>
+
+      <div class="guide-step">
+        📶 Garder l’application installée sur l’écran d’accueil.
+      </div>
+    </div>
+
+    <div class="card guide-card">
+      <h2>📄 Notice PDF originale</h2>
+      <p class="intro">
+        La notice PDF reste disponible si vous souhaitez la consulter ou l’imprimer.
+      </p>
+
+      <a class="btn-alerte" href="./Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">
         📄 Ouvrir la notice PDF
       </a>
+    </div>
 
-      <br><br>
-
-      <a class="btn-alerte"
-         href="./index.html">
+    <div class="retour-fixe">
+      <a class="btn-alerte" href="./index.html">
         🏠 Retour à l'application
       </a>
-
     </div>
 
   </section>
