@@ -1,6 +1,6 @@
 // ==============================
-// Notifications - Mouton Vigilant V8
-// Chargement fiable OneSignal + réabonnement propre
+// Notifications - Mouton Vigilant V8 stable
+// Chargement fiable OneSignal + activation simple
 // ==============================
 
 window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -10,9 +10,7 @@ const SERVEUR_MOUTON = "https://mouton-vigilant-server.fr12andco55.workers.dev";
 
 async function attendreOneSignal() {
   for (let i = 0; i < 20; i++) {
-    if (window.OneSignal) {
-      return window.OneSignal;
-    }
+    if (window.OneSignal) return window.OneSignal;
     await new Promise(resolve => setTimeout(resolve, 500));
   }
   return null;
