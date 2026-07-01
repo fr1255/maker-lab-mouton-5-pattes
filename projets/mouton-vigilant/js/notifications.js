@@ -66,18 +66,32 @@ async function activerNotifications() {
       return false;
     }
 
+    // Réabonnement propre : utile pour iPad / ancien abonnement bloqué
+    try {
+      await OneSignal.User.PushSubscription.optOut();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (e) {
+      console.log("OptOut ignoré :", e);
+    }
+
     await OneSignal.User.PushSubscription.optIn();
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const id = OneSignal.User?.PushSubscription?.id || null;
     window.MOUTON_ONESIGNAL_ID = id;
 
     console.log("🐑 OneSignal ID téléphone :", id);
 
+    if (!id) {
+      if (etat) etat.textContent = "🟠 Appareil en cours d'enregistrement";
+      alert("🐑 L'appareil n'est pas encore enregistré.\n\nAttendez quelques secondes puis recommencez.");
+      return false;
+    }
+
     mettreAJourEtatNotifications();
 
-    alert("✅ Notifications activées.");
+    alert("✅ Notifications activées.\n\nLe mouton est bien enregistré sur cet appareil.");
 
     return true;
 
