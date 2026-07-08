@@ -150,17 +150,17 @@ async function verifierQueLeMoutonVeille() {
       }
     }
 
-    let onesignalId =
-      OneSignal.User?.PushSubscription?.id ||
-      window.MOUTON_ONESIGNAL_ID ||
-      null;
+   let onesignalId =
+     window.MOUTON_ONESIGNAL_ID ||
+     OneSignal.User?.PushSubscription?.id ||
+     null;
 
     if (!onesignalId) {
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       onesignalId =
-        OneSignal.User?.PushSubscription?.id ||
         window.MOUTON_ONESIGNAL_ID ||
+        OneSignal.User?.PushSubscription?.id ||
         null;
     }
 
