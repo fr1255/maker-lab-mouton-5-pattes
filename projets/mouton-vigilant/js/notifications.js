@@ -177,9 +177,10 @@ async function verifierQueLeMoutonVeille() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        onesignal_id: onesignalId
-      })
+      
+    body: JSON.stringify({
+      user_id: obtenirUserId()
+      }) 
     });
 
     const resultat = await reponse.json();
