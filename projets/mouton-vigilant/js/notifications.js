@@ -178,6 +178,7 @@ async function verifierQueLeMoutonVeille() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        user_id: localStorage.getItem("mouton_user_id"),
         onesignal_id: onesignalId
       })
     });
