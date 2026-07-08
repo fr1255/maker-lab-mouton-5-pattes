@@ -179,8 +179,8 @@ async function verifierQueLeMoutonVeille() {
       },
       
     body: JSON.stringify({
-      user_id: obtenirUserId()
-      }) 
+      onesignal_id: onesignalId
+    })
     });
 
     const resultat = await reponse.json();
