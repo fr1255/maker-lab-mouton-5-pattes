@@ -1,211 +1,187 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Mouton Vigilant – Maker Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>🐑 Mouton Vigilant</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111824;
+      --text: #e7eef7;
+      --muted: #a9b4c4;
+      --line: rgba(255,255,255,.12);
+      --accent: #58a6ff;
+      --radius: 16px;
+      --max: 1000px;
+    }
 
-<link rel="stylesheet" href="../../style.css">
+    * { box-sizing: border-box; }
 
-<style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-.hero{
-    text-align:center;
-    padding:20px 0;
-}
+    .wrap {
+      max-width: var(--max);
+      margin: auto;
+      padding: 60px 16px;
+    }
 
-.hero h1{
-    margin-bottom:8px;
-    font-size:2.3rem;
-}
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-.slogan{
-    font-size:1.35rem;
-    color:#7dd3fc;
-    font-weight:bold;
-    margin-bottom:25px;
-}
+    a:hover { text-decoration: underline; }
 
-.presentation{
-    max-width:850px;
-    margin:auto;
-    line-height:1.7;
-    text-align:center;
-}
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px;
+      margin-bottom: 22px;
+    }
 
-.grille{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-    margin-top:35px;
-}
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+    }
 
-.tuile{
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(120,160,255,.25);
-    border-radius:18px;
-    padding:25px;
-    text-align:center;
-}
+    h2 { margin-top: 0; }
 
-.tuile h2{
-    margin-top:10px;
-}
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
 
-.icone{
-    font-size:3rem;
-}
+    .slogan {
+      font-size: 24px;
+      color: var(--accent);
+      font-weight: 800;
+      margin: 10px 0 20px;
+    }
 
-footer{
-    text-align:center;
-    margin-top:35px;
-    opacity:.8;
-    font-size:.95rem;
-}
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
 
-</style>
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.25);
+      color: var(--text);
+      background: transparent;
+    }
 
+    .btn:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      background: rgba(88,166,255,.16);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .mini-card {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .icon {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .disabled {
+      opacity: .45;
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body>
 
-<main class="app">
+<div class="wrap">
 
-<section class="card hero">
+  <section class="card">
+    <h1>🐑 Mouton Vigilant</h1>
 
-<h1>🐑 Mouton Vigilant</h1>
+    <div class="slogan">Plus têtu qu’un oubli !</div>
 
-<div class="slogan">
-Plus têtu qu'un oubli !
-</div>
+    <p>
+      Une application PWA gratuite pour accompagner la prise quotidienne des médicaments,
+      avec rappels, suivi des prises et fonctionnement simple sur téléphone.
+    </p>
 
-<p class="presentation">
+    <div class="actions">
+      <a class="btn" href="../">← Retour aux projets</a>
+      <a class="btn btn-primary" href="index.html">📱 Ouvrir l’application</a>
+      <a class="btn" href="Logo%20Mouton_Vigilant_notice_v1.pdf">📖 Ouvrir la notice</a>
+      <a class="btn disabled" href="#">⚙️ Sous le capot bientôt</a>
+    </div>
+  </section>
 
-Une application gratuite qui accompagne les utilisateurs dans la prise quotidienne
-de leurs médicaments.
+  <section class="grid">
 
-Simple à utiliser, elle enregistre les traitements,
-envoie des rappels et aide à suivre les prises,
-tout en restant respectueuse de la vie privée.
+    <div class="mini-card">
+      <div class="icon">📱</div>
+      <h2>L’application</h2>
+      <p>
+        Ajouter ses médicaments, recevoir les rappels et suivre les prises au quotidien.
+      </p>
+      <a href="index.html">→ Ouvrir l’application</a>
+    </div>
 
-</p>
+    <div class="mini-card">
+      <div class="icon">📖</div>
+      <h2>La notice</h2>
+      <p>
+        Guide utilisateur pour installer l’application, activer les notifications
+        et comprendre les fonctions principales.
+      </p>
+      <a href="Logo%20Mouton_Vigilant_notice_v1.pdf">→ Consulter la notice</a>
+    </div>
 
-<br>
+    <div class="mini-card">
+      <div class="icon">⚙️</div>
+      <h2>Sous le capot</h2>
+      <p>
+        Une explication simple du fonctionnement : téléphone, notifications,
+        serveur et berger électronique.
+      </p>
+      <a class="disabled" href="#">→ Bientôt disponible</a>
+    </div>
 
-<a class="btn" href="../">
-← Retour aux projets
-</a>
+  </section>
 
-<a class="btn btn-primary" href="index.html">
-📱 Ouvrir l'application
-</a>
-
-</section>
-
-
-<section class="card">
-
-<h2>Découvrir Mouton Vigilant</h2>
-
-<div class="grille">
-
-<div class="tuile">
-
-<div class="icone">
-📱
-</div>
-
-<h2>L'application</h2>
-
-<p>
-
-Ajouter ses traitements,
-recevoir les rappels
-et suivre les prises.
-
-</p>
-
-<a class="btn btn-primary" href="index.html">
-Ouvrir
-</a>
-
-</div>
-
-
-<div class="tuile">
-
-<div class="icone">
-📖
-</div>
-
-<h2>La notice</h2>
-
-<p>
-
-Guide utilisateur illustré
-pour installer et utiliser
-l'application.
-
-</p>
-
-<a class="btn" href="notice/">
-Consulter
-</a>
+  <section class="card">
+    <h2>❤️ Le projet</h2>
+    <p>
+      Projet développé par le <strong>Maker Lab du Mouton à 5 Pattes</strong>.<br>
+      Conception : <strong>René Hippert</strong>
+    </p>
+  </section>
 
 </div>
-
-
-<div class="tuile">
-
-<div class="icone">
-⚙️
-</div>
-
-<h2>Sous le capot</h2>
-
-<p>
-
-Découvrez simplement
-comment fonctionne
-Mouton Vigilant.
-
-</p>
-
-<a class="btn" href="sous-le-capot.html">
-Découvrir
-</a>
-
-</div>
-
-</div>
-
-</section>
-
-
-<section class="card">
-
-<h2>❤️ Le projet</h2>
-
-<p class="presentation">
-
-Mouton Vigilant est un projet développé par le
-<strong>Maker Lab du Mouton à 5 Pattes</strong>.
-
-Il a été imaginé pour proposer une solution simple,
-gratuite et accessible au plus grand nombre.
-
-</p>
-
-</section>
-
-<footer>
-
-Maker Lab du Mouton à 5 Pattes
-
-</footer>
-
-</main>
 
 </body>
 </html>
