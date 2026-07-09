@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sous le capot – Mouton Vigilant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111824;
+      --text: #e7eef7;
+      --muted: #a9b4c4;
+      --line: rgba(255,255,255,.12);
+      --accent: #58a6ff;
+      --radius: 16px;
+      --max: 1000px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: auto;
+      padding: 60px 16px;
+    }
+
+    .card, .mini-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px;
+      margin-bottom: 22px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 34px; }
+    h2 { margin-top: 0; }
+
+    p, li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .slogan {
+      font-size: 22px;
+      color: var(--accent);
+      font-weight: 800;
+      margin: 10px 0 20px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.25);
+      color: var(--text);
+      background: transparent;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      background: rgba(88,166,255,.16);
+    }
+
+    .citation {
+      border-left: 4px solid var(--accent);
+      padding-left: 16px;
+      color: #dbeafe;
+      font-size: 1.1rem;
+      margin: 18px 0;
+    }
+
+    .schema {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .bloc {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-width: 135px;
+      text-align: center;
+    }
+
+    .fleche {
+      font-size: 26px;
+      color: var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <section class="card">
+    <h1>🐑 Sous le capot de Mouton Vigilant</h1>
+
+    <div class="slogan">La vulgarisation du système pour les geeks en herbe.</div>
+
+    <p>
+      Ici, pas besoin d’être informaticien. On explique simplement comment une notification
+      part d’un médicament enregistré jusqu’au téléphone.
+    </p>
+
+    <p class="citation">
+      « Bonjour ! Je suis le Mouton Vigilant. Mon métier ? Veiller discrètement sur vos traitements. »
+    </p>
+
+    <div class="actions">
+      <a class="btn" href="presentation.html">← Retour à la présentation</a>
+      <a class="btn btn-primary" href="index.html">📱 Ouvrir l’application</a>
+      <a class="btn" href="Mouton_Vigilant_notice_logo_v1.pdf" target="_blank">📖 Ouvrir la notice</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>📱 1. Tout commence sur le téléphone</h2>
+    <p>Bidule ajoute un médicament dans l’application :</p>
+    <p><strong>💊 Pilulix — 07 h 30</strong></p>
+    <p>
+      Le Mouton enregistre d’abord l’information directement dans le téléphone.
+      Ainsi, l’application garde les traitements en mémoire.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>☁️ 2. Le Berger prend le relais</h2>
+    <p>
+      Pour envoyer les rappels même lorsque l’application est fermée,
+      le Mouton transmet les horaires au <strong>Cloudflare Worker</strong>.
+    </p>
+    <p>
+      Il ne connaît pas Bidule personnellement. Il connaît seulement l’heure du rappel,
+      le médicament et l’identifiant du téléphone.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>📒 3. Le carnet du Berger</h2>
+    <p>Le Berger possède un carnet appelé <strong>base D1</strong>.</p>
+    <ul>
+      <li>💊 Pilulix → 07 h 30</li>
+      <li>💊 Géludor → 12 h 30</li>
+      <li>💊 Comprimax → 20 h 00</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>📬 4. Le facteur OneSignal</h2>
+    <p>
+      Le Berger ne livre pas lui-même les notifications.
+      Il appelle un facteur spécialisé : <strong>OneSignal</strong>.
+    </p>
+    <p class="citation">« Porte ce message à ce téléphone. »</p>
+  </section>
+
+  <section class="card">
+    <h2>📱 5. Ding ! Le téléphone se réveille</h2>
+    <p>
+      Le téléphone reçoit la notification :
+    </p>
+    <p>
+      🐑 <strong>Mouton Vigilant</strong><br>
+      Il est l’heure de prendre : <strong>Pilulix</strong>
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>✅ 6. Mission accomplie</h2>
+    <p>
+      Lorsque Bidule appuie sur <strong>Prise effectuée</strong>,
+      le Berger coche son carnet et les relances s’arrêtent.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>🔄 Le voyage d’une notification</h2>
+
+    <div class="schema">
+      <div class="bloc">📱<br>Téléphone</div>
+      <div class="fleche">→</div>
+      <div class="bloc">🐑<br>Mouton Vigilant</div>
+      <div class="fleche">→</div>
+      <div class="bloc">☁️<br>Cloudflare Worker</div>
+      <div class="fleche">→</div>
+      <div class="bloc">📒<br>Base D1</div>
+      <div class="fleche">→</div>
+      <div class="bloc">📬<br>OneSignal</div>
+      <div class="fleche">→</div>
+      <div class="bloc">📱<br>Notification</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🎭 Les personnages de l’histoire</h2>
+
+    <div class="grid">
+      <div class="mini-card"><h3>🐑 Le Mouton</h3><p>L’application.</p></div>
+      <div class="mini-card"><h3>🌐 La Bergerie</h3><p>GitHub Pages, qui héberge le projet.</p></div>
+      <div class="mini-card"><h3>☁️ Le Berger</h3><p>Cloudflare Worker, qui surveille les rappels.</p></div>
+      <div class="mini-card"><h3>📒 Le Carnet</h3><p>Base D1, qui mémorise les horaires.</p></div>
+      <div class="mini-card"><h3>📬 Le Facteur</h3><p>OneSignal, qui transporte les notifications.</p></div>
+      <div class="mini-card"><h3>📱 Le téléphone</h3><p>Il reçoit les rappels et affiche l’alerte.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🐑 Le mot de la fin</h2>
+
+    <p class="citation">
+      « Le Mouton accompagne. Le Berger surveille. Le Carnet mémorise.
+      Le Facteur livre. Et le téléphone vous prévient au bon moment. »
+    </p>
+  </section>
+
+</div>
+
+</body>
+</html>
