@@ -156,17 +156,13 @@ async function verifierQueLeMoutonVeille() {
      null;
 
     if (!onesignalId) {
-      for (let i = 0; i < 20; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
-        onesignalId =
-          window.MOUTON_ONESIGNAL_ID ||
-          OneSignal.User?.PushSubscription?.id ||
-          null;
-
-        if (onesignalId) break;
-  }
-}
+      onesignalId =
+        window.MOUTON_ONESIGNAL_ID ||
+        OneSignal.User?.PushSubscription?.id ||
+        null;
+    }
 
     if (!onesignalId) {
       if (etat) etat.textContent = "🟠 Appareil en cours d'enregistrement";
